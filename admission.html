@@ -1,479 +1,407 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admission Form - Ambedkar Public School</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; margin: 0; padding: 20px; color: #333; }
-        .admCard { background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); max-width: 1100px; margin: 0 auto; overflow: hidden; }
-        .admHeader { background: #0b3c5d; color: #fff; padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; }
-        .admHeader h2 { margin: 0; font-size: 20px; }
-        .admSection { padding: 20px 25px; border-bottom: 1px solid #eee; }
-        .admSection h3 { margin: 0 0 15px 0; font-size: 16px; color: #0b3c5d; border-left: 4px solid #0b3c5d; padding-left: 8px; }
-        .admGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; }
-        .admGroup { display: flex; flex-direction: column; }
-        .admGroup label { font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #555; }
-        .admGroup input, .admGroup select, .admGroup textarea { padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; outline: none; }
-        .admGroup input[readonly] { background: #e9ecef; cursor: not-allowed; }
+<style>
+    .admBox { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 16px; overflow: hidden; }
+    .admHead { background: #f8fafc; padding: 10px 15px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #0b3c5d; font-size: 13.5px; }
+    
+    /* 4-कॉलम डेस्कटॉप ग्रिड जो मोबाइल पर खुद 1 कॉलम बनेगा */
+    .admGrid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        padding: 15px;
+    }
+    .admGrp { display: flex; flex-direction: column; }
+    .admGrp label { font-size: 11.5px; font-weight: 600; color: #475569; margin-bottom: 3px; }
+    .admGrp input, .admGrp select, .admGrp textarea {
+        padding: 7px 9px;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        font-size: 13px;
+        outline: none;
+        background: #fff;
+    }
+    .admGrp input[readonly] { background: #f1f5f9; color: #64748b; }
+    .admSpan2 { grid-column: span 2; }
+    
+    .admBtns { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
+    .btn { padding: 9px 16px; font-size: 13px; font-weight: 600; border-radius: 4px; border: none; cursor: pointer; }
+    .btnSuccess { background: #16a34a; color: #fff; }
+    .btnInfo { background: #0284c7; color: #fff; }
+    .btnDanger { background: #dc2626; color: #fff; }
+
+    /* TABLET & MOBILE RESPONSIVE MEDIA QUERIES */
+    @media (max-width: 900px) {
+        .admGrid { grid-template-columns: repeat(2, 1fr); }
         .admSpan2 { grid-column: span 2; }
-        .admActions { padding: 20px 25px; display: flex; justify-content: flex-end; gap: 10px; background: #fafafa; }
-        .btn { padding: 10px 22px; font-size: 14px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; }
-        .btnPrimary { background: #16a34a; color: #fff; }
-        .btnInfo { background: #0284c7; color: #fff; }
-        .btnDanger { background: #dc2626; color: #fff; }
-        .loader { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; }
-    </style>
-</head>
-<body>
+    }
+    @media (max-width: 550px) {
+        .admGrid { grid-template-columns: 1fr; gap: 10px; padding: 12px; }
+        .admSpan2 { grid-column: span 1; }
+        .admBtns { justify-content: stretch; }
+        .admBtns button { flex: 1; text-align: center; }
+    }
+</style>
 
-<div class="admCard">
-    <div class="admHeader">
-        <h2>New Student Admission (प्रवेश फ़ॉर्म)</h2>
-        <div>
-            <button type="button" class="btn btnInfo" onclick="previewForm()">👁️ Print Preview</button>
-            <button type="button" class="btn btnPrimary" onclick="submitForm()">💾 Save Admission</button>
+<form id="admSingleForm" onsubmit="event.preventDefault(); submitAdmissionData();">
+    <!-- 1. छात्र विवरण -->
+    <div class="admBox">
+        <div class="admHead">1. Student Information</div>
+        <div class="admGrid">
+            <div class="admGrp">
+                <label>Primary Mobile *</label>
+                <input type="text" id="primaryMobile" maxlength="10" placeholder="10 Digit Mobile" required>
+            </div>
+            <div class="admGrp">
+                <label>Admission Date *</label>
+                <input type="date" id="admissionDate" required>
+            </div>
+            <div class="admGrp">
+                <label>Session</label>
+                <input type="text" id="currentSession" value="2026-2027" readonly>
+            </div>
+            <div class="admGrp">
+                <label>Student ID</label>
+                <input type="text" id="studentId" readonly placeholder="APS...">
+            </div>
+            <div class="admGrp">
+                <label>Student Full Name *</label>
+                <input type="text" id="studentName" required placeholder="Full Name">
+            </div>
+            <div class="admGrp">
+                <label>Date Of Birth *</label>
+                <input type="date" id="dob" required>
+            </div>
+            <div class="admGrp">
+                <label>Gender *</label>
+                <select id="gender" required>
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+            <div class="admGrp">
+                <label>Blood Group</label>
+                <select id="bloodGroup">
+                    <option value="">Select</option>
+                    <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                    <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+                </select>
+            </div>
+            <div class="admGrp">
+                <label>Student Aadhaar</label>
+                <input type="text" id="studentAadhaar" maxlength="12" placeholder="12 Digit Aadhaar">
+            </div>
+            <div class="admGrp">
+                <label>PEN Number</label>
+                <input type="text" id="penNumber" placeholder="UDISE PEN">
+            </div>
+            <div class="admGrp">
+                <label>Category</label>
+                <select id="category">
+                    <option value="GEN">GEN</option><option value="OBC">OBC</option>
+                    <option value="SC">SC</option><option value="ST">ST</option>
+                </select>
+            </div>
+            <div class="admGrp">
+                <label>Religion</label>
+                <select id="religion">
+                    <option value="Hindu">Hindu</option><option value="Islam">Islam</option>
+                    <option value="Buddhist">Buddhist</option><option value="Sikh">Sikh</option><option value="Christian">Christian</option>
+                </select>
+            </div>
+            <div class="admGrp">
+                <label>Caste</label>
+                <input type="text" id="caste" placeholder="Caste">
+            </div>
+            <div class="admGrp">
+                <label>Student Photo</label>
+                <div style="display:flex; gap:5px;">
+                    <input type="file" id="photoFile" accept="image/*" style="padding:2px; font-size:11px;">
+                    <button type="button" class="btn btnInfo" style="padding:3px 8px; font-size:11px;" onclick="uploadPhotoNow()">Upload</button>
+                </div>
+                <input type="hidden" id="studentPhotoLink">
+                <small id="photoStatus" style="color:#666; font-size:11px; margin-top:2px;">No photo uploaded</small>
+            </div>
         </div>
     </div>
 
-    <form id="admissionForm">
-        <!-- 1. छात्र विवरण -->
-        <div class="admSection">
-            <h3>1. Student Information</h3>
-            <div class="admGrid">
-                <div class="admGroup">
-                    <label>Primary Mobile *</label>
-                    <input type="text" id="primaryMobile" maxlength="10" required>
-                </div>
-                <div class="admGroup">
-                    <label>Admission Date *</label>
-                    <input type="date" id="admissionDate" required>
-                </div>
-                <div class="admGroup">
-                    <label>Session</label>
-                    <input type="text" id="currentSession" readonly>
-                </div>
-                <div class="admGroup">
-                    <label>Student ID</label>
-                    <input type="text" id="studentId" readonly>
-                </div>
-                <div class="admGroup">
-                    <label>Student Full Name *</label>
-                    <input type="text" id="studentName" required>
-                </div>
-                <div class="admGroup">
-                    <label>Date of Birth *</label>
-                    <input type="date" id="dob" required>
-                </div>
-                <div class="admGroup">
-                    <label>Gender *</label>
-                    <select id="gender" required>
-                        <option value="">Select</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                    </select>
-                </div>
-                <div class="admGroup">
-                    <label>Blood Group</label>
-                    <select id="bloodGroup">
-                        <option value="">Select</option>
-                        <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
-                        <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
-                    </select>
-                </div>
-                <div class="admGroup">
-                    <label>Aadhaar Number</label>
-                    <input type="text" id="studentAadhaar" maxlength="12">
-                </div>
-                <div class="admGroup">
-                    <label>PEN Number</label>
-                    <input type="text" id="penNumber">
-                </div>
-                <div class="admGroup">
-                    <label>Category</label>
-                    <select id="category">
-                        <option value="GEN">GEN</option><option value="OBC">OBC</option>
-                        <option value="SC">SC</option><option value="ST">ST</option>
-                    </select>
-                </div>
-                <div class="admGroup">
-                    <label>Religion</label>
-                    <select id="religion">
-                        <option value="Hindu">Hindu</option><option value="Islam">Islam</option>
-                        <option value="Buddhist">Buddhist</option><option value="Sikh">Sikh</option><option value="Christian">Christian</option>
-                    </select>
-                </div>
-                <div class="admGroup">
-                    <label>Caste</label>
-                    <input type="text" id="caste">
-                </div>
-                <div class="admGroup">
-                    <label>Student Photo</label>
-                    <div style="display: flex; gap: 6px;">
-                        <input type="file" id="photoFile" accept="image/*">
-                        <button type="button" class="btn btnInfo" style="padding: 4px 10px; font-size:12px;" onclick="uploadPhoto()">Upload</button>
-                    </div>
-                    <input type="hidden" id="studentPhotoLink">
-                    <small id="photoStatus" style="color: #666;"></small>
-                </div>
+    <!-- 2. शैक्षणिक विवरण -->
+    <div class="admBox">
+        <div class="admHead">2. Academic Information</div>
+        <div class="admGrid">
+            <div class="admGrp">
+                <label>Admission Class *</label>
+                <select id="currentClass" required onchange="fetchRollNumber()">
+                    <option value="Nursery">Nursery</option>
+                    <option value="LKG">LKG</option>
+                    <option value="UKG">UKG</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                </select>
+            </div>
+            <div class="admGrp">
+                <label>Section *</label>
+                <select id="section" required>
+                    <option value="A" selected>A</option>
+                </select>
+            </div>
+            <div class="admGrp">
+                <label>Roll Number</label>
+                <input type="text" id="rollNumber" readonly placeholder="Auto">
+            </div>
+            <div class="admGrp">
+                <label>Status</label>
+                <select id="studentStatus">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="admGrp">
+                <label>SR Number (खाली छोड़ें या खुद भरें)</label>
+                <input type="text" id="srNumber" placeholder="Leave blank for Auto +1">
+            </div>
+            <div class="admGrp">
+                <label>Previous School Status</label>
+                <select id="previousSchoolStatus">
+                    <option value="Non Schooling">Non Schooling</option>
+                    <option value="Same School">Same School</option>
+                    <option value="Other School">Other School</option>
+                </select>
+            </div>
+            <div class="admGrp admSpan2">
+                <label>Previous School Details & UDISE</label>
+                <input type="text" id="previousSchoolDetails" placeholder="School Name, UDISE">
             </div>
         </div>
-
-        <!-- 2. शैक्षणिक विवरण -->
-        <div class="admSection">
-            <h3>2. Academic Details</h3>
-            <div class="admGrid">
-                <div class="admGroup">
-                    <label>Class *</label>
-                    <select id="currentClass" required onchange="onClassSelect(this.value)">
-                        <option value="">Loading...</option>
-                    </select>
-                </div>
-                <div class="admGroup">
-                    <label>Section *</label>
-                    <select id="section" required onchange="onSectionSelect()">
-                        <option value="A">A</option>
-                    </select>
-                </div>
-                <div class="admGroup">
-                    <label>Roll Number</label>
-                    <input type="text" id="rollNumber" readonly>
-                </div>
-                <div class="admGroup">
-                    <label>Status</label>
-                    <select id="studentStatus">
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                    </select>
-                </div>
-                <div class="admGroup">
-                    <label>SR Number (खाली छोड़ें या खुद भरें)</label>
-                    <input type="text" id="srNumber" placeholder="Leave blank for Auto +1">
-                </div>
-                <div class="admGroup">
-                    <label>Previous School Status</label>
-                    <select id="previousSchoolStatus">
-                        <option value="Non Schooling">Non Schooling</option>
-                        <option value="Same School">Same School</option>
-                        <option value="Other School">Other School</option>
-                    </select>
-                </div>
-                <div class="admGroup admSpan2">
-                    <label>Previous School Details</label>
-                    <input type="text" id="previousSchoolDetails">
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. अभिभावक व पता -->
-        <div class="admSection">
-            <h3>3. Parent & Address Details</h3>
-            <div class="admGrid">
-                <div class="admGroup">
-                    <label>Father Name *</label>
-                    <input type="text" id="fatherName" required>
-                </div>
-                <div class="admGroup">
-                    <label>Father Occupation</label>
-                    <input type="text" id="fatherOccupation">
-                </div>
-                <div class="admGroup">
-                    <label>Father Aadhaar</label>
-                    <input type="text" id="fatherAadhaar" maxlength="12">
-                </div>
-                <div class="admGroup">
-                    <label>Mother Name *</label>
-                    <input type="text" id="motherName" required>
-                </div>
-                <div class="admGroup">
-                    <label>Mother Occupation</label>
-                    <input type="text" id="motherOccupation">
-                </div>
-                <div class="admGroup">
-                    <label>Mother Aadhaar</label>
-                    <input type="text" id="motherAadhaar" maxlength="12">
-                </div>
-                <div class="admGroup">
-                    <label>Alternate Mobile</label>
-                    <input type="text" id="alternateMobile" maxlength="10">
-                </div>
-                <div class="admGroup">
-                    <label>Email</label>
-                    <input type="email" id="email">
-                </div>
-                <div class="admGroup admSpan2">
-                    <label>Permanent Address *</label>
-                    <textarea id="fullAddress" rows="2" required></textarea>
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. वास्तविक स्कूल विवरण (केवल ID कार्ड हेतु) -->
-        <div class="admSection">
-            <h3>4. Affiliated School (केवल ID Card हेतु - वैकल्पिक)</h3>
-            <div class="admGrid">
-                <div class="admGroup admSpan2">
-                    <label>Actual School Name & Address</label>
-                    <input type="text" id="actualSchoolName" placeholder="यदि छात्र दूसरे स्कूल का है (उदा. ABC Academy, Gorakhpur)">
-                </div>
-                <div class="admGroup admSpan2">
-                    <label>Actual School Logo Link</label>
-                    <input type="text" id="actualSchoolLogo" placeholder="https://.../logo.png">
-                </div>
-            </div>
-        </div>
-
-        <div class="admActions">
-            <button type="reset" class="btn btnDanger">Reset</button>
-            <button type="button" class="btn btnInfo" onclick="previewForm()">👁️ Preview Form</button>
-            <button type="button" class="btn btnPrimary" onclick="submitForm()">💾 Final Submit</button>
-        </div>
-    </form>
-</div>
-
-<div id="loader" class="loader">
-    <div style="background:#fff; padding:20px 30px; border-radius:8px; font-weight:bold; color:#0b3c5d;">
-        कृपया प्रतीक्षा करें (Processing)...
     </div>
-</div>
+
+    <!-- 3. अभिभावक व पता -->
+    <div class="admBox">
+        <div class="admHead">3. Parent & Address Details</div>
+        <div class="admGrid">
+            <div class="admGrp">
+                <label>Father Name *</label>
+                <input type="text" id="fatherName" required placeholder="Father Name">
+            </div>
+            <div class="admGrp">
+                <label>Father Occupation</label>
+                <input type="text" id="fatherOccupation" placeholder="Occupation">
+            </div>
+            <div class="admGrp">
+                <label>Father Aadhaar</label>
+                <input type="text" id="fatherAadhaar" maxlength="12" placeholder="Aadhaar">
+            </div>
+            <div class="admGrp">
+                <label>Mother Name *</label>
+                <input type="text" id="motherName" required placeholder="Mother Name">
+            </div>
+            <div class="admGrp">
+                <label>Mother Occupation</label>
+                <input type="text" id="motherOccupation" placeholder="Occupation">
+            </div>
+            <div class="admGrp">
+                <label>Mother Aadhaar</label>
+                <input type="text" id="motherAadhaar" maxlength="12" placeholder="Aadhaar">
+            </div>
+            <div class="admGrp">
+                <label>Alternate Mobile</label>
+                <input type="text" id="alternateMobile" maxlength="10" placeholder="Mobile">
+            </div>
+            <div class="admGrp">
+                <label>Email</label>
+                <input type="email" id="email" placeholder="Email">
+            </div>
+            <div class="admGrp admSpan2">
+                <label>Permanent Address *</label>
+                <textarea id="fullAddress" rows="2" placeholder="Village, Post, Dist" required></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. वास्तविक स्कूल विवरण (केवल ID कार्ड हेतु) -->
+    <div class="admBox">
+        <div class="admHead">4. Actual School Affiliation (केवल ID Card हेतु - वैकल्पिक)</div>
+        <div class="admGrid">
+            <div class="admGrp admSpan2">
+                <label>Actual School Name & Address</label>
+                <input type="text" id="actualSchoolName" placeholder="यदि छात्र दूसरे स्कूल का है (उदा. ABC Academy, Gorakhpur)">
+            </div>
+            <div class="admGrp admSpan2">
+                <label>Actual School Logo Link</label>
+                <input type="text" id="actualSchoolLogo" placeholder="https://.../logo.png">
+            </div>
+        </div>
+    </div>
+
+    <div class="admBtns">
+        <button type="button" class="btn btnDanger" onclick="navigateModule('admission', 'New Admission')">Reset</button>
+        <button type="button" class="btn btnInfo" onclick="previewCurrentForm()">👁️ Print Preview</button>
+        <button type="submit" class="btn btnSuccess">💾 Final Submit</button>
+    </div>
+</form>
 
 <script>
-// ⭐ अपने Apps Script डिप्लॉयड Web App का URL यहाँ डालें
-const API_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+    (function() {
+        document.getElementById("admissionDate").value = new Date().toISOString().split('T')[0];
+        fetchRollNumber();
+    })();
 
-let classDataCache = {};
-let lastSavedStudent = null;
+    function fetchRollNumber() {
+        const cls = document.getElementById("currentClass").value;
+        const sec = document.getElementById("section").value;
 
-window.onload = function() {
-    loadInitData();
-    loadClasses();
-    document.getElementById("admissionDate").value = new Date().toISOString().split('T')[0];
-};
-
-function loadInitData() {
-    fetch(`${API_URL}?action=getAdmissionInit`)
-    .then(r => r.json())
-    .then(res => {
-        if(res.status === "SUCCESS") {
-            document.getElementById("currentSession").value = res.session;
-            document.getElementById("studentId").value = res.studentId;
-            document.getElementById("srNumber").placeholder = `Auto: ${res.nextSR} (या खुद लिखें)`;
-        }
-    });
-}
-
-function loadClasses() {
-    fetch(`${API_URL}?action=getClassAndSections`)
-    .then(r => r.json())
-    .then(res => {
-        if(res.status === "SUCCESS") {
-            classDataCache = res.classData;
-            const clsSelect = document.getElementById("currentClass");
-            clsSelect.innerHTML = '<option value="">Select Class</option>';
-            Object.keys(classDataCache).forEach(cls => {
-                clsSelect.innerHTML += `<option value="${cls}">${cls}</option>`;
-            });
-        }
-    });
-}
-
-function onClassSelect(cls) {
-    const secSelect = document.getElementById("section");
-    secSelect.innerHTML = '';
-    const sections = classDataCache[cls] || ["A"];
-    sections.forEach(s => {
-        secSelect.innerHTML += `<option value="${s}">${s}</option>`;
-    });
-    onSectionSelect();
-}
-
-function onSectionSelect() {
-    const cls = document.getElementById("currentClass").value;
-    const sec = document.getElementById("section").value;
-    if(!cls || !sec) return;
-
-    fetch(`${API_URL}?action=getNextRoll&className=${encodeURIComponent(cls)}&section=${encodeURIComponent(sec)}`)
-    .then(r => r.json())
-    .then(res => {
-        if(res.status === "SUCCESS") {
-            document.getElementById("rollNumber").value = res.rollNumber;
-        }
-    });
-}
-
-function uploadPhoto() {
-    const file = document.getElementById("photoFile").files[0];
-    if(!file) { alert("फ़ोटो चुनें!"); return; }
-
-    const sId = document.getElementById("studentId").value;
-    const sName = document.getElementById("studentName").value.trim() || "Student";
-    const status = document.getElementById("photoStatus");
-    status.innerText = "Uploading...";
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify({
-                action: "uploadPhoto",
-                base64: e.target.result,
-                fileName: `${sId}_${sName}_Photo`
-            })
-        })
+        fetch(`${SCRIPT_URL}?action=getAdmissionInit&className=${encodeURIComponent(cls)}&section=${encodeURIComponent(sec)}`)
         .then(r => r.json())
         .then(res => {
             if(res.status === "SUCCESS") {
-                document.getElementById("studentPhotoLink").value = res.thumbnail;
-                status.innerText = "✅ Uploaded!";
-                status.style.color = "green";
+                document.getElementById("studentId").value = res.studentId;
+                document.getElementById("rollNumber").value = res.rollNumber;
+                document.getElementById("srNumber").placeholder = `Auto: ${res.nextSR} (या खुद लिखें)`;
             }
         });
-    };
-    reader.readAsDataURL(file);
-}
-
-function getFormData() {
-    return {
-        primaryMobile: document.getElementById("primaryMobile").value.trim(),
-        admissionDate: document.getElementById("admissionDate").value,
-        currentSession: document.getElementById("currentSession").value.trim(),
-        studentId: document.getElementById("studentId").value.trim(),
-        studentName: document.getElementById("studentName").value.trim(),
-        dob: document.getElementById("dob").value,
-        gender: document.getElementById("gender").value,
-        bloodGroup: document.getElementById("bloodGroup").value,
-        studentAadhaar: document.getElementById("studentAadhaar").value.trim(),
-        penNumber: document.getElementById("penNumber").value.trim(),
-        religion: document.getElementById("religion").value,
-        category: document.getElementById("category").value,
-        caste: document.getElementById("caste").value.trim(),
-        currentClass: document.getElementById("currentClass").value,
-        section: document.getElementById("section").value,
-        rollNumber: document.getElementById("rollNumber").value,
-        studentStatus: document.getElementById("studentStatus").value,
-        previousSchoolStatus: document.getElementById("previousSchoolStatus").value,
-        previousSchoolDetails: document.getElementById("previousSchoolDetails").value.trim(),
-        srNumber: document.getElementById("srNumber").value.trim(),
-        alternateMobile: document.getElementById("alternateMobile").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        fatherName: document.getElementById("fatherName").value.trim(),
-        fatherEducation: "",
-        fatherOccupation: document.getElementById("fatherOccupation").value.trim(),
-        fatherAadhaar: document.getElementById("fatherAadhaar").value.trim(),
-        motherName: document.getElementById("motherName").value.trim(),
-        motherEducation: "",
-        motherOccupation: document.getElementById("motherOccupation").value.trim(),
-        motherAadhaar: document.getElementById("motherAadhaar").value.trim(),
-        guardianName: "", guardianEducation: "", guardianOccupation: "", guardianAadhaar: "",
-        fullAddress: document.getElementById("fullAddress").value.trim(),
-        studentPhotoLink: document.getElementById("studentPhotoLink").value.trim(),
-        actualSchoolName: document.getElementById("actualSchoolName").value.trim(),
-        actualSchoolLogo: document.getElementById("actualSchoolLogo").value.trim()
-    };
-}
-
-function submitForm() {
-    const data = getFormData();
-    if(!data.primaryMobile || !data.studentName || !data.currentClass || !data.fatherName) {
-        alert("कृपया सभी अनिवार्य फ़ील्ड्स (*) भरें!");
-        return;
     }
 
-    document.getElementById("loader").style.display = "flex";
-
-    fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "saveAdmission", data: data })
-    })
-    .then(r => r.json())
-    .then(res => {
-        document.getElementById("loader").style.display = "none";
-        if(res.status === "SUCCESS") {
-            lastSavedStudent = res.savedData;
-            alert(`✅ प्रवेश सफल!\nStudent ID: ${res.studentId}\nSR Number: ${res.srNumber}`);
-            if(confirm("क्या आप एडमिशन फ़ॉर्म प्रिंट करना चाहते हैं?")) {
-                printForm(res.savedData, "ADMITTED");
-            }
-            location.reload();
-        } else {
-            alert("Error: " + res.message);
+    function uploadPhotoNow() {
+        const fileInput = document.getElementById("photoFile");
+        if(!fileInput.files || !fileInput.files[0]) {
+            alert("कृपया पहले फोटो फ़ाइल चुनें!");
+            return;
         }
-    })
-    .catch(err => {
-        document.getElementById("loader").style.display = "none";
-        alert("Fetch Error: " + err.message);
-    });
-}
 
-function previewForm() {
-    printForm(getFormData(), "PREVIEW");
-}
+        const sId = document.getElementById("studentId").value || "TempID";
+        const sName = document.getElementById("studentName").value.trim() || "Student";
+        const status = document.getElementById("photoStatus");
+        status.innerText = "Uploading photo...";
 
-function printForm(d, statusText) {
-    const photoHtml = d.studentPhotoLink 
-        ? `<img src="${d.studentPhotoLink}" style="width:90px; height:110px; object-fit:cover; border:1px solid #333;">`
-        : `<div style="width:90px; height:110px; border:1px dashed #999; display:flex; align-items:center; justify-content:center; font-size:11px;">Affix Photo</div>`;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const params = new URLSearchParams();
+            params.append("action", "uploadPhoto");
+            params.append("base64", e.target.result);
+            params.append("fileName", `${sId}_${sName}_Photo`);
 
-    const win = window.open("", "_blank");
-    win.document.write(`
-        <html>
-        <head>
-            <title>${d.studentId || 'Admission'}_Form</title>
+            fetch(SCRIPT_URL, { method: "POST", body: params })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === "SUCCESS") {
+                    document.getElementById("studentPhotoLink").value = res.thumbnail;
+                    status.innerText = "✅ Uploaded!";
+                    status.style.color = "green";
+                } else {
+                    alert("Upload error: " + res.message);
+                }
+            })
+            .catch(err => alert("Upload error: " + err.message));
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+    }
+
+    function getFormDataJson() {
+        return {
+            primaryMobile: document.getElementById("primaryMobile").value.trim(),
+            admissionDate: document.getElementById("admissionDate").value,
+            currentSession: document.getElementById("currentSession").value.trim(),
+            studentId: document.getElementById("studentId").value.trim(),
+            studentName: document.getElementById("studentName").value.trim(),
+            dob: document.getElementById("dob").value,
+            gender: document.getElementById("gender").value,
+            bloodGroup: document.getElementById("bloodGroup").value,
+            studentAadhaar: document.getElementById("studentAadhaar").value.trim(),
+            penNumber: document.getElementById("penNumber").value.trim(),
+            religion: document.getElementById("religion").value,
+            category: document.getElementById("category").value,
+            caste: document.getElementById("caste").value.trim(),
+            currentClass: document.getElementById("currentClass").value,
+            section: document.getElementById("section").value,
+            rollNumber: document.getElementById("rollNumber").value,
+            studentStatus: document.getElementById("studentStatus").value,
+            previousSchoolStatus: document.getElementById("previousSchoolStatus").value,
+            previousSchoolDetails: document.getElementById("previousSchoolDetails").value.trim(),
+            srNumber: document.getElementById("srNumber").value.trim(),
+            alternateMobile: document.getElementById("alternateMobile").value.trim(),
+            email: document.getElementById("email").value.trim(),
+            fatherName: document.getElementById("fatherName").value.trim(),
+            fatherEducation: "",
+            fatherOccupation: document.getElementById("fatherOccupation").value.trim(),
+            fatherAadhaar: document.getElementById("fatherAadhaar").value.trim(),
+            motherName: document.getElementById("motherName").value.trim(),
+            motherEducation: "",
+            motherOccupation: document.getElementById("motherOccupation").value.trim(),
+            motherAadhaar: document.getElementById("motherAadhaar").value.trim(),
+            guardianName: "", guardianEducation: "", guardianOccupation: "", guardianAadhaar: "",
+            fullAddress: document.getElementById("fullAddress").value.trim(),
+            studentPhotoLink: document.getElementById("studentPhotoLink").value.trim(),
+            actualSchoolName: document.getElementById("actualSchoolName").value.trim(),
+            actualSchoolLogo: document.getElementById("actualSchoolLogo").value.trim()
+        };
+    }
+
+    function submitAdmissionData() {
+        const d = getFormDataJson();
+        if(!d.primaryMobile || !d.studentName || !d.fatherName) {
+            alert("कृपया सभी अनिवार्य फ़ील्ड्स (*) भरें!");
+            return;
+        }
+
+        const params = new URLSearchParams();
+        params.append("action", "saveAdmission");
+        params.append("data", JSON.stringify(d));
+
+        fetch(SCRIPT_URL, { method: "POST", body: params })
+        .then(r => r.json())
+        .then(res => {
+            if(res.status === "SUCCESS") {
+                alert(`✅ प्रवेश सफलतापूर्वक सुरक्षित!\nStudent ID: ${res.studentId}\nSR Number: ${res.srNumber}`);
+                if(confirm("क्या आप एडमिशन फ़ॉर्म प्रिंट करना चाहते हैं?")) {
+                    printFormLayout(res.savedData, "ADMITTED");
+                }
+                navigateModule('admission', 'New Admission');
+            } else {
+                alert("Error: " + res.message);
+            }
+        })
+        .catch(err => alert("Saving failed: " + err.message));
+    }
+
+    function previewCurrentForm() {
+        printFormLayout(getFormDataJson(), "PREVIEW");
+    }
+
+    function printFormLayout(d, status) {
+        const pImg = d.studentPhotoLink ? `<img src="${d.studentPhotoLink}" style="width:85px; height:105px; object-fit:cover;">` : `<div style="width:85px; height:105px; border:1px dashed #777;">Photo</div>`;
+        const w = window.open("", "_blank");
+        w.document.write(`
+            <html><head><title>${d.studentId || 'Form'}</title>
             <style>
-                @page { size: A4 portrait; margin: 10mm; }
-                body { font-family: Arial, sans-serif; margin: 0; padding: 10px; font-size: 13px; }
-                .table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-                .table td { border: 1px solid #555; padding: 6px 8px; font-size: 12px; }
-                .lbl { background: #f2f2f2; font-weight: bold; width: 22%; }
-                .val { width: 28%; }
-                .header { text-align: center; border-bottom: 2px solid #0b3c5d; padding-bottom: 8px; margin-bottom: 12px; }
-            </style>
-        </head>
-        <body>
-            <button style="position:fixed; top:10px; right:10px;" onclick="window.print()">Print</button>
-            <div class="header">
+                @page { size: A4; margin: 10mm; }
+                body { font-family: Arial, sans-serif; font-size: 13px; }
+                .table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                .table td { border: 1px solid #444; padding: 6px 8px; }
+                .lbl { background: #f0f0f0; font-weight: bold; width: 22%; }
+            </style></head><body>
+            <div style="text-align:center; border-bottom: 2px solid #0b3c5d; padding-bottom: 6px;">
                 <h2 style="margin:0; color:#0b3c5d;">AMBEDKAR PUBLIC SCHOOL</h2>
-                <div style="font-size:12px;">Madhopur, Campierganj, Gorakhpur | Session: ${d.currentSession || ''}</div>
-                <h4 style="margin:8px 0 0;">STUDENT ADMISSION FORM (${statusText})</h4>
+                <div>Madhopur, Campierganj, Gorakhpur | Session: ${d.currentSession}</div>
+                <h4 style="margin:6px 0 0;">STUDENT ADMISSION FORM (${status})</h4>
             </div>
             <table class="table">
-                <tr>
-                    <td class="lbl">Student ID</td><td class="val"><strong>${d.studentId || ''}</strong></td>
-                    <td class="lbl">Admission Date</td><td class="val">${d.admissionDate || ''}</td>
-                </tr>
-                <tr>
-                    <td class="lbl">Student Name</td><td class="val"><strong>${d.studentName || ''}</strong></td>
-                    <td class="lbl">Class & Section</td><td class="val">${d.currentClass || ''} - ${d.section || ''}</td>
-                </tr>
-                <tr>
-                    <td class="lbl">Date of Birth</td><td class="val">${d.dob || ''}</td>
-                    <td class="lbl">Gender</td><td class="val">${d.gender || ''}</td>
-                </tr>
-                <tr>
-                    <td class="lbl">SR Number</td><td class="val"><strong>${d.srNumber || ''}</strong></td>
-                    <td class="lbl">Roll Number</td><td class="val">${d.rollNumber || ''}</td>
-                </tr>
-                <tr>
-                    <td class="lbl">Father Name</td><td class="val">${d.fatherName || ''}</td>
-                    <td class="lbl">Mother Name</td><td class="val">${d.motherName || ''}</td>
-                </tr>
-                <tr>
-                    <td class="lbl">Primary Mobile</td><td class="val">${d.primaryMobile || ''}</td>
-                    <td class="lbl">Alternate Mobile</td><td class="val">${d.alternateMobile || '-'}</td>
-                </tr>
-                <tr>
-                    <td class="lbl">Address</td><td class="val" colspan="3">${d.fullAddress || ''}</td>
-                </tr>
+                <tr><td class="lbl">Student ID</td><td><strong>${d.studentId}</strong></td><td class="lbl">SR Number</td><td><strong>${d.srNumber || '-'}</strong></td></tr>
+                <tr><td class="lbl">Student Name</td><td><strong>${d.studentName}</strong></td><td class="lbl">Class - Section</td><td>${d.currentClass} - ${d.section}</td></tr>
+                <tr><td class="lbl">DOB / Gender</td><td>${d.dob} (${d.gender})</td><td class="lbl">Roll Number</td><td>${d.rollNumber || '-'}</td></tr>
+                <tr><td class="lbl">Father Name</td><td>${d.fatherName}</td><td class="lbl">Mother Name</td><td>${d.motherName}</td></tr>
+                <tr><td class="lbl">Mobile</td><td>${d.primaryMobile}</td><td class="lbl">Address</td><td>${d.fullAddress}</td></tr>
             </table>
-            <div style="margin-top:40px; display:flex; justify-content:space-between; text-align:center;">
-                <div style="width:200px; border-top:1px solid #000; padding-top:4px;">Parent Signature</div>
-                <div style="width:200px; border-top:1px solid #000; padding-top:4px;">Principal Signature</div>
+            <div style="margin-top:50px; display:flex; justify-content:space-between; text-align:center;">
+                <div style="width:200px; border-top:1px solid #000;">Parent Sign</div>
+                <div style="width:200px; border-top:1px solid #000;">Principal Sign</div>
             </div>
-        </body>
-        </html>
-    `);
-    win.document.close();
-}
+            <script>window.print();<\/script></body></html>
+        `);
+        w.document.close();
+    }
 </script>
-</body>
-</html>
