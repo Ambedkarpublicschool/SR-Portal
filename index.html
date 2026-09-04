@@ -227,7 +227,7 @@
             const loader = document.getElementById("loader");
             loader.style.display = "flex";
 
-            fetch(`modules/${fileKey}.html`)
+            fetch(`${fileKey}.html`)
             .then(res => {
                 if (!res.ok) throw new Error("फ़ाइल लोड नहीं हो सकी: " + fileKey);
                 return res.text();
