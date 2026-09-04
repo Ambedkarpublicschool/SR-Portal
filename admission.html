@@ -270,40 +270,48 @@ function fetchRollNumber() {
     });
 }
 
-    function uploadPhotoNow() {
-        const fileInput = document.getElementById("photoFile");
-        if(!fileInput.files || !fileInput.files[0]) {
-            alert("कृपया पहले फोटो फ़ाइल चुनें!");
-            return;
-        }
-
-        const sId = document.getElementById("studentId").value || "TempID";
-        const sName = document.getElementById("studentName").value.trim() || "Student";
-        const status = document.getElementById("photoStatus");
-        status.innerText = "Uploading photo...";
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const params = new URLSearchParams();
-            params.append("action", "uploadPhoto");
-            params.append("base64", e.target.result);
-            params.append("fileName", `${sId}_${sName}_Photo`);
-
-            fetch(SCRIPT_URL, { method: "POST", body: params })
-            .then(r => r.json())
-            .then(res => {
-                if(res.status === "SUCCESS") {
-                    document.getElementById("studentPhotoLink").value = res.thumbnail;
-                    status.innerText = "✅ Uploaded!";
-                    status.style.color = "green";
-                } else {
-                    alert("Upload error: " + res.message);
-                }
-            })
-            .catch(err => alert("Upload error: " + err.message));
-        };
-        reader.readAsDataURL(fileInput.files[0]);
+function uploadPhotoNow() {
+    const fileInput = document.getElementById("photoFile");
+    if(!fileInput.files || !fileInput.files[0]) {
+        alert("कृपया पहले फोटो फ़ाइल चुनें!");
+        return;
     }
+
+    const sId = document.getElementById("studentId").value || "Student";
+    const sName = document.getElementById("studentName").value.trim() || "Photo";
+    const status = document.getElementById("photoStatus");
+    status.innerText = "Uploading photo...";
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const params = new URLSearchParams();
+        params.append("action", "uploadPhoto");
+        params.append("base64", e.target.result);
+        params.append("fileName", `${sId}_${sName}.jpg`);
+
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            body: params
+        })
+        .then(r => r.json())
+        .then(res => {
+            if(res.status === "SUCCESS") {
+                document.getElementById("studentPhotoLink").value = res.thumbnail;
+                status.innerText = "✅ Uploaded!";
+                status.style.color = "green";
+                alert("फोटो सफलतापूर्वक अपलोड हो गई!");
+            } else {
+                alert("Upload error: " + res.message);
+                status.innerText = "Upload failed";
+            }
+        })
+        .catch(err => {
+            alert("Upload failed: " + err.message);
+            status.innerText = "Upload failed";
+        });
+    };
+    reader.readAsDataURL(fileInput.files[0]);
+}
 
     function getFormDataJson() {
         return {
