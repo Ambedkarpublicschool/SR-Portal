@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ambedkar Public School - ERP Portal</title>
+    <title>Ambedkar Public School - Portal</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
         body { background: #f0f2f5; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
@@ -14,95 +14,146 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 20px;
+            padding: 8px 15px;
             border-bottom: 2px solid #e6b800;
-            height: 75px;
+            height: 70px;
             flex-shrink: 0;
+            z-index: 100;
         }
-        .schoolBrand { display: flex; align-items: center; gap: 15px; }
-        .schoolLogo { width: 58px; height: 58px; object-fit: contain; }
-        .schoolInfo h1 { font-size: 20px; color: #0b3c5d; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; }
-        .schoolInfo div { font-size: 11.5px; color: #333; font-weight: 500; }
-
-        .adminMeta { text-align: right; }
-        .adminMeta h3 { font-size: 13px; color: #0b3c5d; font-weight: bold; }
-        .adminMeta div { font-size: 11px; color: #444; }
-
-        /* BODY LAYOUT */
-        .portalLayout { display: flex; flex: 1; height: calc(100vh - 75px); overflow: hidden; }
-
-        /* SIDEBAR */
-        .sidebar { width: 220px; background: #071b46; color: #fff; display: flex; flex-direction: column; flex-shrink: 0; }
-        .sidebarMenu { list-style: none; padding: 10px 0; }
-        .menuItem {
-            padding: 12px 18px;
+        .headerLeft { display: flex; align-items: center; gap: 12px; }
+        
+        /* SIDEBAR TOGGLE BUTTON */
+        .toggleBtn {
+            background: #0b3c5d;
+            color: #fff;
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 6px;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 13.5px;
+            justify-content: center;
+            font-size: 20px;
+            transition: 0.2s;
+            flex-shrink: 0;
+        }
+        .toggleBtn:hover { background: #07273d; }
+
+        .schoolBrand { display: flex; align-items: center; gap: 12px; }
+        .schoolLogo { width: 50px; height: 50px; object-fit: contain; flex-shrink: 0; }
+        .schoolInfo h1 { font-size: 18px; color: #0b3c5d; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; line-height: 1.1; }
+        .schoolInfo div { font-size: 11px; color: #333; font-weight: 500; }
+
+        .adminMeta { text-align: right; }
+        .adminMeta h3 { font-size: 12px; color: #0b3c5d; font-weight: bold; }
+        .adminMeta div { font-size: 10.5px; color: #444; }
+
+        /* BODY LAYOUT */
+        .portalLayout { display: flex; flex: 1; height: calc(100vh - 70px); overflow: hidden; position: relative; }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 230px;
+            background: #071b46;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            z-index: 90;
+        }
+        
+        /* SIDEBAR COLLAPSED (DESKTOP) */
+        .sidebar.collapsed {
+            margin-left: -230px;
+        }
+
+        .sidebarMenu { list-style: none; padding: 10px 0; }
+        .menuItem {
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
             cursor: pointer;
             color: #cfd9df;
             border-left: 4px solid transparent;
             transition: all 0.2s;
+            white-space: nowrap;
         }
         .menuItem:hover, .menuItem.active { background: #0c2b6d; color: #fff; border-left-color: #ffcc00; }
 
         /* MAIN CONTENT AREA */
-        .mainArea { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .mainArea { flex: 1; display: flex; flex-direction: column; overflow: hidden; width: 100%; }
         .moduleTopBar {
             background: #fff;
-            padding: 12px 25px;
+            padding: 12px 20px;
             font-size: 17px;
             font-weight: 700;
             color: #0b3c5d;
             border-bottom: 1px solid #dfe3e8;
             flex-shrink: 0;
         }
-        .moduleContainer { flex: 1; padding: 15px 25px; overflow-y: auto; }
+        .moduleContainer { flex: 1; padding: 15px; overflow-y: auto; position: relative; }
 
-        /* DASHBOARD WELCOME CARD */
-        .dashCard { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; margin-top: 20px; }
-        .dashCard h2 { color: #0b3c5d; margin-bottom: 10px; }
-        .dashCard p { color: #666; font-size: 14px; }
-
-        /* ADMISSION FORM STYLING */
-        .admCard { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 25px; overflow: hidden; }
-        .admCardHeader { background: #f8fafc; padding: 12px 18px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #0b3c5d; font-size: 14px; }
-        .admGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 15px; padding: 18px; }
-        .admGroup { display: flex; flex-direction: column; }
-        .admGroup label { font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; }
-        .admGroup input, .admGroup select, .admGroup textarea {
-            padding: 7px 9px;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 13px;
-            outline: none;
-            background: #fff;
+        /* BACKDROP FOR MOBILE */
+        .sidebarOverlay {
+            position: fixed;
+            top: 70px; left: 0; width: 100%; height: calc(100vh - 70px);
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 80;
         }
-        .admGroup input[readonly] { background: #f1f5f9; color: #64748b; }
-        .admSpan2 { grid-column: span 2; }
-        .admActions { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 30px; }
 
-        .btn { padding: 9px 18px; font-size: 13px; font-weight: 600; border-radius: 4px; border: none; cursor: pointer; }
-        .btnSuccess { background: #16a34a; color: #fff; }
-        .btnInfo { background: #0284c7; color: #fff; }
-        .btnDanger { background: #dc2626; color: #fff; }
+        .pageLoader {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(255,255,255,0.7); display: none;
+            align-items: center; justify-content: center; font-weight: bold; color: #0b3c5d;
+            z-index: 50;
+        }
 
-        /* POPUP & LOADER */
-        .modalOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; z-index:999; }
-        .modalBox { background:#fff; padding:25px; border-radius:8px; width:450px; text-align:center; }
+        /* RESPONSIVE CSS (MOBILE & TABLET) */
+        @media (max-width: 768px) {
+            .adminMeta { display: none; } /* मोबाइल पर गैर-जरूरी टेक्स्ट छुपाएं */
+            .schoolInfo h1 { font-size: 15px; }
+            .schoolInfo div:nth-child(3) { display: none; } /* फोन/ईमेल लाइन छुपाएं */
+            
+            .sidebar {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+                transform: translateX(-100%);
+                margin-left: 0 !important;
+            }
+
+            .sidebar.mobileOpen {
+                transform: translateX(0);
+            }
+
+            .sidebarOverlay.active {
+                display: block;
+            }
+
+            .moduleContainer { padding: 10px; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- APP HEADER -->
+    <!-- HEADER WITH TOGGLE BUTTON -->
     <div class="topHeader">
-        <div class="schoolBrand">
-            <img src="https://i.postimg.cc/pLt1F2cD/logo-copy.png" class="schoolLogo" alt="Logo">
-            <div class="schoolInfo">
-                <h1>Ambedkar Public School</h1>
-                <div>Madhopur Campierganj Gorakhpur | UDISE: 9584109512 | Session: 2026-2027</div>
-                <div>Mobile: 9793458774 | Email: apsmadhopur2024@gmail.com</div>
+        <div class="headerLeft">
+            <button class="toggleBtn" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
+            <div class="schoolBrand">
+                <img src="https://i.postimg.cc/pLt1F2cD/logo-copy.png" class="schoolLogo" alt="Logo">
+                <div class="schoolInfo">
+                    <h1>Ambedkar Public School</h1>
+                    <div>Madhopur Campierganj Gorakhpur | UDISE: 9584109512</div>
+                    <div>Mobile: 9793458774 | Session: 2026-2027</div>
+                </div>
             </div>
         </div>
         <div class="adminMeta">
@@ -111,482 +162,98 @@
         </div>
     </div>
 
+    <!-- MAIN BODY -->
     <div class="portalLayout">
         <!-- SIDEBAR -->
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <ul class="sidebarMenu">
-                <li class="menuItem active" onclick="loadModuleView('Dashboard')">📊 Dashboard</li>
-                <li class="menuItem" onclick="loadModuleView('New Admission')">📝 New Admission</li>
-                <li class="menuItem" onclick="loadModuleView('Manage Students')">👥 Manage Students</li>
+                <li class="menuItem active" onclick="navigateModule('dashboard', 'Dashboard')">📊 Dashboard</li>
+                <li class="menuItem" onclick="navigateModule('admission', 'New Admission')">📝 New Admission</li>
+                <li class="menuItem" onclick="navigateModule('manage-students', 'Manage Students')">👥 Manage Students</li>
             </ul>
         </div>
 
-        <!-- MAIN PANEL -->
+        <!-- MOBILE OVERLAY -->
+        <div class="sidebarOverlay" id="sidebarOverlay" onclick="closeSidebarOnMobile()"></div>
+
+        <!-- WORKSPACE -->
         <div class="mainArea">
             <div class="moduleTopBar" id="moduleTitle">Dashboard</div>
-            <div class="moduleContainer" id="moduleContent">
-
-                <!-- DASHBOARD VIEW -->
-                <div id="viewDashboard">
-                    <div class="dashCard">
-                        <h2>Welcome to Ambedkar Public School Portal</h2>
-                        <p>विद्यार्थियों के प्रवेश, आईडी कार्ड, टीसी तथा एसआर प्रबंधन के लिए बायीं सूची से विकल्प चुनें।</p>
-                    </div>
-                </div>
-
-                <!-- ADMISSION VIEW -->
-                <div id="viewAdmission" style="display:none;">
-                    <form id="admissionForm" onsubmit="event.preventDefault(); submitAdmission();">
-                        
-                        <div class="admCard">
-                            <div class="admCardHeader">1. Student Information</div>
-                            <div class="admGrid">
-                                <div class="admGroup">
-                                    <label>Primary Mobile *</label>
-                                    <input type="text" id="primaryMobile" maxlength="10" placeholder="10 Digit Mobile" required>
-                                </div>
-                                <div class="admGroup">
-                                    <label>Admission Date *</label>
-                                    <input type="date" id="admissionDate" required>
-                                </div>
-                                <div class="admGroup">
-                                    <label>Current Session</label>
-                                    <input type="text" id="admissionCurrentSession" value="2026-2027" readonly>
-                                </div>
-                                <div class="admGroup">
-                                    <label>Student ID</label>
-                                    <input type="text" id="studentId" readonly placeholder="APS...">
-                                </div>
-                                <div class="admGroup">
-                                    <label>Student Full Name *</label>
-                                    <input type="text" id="studentName" placeholder="Full Name" required>
-                                </div>
-                                <div class="admGroup">
-                                    <label>Date Of Birth *</label>
-                                    <input type="date" id="dob" required>
-                                </div>
-                                <div class="admGroup">
-                                    <label>Gender *</label>
-                                    <select id="gender" required>
-                                        <option value="">Select</option>
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
-                                    </select>
-                                </div>
-                                <div class="admGroup">
-                                    <label>Blood Group</label>
-                                    <select id="bloodGroup">
-                                        <option value="">Select</option>
-                                        <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
-                                        <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
-                                    </select>
-                                </div>
-                                <div class="admGroup">
-                                    <label>Student Aadhaar</label>
-                                    <input type="text" id="studentAadhaar" maxlength="12" placeholder="12 Digit Aadhaar">
-                                </div>
-                                <div class="admGroup">
-                                    <label>PEN Number</label>
-                                    <input type="text" id="penNumber" placeholder="UDISE PEN">
-                                </div>
-                                <div class="admGroup">
-                                    <label>Category</label>
-                                    <select id="category">
-                                        <option value="GEN">GEN</option><option value="OBC">OBC</option>
-                                        <option value="SC">SC</option><option value="ST">ST</option>
-                                    </select>
-                                </div>
-                                <div class="admGroup">
-                                    <label>Religion</label>
-                                    <select id="religion">
-                                        <option value="Hindu">Hindu</option><option value="Islam">Islam</option>
-                                        <option value="Buddhist">Buddhist</option><option value="Sikh">Sikh</option><option value="Christian">Christian</option>
-                                    </select>
-                                </div>
-                                <div class="admGroup">
-                                    <label>Caste</label>
-                                    <input type="text" id="caste" placeholder="Caste">
-                                </div>
-                                <div class="admGroup">
-                                    <label>Student Photo</label>
-                                    <div style="display:flex; gap:5px;">
-                                        <input type="file" id="photoFileInput" accept="image/*" style="padding:3px; font-size:11px;">
-                                        <button type="button" class="btn btnInfo" style="padding:3px 8px; font-size:11px;" onclick="uploadStudentPhoto()">Upload</button>
-                                    </div>
-                                    <input type="hidden" id="studentPhotoLink">
-                                    <small id="photoStatusText" style="color:#666; font-size:11px; margin-top:2px;">No photo uploaded</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="admCard">
-                            <div class="admCardHeader">2. Academic Information</div>
-                            <div class="admGrid">
-                                <div class="admGroup">
-                                    <label>Admission Class *</label>
-                                    <select id="currentClass" required>
-                                        <option value="Nursery">Nursery</option>
-                                        <option value="LKG">LKG</option>
-                                        <option value="UKG">UKG</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="6">6</option>
-                                        <option value="7">7</option>
-                                        <option value="8">8</option>
-                                    </select>
-                                </div>
-                                <div class="admGroup">
-                                    <label>Section *</label>
-                                    <select id="section" required>
-                                        <option value="A" selected>A</option>
-                                    </select>
-                                </div>
-                                <div class="admGroup">
-                                    <label>Roll Number</label>
-                                    <input type="text" id="rollNumber" readonly placeholder="Auto">
-                                </div>
-                                <div class="admGroup">
-                                    <label>Student Status</label>
-                                    <select id="studentStatus">
-                                        <option value="Active">Active</option>
-                                        <option value="Inactive">Inactive</option>
-                                    </select>
-                                </div>
-                                <div class="admGroup">
-                                    <label>SR Number (खाली छोड़ें या खुद भरें)</label>
-                                    <input type="text" id="srNumber" placeholder="Leave blank for Auto +1">
-                                </div>
-                                <div class="admGroup">
-                                    <label>Previous School Status</label>
-                                    <select id="previousSchoolStatus">
-                                        <option value="Non Schooling">Non Schooling</option>
-                                        <option value="Same School">Same School</option>
-                                        <option value="Other School">Other School</option>
-                                    </select>
-                                </div>
-                                <div class="admGroup admSpan2">
-                                    <label>Previous School Details & UDISE</label>
-                                    <input type="text" id="previousSchoolDetails" placeholder="School Name, UDISE">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="admCard">
-                            <div class="admCardHeader">3. Parent & Address Details</div>
-                            <div class="admGrid">
-                                <div class="admGroup">
-                                    <label>Father Name *</label>
-                                    <input type="text" id="fatherName" required placeholder="Father Name">
-                                </div>
-                                <div class="admGroup">
-                                    <label>Father Occupation</label>
-                                    <input type="text" id="fatherOccupation" placeholder="Occupation">
-                                </div>
-                                <div class="admGroup">
-                                    <label>Father Aadhaar</label>
-                                    <input type="text" id="fatherAadhaar" maxlength="12" placeholder="Aadhaar">
-                                </div>
-                                <div class="admGroup">
-                                    <label>Mother Name *</label>
-                                    <input type="text" id="motherName" required placeholder="Mother Name">
-                                </div>
-                                <div class="admGroup">
-                                    <label>Mother Occupation</label>
-                                    <input type="text" id="motherOccupation" placeholder="Occupation">
-                                </div>
-                                <div class="admGroup">
-                                    <label>Mother Aadhaar</label>
-                                    <input type="text" id="motherAadhaar" maxlength="12" placeholder="Aadhaar">
-                                </div>
-                                <div class="admGroup">
-                                    <label>Alternate Mobile</label>
-                                    <input type="text" id="alternateMobile" maxlength="10" placeholder="Mobile">
-                                </div>
-                                <div class="admGroup">
-                                    <label>Email</label>
-                                    <input type="email" id="email" placeholder="Email">
-                                </div>
-                                <div class="admGroup admSpan2">
-                                    <label>Permanent Address *</label>
-                                    <textarea id="fullAddress" rows="2" placeholder="Village, Post, Dist" required></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="admCard">
-                            <div class="admCardHeader">4. Actual School Affiliation (केवल ID Card हेतु - वैकल्पिक)</div>
-                            <div class="admGrid">
-                                <div class="admGroup admSpan2">
-                                    <label>Actual School Name & Address</label>
-                                    <input type="text" id="actualSchoolName" placeholder="यदि छात्र दूसरे स्कूल का है तो उस स्कूल का नाम व पता">
-                                </div>
-                                <div class="admGroup admSpan2">
-                                    <label>Actual School Logo Link</label>
-                                    <input type="text" id="actualSchoolLogo" placeholder="https://.../logo.png">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="admActions">
-                            <button type="button" class="btn btnDanger" onclick="resetForm()">Reset</button>
-                            <button type="button" class="btn btnInfo" onclick="previewAdmission()">👁️ Print Preview</button>
-                            <button type="submit" class="btn btnSuccess">💾 Save Admission</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- MANAGE STUDENTS PLACEHOLDER -->
-                <div id="viewManageStudents" style="display:none;">
-                    <div class="dashCard">
-                        <h3>Manage Students Module</h3>
-                        <p>यह मॉड्यूल अगले चरण में कनेक्ट होगा।</p>
-                    </div>
-                </div>
-
-            </div>
+            <div class="moduleContainer" id="moduleContent"></div>
+            <div id="loader" class="pageLoader">Loading Module...</div>
         </div>
     </div>
 
-    <!-- MODAL POPUP -->
-    <div id="successModal" class="modalOverlay">
-        <div class="modalBox">
-            <h3 style="color:#16a34a; margin-bottom:12px;">🎉 Admission Saved Successfully!</h3>
-            <p style="font-size:14px; margin-bottom:6px;">Student ID: <strong id="resStudentId"></strong></p>
-            <p style="font-size:14px; margin-bottom:6px;">Student Name: <strong id="resStudentName"></strong></p>
-            <p style="font-size:14px; margin-bottom:20px;">SR Number: <strong id="resSrNumber" style="color:#0b3c5d;"></strong></p>
-            <div style="display:flex; justify-content:center; gap:10px;">
-                <button type="button" class="btn btnInfo" onclick="printSavedForm()">🖨️ Print Form</button>
-                <button type="button" class="btn btnSuccess" onclick="closeSuccessAndNew()">New Admission</button>
-            </div>
-        </div>
-    </div>
+    <!-- CONFIGURATION -->
+    <script src="config.js"></script>
 
-    <!-- LOADER -->
-    <div id="loader" class="modalOverlay">
-        <div style="background:#fff; padding:20px 30px; border-radius:6px; font-weight:bold; color:#0b3c5d;">
-            कृपया प्रतीक्षा करें (Loading / Saving Data)...
-        </div>
-    </div>
+    <script>
+        // साइडबार टॉगल (डेस्कटॉप व मोबाइल फ्रेंडली)
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
 
-<script>
-    // ⭐ अपने डिप्लॉयड Web App का URL यहाँ पेस्ट करें
-    const SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
-
-    let lastSavedData = null;
-
-    function loadModuleView(moduleName) {
-        document.getElementById("moduleTitle").innerText = moduleName;
-        
-        document.querySelectorAll(".sidebarMenu .menuItem").forEach(item => {
-            item.classList.remove("active");
-            if (item.innerText.includes(moduleName)) item.classList.add("active");
-        });
-
-        document.getElementById("viewDashboard").style.display = (moduleName === "Dashboard") ? "block" : "none";
-        document.getElementById("viewAdmission").style.display = (moduleName === "New Admission") ? "block" : "none";
-        document.getElementById("viewManageStudents").style.display = (moduleName === "Manage Students") ? "block" : "none";
-
-        if(moduleName === "New Admission") {
-            initAdmissionModule();
-        }
-    }
-
-    function initAdmissionModule() {
-        document.getElementById("admissionDate").value = new Date().toISOString().split('T')[0];
-        fetchRollAndNextIds();
-    }
-
-    function fetchRollAndNextIds() {
-        const cls = document.getElementById("currentClass").value;
-        const sec = document.getElementById("section").value;
-
-        fetch(`${SCRIPT_URL}?action=getAdmissionInit&className=${encodeURIComponent(cls)}&section=${encodeURIComponent(sec)}`)
-        .then(r => r.json())
-        .then(res => {
-            if(res.status === "SUCCESS") {
-                document.getElementById("studentId").value = res.studentId;
-                document.getElementById("rollNumber").value = res.rollNumber;
-                document.getElementById("srNumber").placeholder = `Auto: ${res.nextSR} (या खुद लिखें)`;
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle("mobileOpen");
+                overlay.classList.toggle("active");
+            } else {
+                sidebar.classList.toggle("collapsed");
             }
-        }).catch(err => console.log("Init fetch error:", err));
-    }
-
-    document.getElementById("currentClass").addEventListener("change", fetchRollAndNextIds);
-
-    // फोटो अपलोड (CORS Safe Base64 POST)
-    function uploadStudentPhoto() {
-        const fileInput = document.getElementById("photoFileInput");
-        if(!fileInput.files || !fileInput.files[0]) {
-            alert("कृपया फ़ोटो फ़ाइल चुनें!");
-            return;
         }
 
-        const sId = document.getElementById("studentId").value || "Student";
-        const sName = document.getElementById("studentName").value.trim() || "Photo";
-        const status = document.getElementById("photoStatusText");
-        status.innerText = "Uploading photo...";
+        function closeSidebarOnMobile() {
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+            sidebar.classList.remove("mobileOpen");
+            overlay.classList.remove("active");
+        }
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const params = new URLSearchParams();
-            params.append("action", "uploadPhoto");
-            params.append("base64", e.target.result);
-            params.append("fileName", `${sId}_${sName}`);
+        // डायनेमिक फ़ाइल लोडर
+        function navigateModule(fileKey, titleText) {
+            document.getElementById("moduleTitle").innerText = titleText;
 
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                body: params
-            })
-            .then(r => r.json())
+            // एक्टिव क्लास बदलना
+            document.querySelectorAll(".sidebarMenu .menuItem").forEach(item => {
+                item.classList.remove("active");
+                if (item.innerText.includes(titleText)) item.classList.add("active");
+            });
+
+            // मोबाइल पर मॉड्यूल चुनने के बाद साइडबार स्वतः बंद हो
+            if (window.innerWidth <= 768) {
+                closeSidebarOnMobile();
+            }
+
+            const contentDiv = document.getElementById("moduleContent");
+            const loader = document.getElementById("loader");
+            loader.style.display = "flex";
+
+            fetch(`modules/${fileKey}.html`)
             .then(res => {
-                if(res.status === "SUCCESS") {
-                    document.getElementById("studentPhotoLink").value = res.thumbnail;
-                    status.innerText = "✅ Photo Uploaded!";
-                    status.style.color = "green";
-                } else {
-                    alert("Upload Error: " + res.message);
-                    status.innerText = "Upload failed";
-                }
+                if (!res.ok) throw new Error("फ़ाइल लोड नहीं हो सकी: " + fileKey);
+                return res.text();
+            })
+            .then(html => {
+                contentDiv.innerHTML = html;
+                loader.style.display = "none";
+
+                // स्क्रिप्ट्स निष्पादित करना
+                const scripts = contentDiv.querySelectorAll("script");
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement("script");
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
             })
             .catch(err => {
-                alert("Upload failed: " + err.message);
-                status.innerText = "Upload failed";
+                loader.style.display = "none";
+                contentDiv.innerHTML = `<div style="color:red; padding:20px; font-weight:bold;">त्रुटि: ${err.message}</div>`;
             });
-        };
-        reader.readAsDataURL(fileInput.files[0]);
-    }
-
-    function getFormData() {
-        return {
-            primaryMobile: document.getElementById("primaryMobile").value.trim(),
-            admissionDate: document.getElementById("admissionDate").value,
-            currentSession: document.getElementById("admissionCurrentSession").value.trim(),
-            studentId: document.getElementById("studentId").value.trim(),
-            studentName: document.getElementById("studentName").value.trim(),
-            dob: document.getElementById("dob").value,
-            gender: document.getElementById("gender").value,
-            bloodGroup: document.getElementById("bloodGroup").value,
-            studentAadhaar: document.getElementById("studentAadhaar").value.trim(),
-            penNumber: document.getElementById("penNumber").value.trim(),
-            religion: document.getElementById("religion").value,
-            category: document.getElementById("category").value,
-            caste: document.getElementById("caste").value.trim(),
-            currentClass: document.getElementById("currentClass").value,
-            section: document.getElementById("section").value,
-            rollNumber: document.getElementById("rollNumber").value,
-            studentStatus: document.getElementById("studentStatus").value,
-            previousSchoolStatus: document.getElementById("previousSchoolStatus").value,
-            previousSchoolDetails: document.getElementById("previousSchoolDetails").value.trim(),
-            srNumber: document.getElementById("srNumber").value.trim(),
-            alternateMobile: document.getElementById("alternateMobile").value.trim(),
-            email: document.getElementById("email").value.trim(),
-            fatherName: document.getElementById("fatherName").value.trim(),
-            fatherEducation: "",
-            fatherOccupation: document.getElementById("fatherOccupation").value.trim(),
-            fatherAadhaar: document.getElementById("fatherAadhaar").value.trim(),
-            motherName: document.getElementById("motherName").value.trim(),
-            motherEducation: "",
-            motherOccupation: document.getElementById("motherOccupation").value.trim(),
-            motherAadhaar: document.getElementById("motherAadhaar").value.trim(),
-            guardianName: "", guardianEducation: "", guardianOccupation: "", guardianAadhaar: "",
-            fullAddress: document.getElementById("fullAddress").value.trim(),
-            studentPhotoLink: document.getElementById("studentPhotoLink").value.trim(),
-            actualSchoolName: document.getElementById("actualSchoolName").value.trim(),
-            actualSchoolLogo: document.getElementById("actualSchoolLogo").value.trim()
-        };
-    }
-
-    function submitAdmission() {
-        const d = getFormData();
-        if(!d.primaryMobile || !d.studentName || !d.fatherName) {
-            alert("कृपया सभी अनिवार्य फ़ील्ड्स (*) भरें!");
-            return;
         }
 
-        document.getElementById("loader").style.display = "flex";
-
-        const params = new URLSearchParams();
-        params.append("action", "saveAdmission");
-        params.append("data", JSON.stringify(d));
-
-        fetch(SCRIPT_URL, {
-            method: "POST",
-            body: params
-        })
-        .then(r => r.json())
-        .then(res => {
-            document.getElementById("loader").style.display = "none";
-            if(res.status === "SUCCESS") {
-                lastSavedData = res.savedData;
-                document.getElementById("resStudentId").innerText = res.studentId;
-                document.getElementById("resStudentName").innerText = res.studentName;
-                document.getElementById("resSrNumber").innerText = res.srNumber;
-                document.getElementById("successModal").style.display = "flex";
-            } else {
-                alert("Error: " + res.message);
-            }
-        })
-        .catch(err => {
-            document.getElementById("loader").style.display = "none";
-            alert("Saving failed: " + err.message);
-        });
-    }
-
-    function previewAdmission() {
-        printAdmissionWindow(getFormData(), "PREVIEW");
-    }
-
-    function printSavedForm() {
-        if(lastSavedData) printAdmissionWindow(lastSavedData, "ADMITTED");
-    }
-
-    function printAdmissionWindow(d, status) {
-        const pImg = d.studentPhotoLink ? `<img src="${d.studentPhotoLink}" style="width:85px; height:105px; object-fit:cover;">` : `<div style="width:85px; height:105px; border:1px dashed #777;">Photo</div>`;
-        const w = window.open("", "_blank");
-        w.document.write(`
-            <html><head><title>${d.studentId || 'Form'}</title>
-            <style>
-                @page { size: A4; margin: 10mm; }
-                body { font-family: Arial, sans-serif; font-size: 13px; }
-                .table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                .table td { border: 1px solid #444; padding: 6px 8px; }
-                .lbl { background: #f0f0f0; font-weight: bold; width: 22%; }
-            </style></head><body>
-            <div style="text-align:center; border-bottom: 2px solid #0b3c5d; padding-bottom: 6px;">
-                <h2 style="margin:0; color:#0b3c5d;">AMBEDKAR PUBLIC SCHOOL</h2>
-                <div>Madhopur, Campierganj, Gorakhpur | Session: ${d.currentSession}</div>
-                <h4 style="margin:6px 0 0;">STUDENT ADMISSION FORM (${status})</h4>
-            </div>
-            <table class="table">
-                <tr><td class="lbl">Student ID</td><td><strong>${d.studentId}</strong></td><td class="lbl">SR Number</td><td><strong>${d.srNumber || '-'}</strong></td></tr>
-                <tr><td class="lbl">Student Name</td><td><strong>${d.studentName}</strong></td><td class="lbl">Class - Section</td><td>${d.currentClass} - ${d.section}</td></tr>
-                <tr><td class="lbl">DOB / Gender</td><td>${d.dob} (${d.gender})</td><td class="lbl">Roll Number</td><td>${d.rollNumber || '-'}</td></tr>
-                <tr><td class="lbl">Father Name</td><td>${d.fatherName}</td><td class="lbl">Mother Name</td><td>${d.motherName}</td></tr>
-                <tr><td class="lbl">Mobile</td><td>${d.primaryMobile}</td><td class="lbl">Address</td><td>${d.fullAddress}</td></tr>
-            </table>
-            <div style="margin-top:50px; display:flex; justify-content:space-between; text-align:center;">
-                <div style="width:200px; border-top:1px solid #000;">Parent Sign</div>
-                <div style="width:200px; border-top:1px solid #000;">Principal Sign</div>
-            </div>
-            <script>window.print();<\/script></body></html>
-        `);
-        w.document.close();
-    }
-
-    function resetForm() {
-        document.getElementById("admissionForm").reset();
-        document.getElementById("studentPhotoLink").value = '';
-        document.getElementById("photoStatusText").innerText = 'No photo uploaded';
-        initAdmissionModule();
-    }
-
-    function closeSuccessAndNew() {
-        document.getElementById("successModal").style.display = "none";
-        resetForm();
-    }
-</script>
+        window.onload = function() {
+            navigateModule('dashboard', 'Dashboard');
+        };
+    </script>
 </body>
 </html>
