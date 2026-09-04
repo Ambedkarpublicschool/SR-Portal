@@ -251,20 +251,24 @@
         fetchRollNumber();
     })();
 
-    function fetchRollNumber() {
-        const cls = document.getElementById("currentClass").value;
-        const sec = document.getElementById("section").value;
+function fetchRollNumber() {
+    const cls = document.getElementById("currentClass").value;
+    const sec = document.getElementById("section").value;
 
-        fetch(`${SCRIPT_URL}?action=getAdmissionInit&className=${encodeURIComponent(cls)}&section=${encodeURIComponent(sec)}`)
-        .then(r => r.json())
-        .then(res => {
-            if(res.status === "SUCCESS") {
-                document.getElementById("studentId").value = res.studentId;
-                document.getElementById("rollNumber").value = res.rollNumber;
-                document.getElementById("srNumber").placeholder = `Auto: ${res.nextSR} (या खुद लिखें)`;
-            }
-        });
-    }
+    fetch(`${SCRIPT_URL}?action=getAdmissionInit&className=${encodeURIComponent(cls)}&section=${encodeURIComponent(sec)}`)
+    .then(r => r.json())
+    .then(res => {
+        if(res.status === "SUCCESS") {
+            document.getElementById("studentId").value = res.studentId;
+            // रोल नंबर अगर ऑब्जेक्ट हो तो उसका मान निकालें, वर्ना सीधा असाइन करें
+            const finalRoll = (typeof res.rollNumber === 'object' && res.rollNumber !== null) 
+                              ? res.rollNumber.rollNumber 
+                              : res.rollNumber;
+            document.getElementById("rollNumber").value = finalRoll || 1;
+            document.getElementById("srNumber").placeholder = `Auto: ${res.nextSR} (या खुद लिखें)`;
+        }
+    });
+}
 
     function uploadPhotoNow() {
         const fileInput = document.getElementById("photoFile");
