@@ -326,7 +326,7 @@
             if (res.status === "SUCCESS") {
                 alert(`🎉 TC Saved Successfully!\nAssigned TC Number: ${res.tcNumber}`);
                 closeModal('tcModal');
-                loadStudentsData(); // छात्र का स्टेटस Inactive दिखेगा
+                loadStudentsData();
             } else {
                 alert("Error: " + res.message);
             }
@@ -495,10 +495,6 @@
                 alert("Error: " + res.message);
             }
         });
-    }
-
-    function closeModal(mId) {
-        document.getElementById(mId).style.display = "none";
     }
 
     /* BULK PRINTS TRIGGER */
