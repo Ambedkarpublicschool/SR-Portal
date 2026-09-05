@@ -1,7 +1,7 @@
 <style>
     .msWrap { font-size: 13px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     
-    /* 🌟 फ़िल्टर बार (Clean & Fixed Layout) */
+    /* 🌟 फ़िल्टर बार */
     .filterPanel { 
         background: #fff; 
         padding: 12px 16px; 
@@ -113,17 +113,17 @@
             <input type="text" id="msSearch" placeholder="Search ID / Mobile / Name" class="searchInp">
             
             <!-- 🌟 स्कूल फ़िल्टर (Column AK) -->
-            <select id="msSchoolFilter" onchange="loadStudentsData()">
+            <select id="msSchoolFilter" onchange="loadStudentsData(true)">
                 <option value="all">All Schools</option>
             </select>
 
             <!-- सत्र फ़िल्टर -->
-            <select id="msSessionFilter" onchange="loadStudentsData()">
+            <select id="msSessionFilter" onchange="loadStudentsData(true)">
                 <option value="2026-2027" selected>2026-2027</option>
             </select>
 
             <!-- क्लास फ़िल्टर -->
-            <select id="msClassFilter" onchange="loadStudentsData()">
+            <select id="msClassFilter" onchange="loadStudentsData(true)">
                 <option value="All Classes">All Classes</option>
                 <option value="Nursery">Nursery</option>
                 <option value="LKG">LKG</option>
@@ -139,21 +139,21 @@
             </select>
 
             <!-- सेक्शन फ़िल्टर -->
-            <select id="msSectionFilter" onchange="loadStudentsData()">
+            <select id="msSectionFilter" onchange="loadStudentsData(true)">
                 <option value="All Sections">All Sections</option>
                 <option value="A">A</option>
                 <option value="B">B</option>
             </select>
 
             <!-- स्टेटस फ़िल्टर -->
-            <select id="msStatusFilter" onchange="loadStudentsData()">
+            <select id="msStatusFilter" onchange="loadStudentsData(true)">
                 <option value="All Status">All Status</option>
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
                 <option value="Passout">Passout</option>
             </select>
 
-            <button class="btnSm btnSearch" onclick="loadStudentsData()">🔍 Search</button>
+            <button class="btnSm btnSearch" onclick="loadStudentsData(true)">🔍 Search</button>
             <button class="btnSm btnReset" onclick="resetFilters()">Reset</button>
         </div>
     </div>
@@ -290,41 +290,60 @@
     })();
 
     function initManageModule() {
-        // 1. स्कूल ड्रॉपडाउन लोड करना
-        fetch(`${SCRIPT_URL}?action=getSchoolList`)
-        .then(r => r.json())
-        .then(res => {
-            if (res.status === "SUCCESS" && res.data) {
-                const sSel = document.getElementById("msSchoolFilter");
-                sSel.innerHTML = '<option value="all">All Schools</option>';
-                res.data.forEach(sch => {
-                    sSel.insertAdjacentHTML("beforeend", `<option value="${sch}">${sch}</option>`);
-                });
-            }
-        })
-        .catch(err => console.error("School fetch error:", err));
+        // 1. स्कूल ड्रॉपडाउन लोकल कैश से लोड करना
+        const cachedSchools = localStorage.getItem("cached_school_list");
+        if (cachedSchools) {
+            populateSchoolDropdown(JSON.parse(cachedSchools));
+        } else {
+            fetch(`${SCRIPT_URL}?action=getSchoolList`)
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === "SUCCESS" && res.data) {
+                    localStorage.setItem("cached_school_list", JSON.stringify(res.data));
+                    populateSchoolDropdown(res.data);
+                }
+            })
+            .catch(err => console.error("School fetch error:", err));
+        }
 
-        // 2. सेशन्स लोड करना
-        fetch(`${SCRIPT_URL}?action=getAllSessions`)
-        .then(r => r.json())
-        .then(res => {
-            const sSelect = document.getElementById("msSessionFilter");
-            sSelect.innerHTML = "";
-            if (res.sessions && res.sessions.length > 0) {
-                res.sessions.forEach(ses => {
-                    sSelect.innerHTML += `<option value="${ses}">${ses}</option>`;
-                });
-            } else {
-                sSelect.innerHTML = `<option value="2026-2027">2026-2027</option>`;
-            }
-            loadStudentsData();
-        })
-        .catch(() => {
-            loadStudentsData();
+        // 2. सेशन्स लोकल कैश से लोड करना
+        const cachedSessions = localStorage.getItem("cached_sessions_list");
+        if (cachedSessions) {
+            populateSessionDropdown(JSON.parse(cachedSessions));
+            loadStudentsData(false); // फ़ास्ट लोकल मेमोरी लोड
+        } else {
+            fetch(`${SCRIPT_URL}?action=getAllSessions`)
+            .then(r => r.json())
+            .then(res => {
+                const list = (res.sessions && res.sessions.length > 0) ? res.sessions : ["2026-2027"];
+                localStorage.setItem("cached_sessions_list", JSON.stringify(list));
+                populateSessionDropdown(list);
+                loadStudentsData(false);
+            })
+            .catch(() => loadStudentsData(false));
+        }
+    }
+
+    function populateSchoolDropdown(schools) {
+        const sSel = document.getElementById("msSchoolFilter");
+        sSel.innerHTML = '<option value="all">All Schools</option>';
+        schools.forEach(sch => {
+            sSel.insertAdjacentHTML("beforeend", `<option value="${sch}">${sch}</option>`);
         });
     }
 
-    function loadStudentsData() {
+    function populateSessionDropdown(sessions) {
+        const sSelect = document.getElementById("msSessionFilter");
+        sSelect.innerHTML = "";
+        sessions.forEach(ses => {
+            sSelect.innerHTML += `<option value="${ses}">${ses}</option>`;
+        });
+    }
+
+    /**
+     * 🌟 छात्रों का डेटा लोड करना (स्थानीय कैश फ़र्स्ट)
+     */
+    function loadStudentsData(forceServer = false) {
         const search = document.getElementById("msSearch").value.trim();
         const school = document.getElementById("msSchoolFilter") ? document.getElementById("msSchoolFilter").value : "all";
         const ses = document.getElementById("msSessionFilter").value;
@@ -332,53 +351,75 @@
         const sec = document.getElementById("msSectionFilter").value;
         const stat = document.getElementById("msStatusFilter").value;
 
+        const cacheKey = `students_cache_${ses}`;
+
+        // यदि कोई फ़िल्टर नहीं लगा है और सर्वर फ़ोर्स नहीं है, तो तुरंत लोकल मेमोरी से लोड करें
+        if (!forceServer && !search && school === "all" && cls === "All Classes" && sec === "All Sections" && stat === "All Status") {
+            const cachedData = localStorage.getItem(cacheKey);
+            if (cachedData) {
+                renderStudentRows(JSON.parse(cachedData));
+                return;
+            }
+        }
+
         const tbody = document.getElementById("studentTableRows");
-        tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; font-weight:bold;">Searching Students...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; font-weight:bold;">Loading Students...</td></tr>`;
 
         const url = `${SCRIPT_URL}?action=getStudentsList&searchText=${encodeURIComponent(search)}&classFilter=${encodeURIComponent(cls)}&sectionFilter=${encodeURIComponent(sec)}&statusFilter=${encodeURIComponent(stat)}&sessionFilter=${encodeURIComponent(ses)}&schoolFilter=${encodeURIComponent(school)}`;
 
         fetch(url)
         .then(r => r.json())
         .then(res => {
-            document.getElementById("totalCounter").innerText = `Total Records : ${res.totalRecords || 0}`;
-            tbody.innerHTML = "";
-
             if (!res.students || res.students.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; color:#888;">No Students Found</td></tr>`;
+                document.getElementById("totalCounter").innerText = `Total Records : 0`;
                 return;
             }
 
-            res.students.forEach((s) => {
-                const badgeCls = s.status === 'Active' ? 'badgeActive' : (s.status === 'Passout' ? 'badgePassout' : 'badgeInactive');
-                const photoSrc = s.photo || 'https://via.placeholder.com/40';
+            // बिना फ़िल्टर का डिफ़ॉल्ट डेटा लोकल मेमोरी में सुरक्षित करें
+            if (!search && school === "all" && cls === "All Classes" && sec === "All Sections" && stat === "All Status") {
+                localStorage.setItem(cacheKey, JSON.stringify(res.students));
+            }
 
-                tbody.innerHTML += `
-                    <tr>
-                        <td><input type="checkbox" class="rowCb" value="${s.studentId}" onchange="updateSelectedCounter()"></td>
-                        <td><img src="${photoSrc}" class="stPhoto" onerror="this.src='https://via.placeholder.com/40'"></td>
-                        <td><strong>${s.studentId}</strong></td>
-                        <td>${s.studentName}</td>
-                        <td>${s.fatherName}</td>
-                        <td>${s.studentClass}</td>
-                        <td>${s.section}</td>
-                        <td>${s.rollNo || '-'}</td>
-                        <td>${s.mobile}</td>
-                        <td><span class="badge ${badgeCls}">${s.status}</span></td>
-                        <td>
-                            <div class="actionBtns">
-                                <button class="actBtn actView" onclick="openViewModal('${s.studentId}')">View</button>
-                                <button class="actBtn actEdit" onclick="openEditModal('${s.studentId}')">Edit</button>
-                                <button class="actBtn actTC" onclick="openTCModalDirect('${s.studentId}', '${s.studentName}', '${s.fatherName}', '${s.studentClass}')">TC</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-            updateSelectedCounter();
+            renderStudentRows(res.students);
         })
         .catch(err => {
             tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; color:red;">Error: ${err.message}</td></tr>`;
         });
+    }
+
+    function renderStudentRows(students) {
+        document.getElementById("totalCounter").innerText = `Total Records : ${students.length}`;
+        const tbody = document.getElementById("studentTableRows");
+        tbody.innerHTML = "";
+
+        students.forEach((s) => {
+            const badgeCls = s.status === 'Active' ? 'badgeActive' : (s.status === 'Passout' ? 'badgePassout' : 'badgeInactive');
+            const photoSrc = s.photo || 'https://via.placeholder.com/40';
+
+            tbody.innerHTML += `
+                <tr>
+                    <td><input type="checkbox" class="rowCb" value="${s.studentId}" onchange="updateSelectedCounter()"></td>
+                    <td><img src="${photoSrc}" class="stPhoto" onerror="this.src='https://via.placeholder.com/40'"></td>
+                    <td><strong>${s.studentId}</strong></td>
+                    <td>${s.studentName}</td>
+                    <td>${s.fatherName}</td>
+                    <td>${s.studentClass}</td>
+                    <td>${s.section}</td>
+                    <td>${s.rollNo || '-'}</td>
+                    <td>${s.mobile}</td>
+                    <td><span class="badge ${badgeCls}">${s.status}</span></td>
+                    <td>
+                        <div class="actionBtns">
+                            <button class="actBtn actView" onclick="openViewModal('${s.studentId}')">View</button>
+                            <button class="actBtn actEdit" onclick="openEditModal('${s.studentId}')">Edit</button>
+                            <button class="actBtn actTC" onclick="openTCModalDirect('${s.studentId}', '${s.studentName}', '${s.fatherName}', '${s.studentClass}')">TC</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+        updateSelectedCounter();
     }
 
     function toggleSelectAll(master) {
@@ -397,7 +438,7 @@
         document.getElementById("msClassFilter").selectedIndex = 0;
         document.getElementById("msSectionFilter").selectedIndex = 0;
         document.getElementById("msStatusFilter").selectedIndex = 0;
-        loadStudentsData();
+        loadStudentsData(true); // रीसेट पर सर्वर से ताज़ा डेटा लोड
     }
 
     /* VIEW MODAL */
@@ -471,9 +512,10 @@
     }
 
     function saveEditedData() {
+        const ses = document.getElementById("edSession").value;
         const payload = {
             studentId: document.getElementById("edStudentId").value,
-            currentSession: document.getElementById("edSession").value,
+            currentSession: ses,
             studentName: document.getElementById("edName").value,
             fatherName: document.getElementById("edFather").value,
             motherName: document.getElementById("edMother").value,
@@ -499,8 +541,10 @@
         .then(res => {
             if (res.status === "SUCCESS") {
                 alert("✅ Record Updated Successfully!");
+                // 🌟 अपडेट होने पर लोकल कैश क्लियर करना
+                localStorage.removeItem(`students_cache_${ses}`);
                 closeModal('editModal');
-                loadStudentsData();
+                loadStudentsData(true);
             } else {
                 alert("Error: " + res.message);
             }
@@ -523,12 +567,13 @@
     }
 
     function submitTCForm() {
+        const ses = document.getElementById("tcCurrentSession").value.trim();
         const tcData = {
             studentId: document.getElementById("tcStudentId").value.trim(),
             studentName: document.getElementById("tcStudentName").value.trim(),
             fatherName: document.getElementById("tcFatherName").value.trim(),
             currentClass: document.getElementById("tcCurrentClass").value.trim(),
-            currentSession: document.getElementById("tcCurrentSession").value.trim(),
+            currentSession: ses,
             initialClass: document.getElementById("tcInitialClass").value.trim(),
             initialDate: document.getElementById("tcInitialDate").value.trim(),
             leavingDate: document.getElementById("tcLeavingDate").value,
@@ -544,8 +589,9 @@
         .then(res => {
             if (res.status === "SUCCESS") {
                 alert(`🎉 TC Saved Successfully!\nAssigned TC Number: ${res.tcNumber}`);
+                localStorage.removeItem(`students_cache_${ses}`);
                 closeModal('tcModal');
-                loadStudentsData();
+                loadStudentsData(true);
             } else {
                 alert("Error: " + res.message);
             }
@@ -603,6 +649,7 @@
         .then(res => {
             if (res.status === "SUCCESS") {
                 alert(`🎉 Promotion Done! Promoted: ${res.promoted}, Passout: ${res.passout}`);
+                localStorage.clear(); // पूरा कैश साफ़ करें
                 initManageModule();
             } else {
                 alert("Error: " + res.message);
