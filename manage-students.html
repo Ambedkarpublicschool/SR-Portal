@@ -1,45 +1,104 @@
 <style>
-    .msWrap { font-size: 13px; }
-    /* फ़िल्टर बार */
-    .filterPanel { background: #fff; padding: 14px 18px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 14px; }
-    .filterGrid { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-    .filterGrid input, .filterGrid select { padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; outline: none; height: 38px; }
-    .searchInp { width: 240px; }
+    .msWrap { font-size: 13px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    
+    /* 🌟 फ़िल्टर बार (Clean & Fixed Layout) */
+    .filterPanel { 
+        background: #fff; 
+        padding: 12px 16px; 
+        border-radius: 8px; 
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08); 
+        margin-bottom: 12px; 
+    }
+    .filterGrid { 
+        display: flex; 
+        gap: 8px; 
+        flex-wrap: wrap; 
+        align-items: center; 
+    }
+    .filterGrid input, .filterGrid select { 
+        padding: 6px 10px; 
+        border: 1px solid #cbd5e1; 
+        border-radius: 5px; 
+        font-size: 12.5px; 
+        outline: none; 
+        height: 36px; 
+        box-sizing: border-box;
+        background: #fff;
+    }
+    .searchInp { width: 220px; }
     
     /* बल्क ऐक्शन बार */
-    .bulkBar { background: #fff; padding: 10px 18px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .bulkBar { 
+        background: #fff; 
+        padding: 10px 16px; 
+        border-radius: 8px; 
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08); 
+        margin-bottom: 12px; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        flex-wrap: wrap; 
+        gap: 10px; 
+    }
     .bulkLeft { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .bulkRight { font-size: 13px; font-weight: bold; color: #0b3c5d; }
     
     /* बटन्स */
-    .btnSm { padding: 6px 12px; font-size: 12px; font-weight: bold; border-radius: 4px; border: none; cursor: pointer; color: #fff; }
+    .btnSm { 
+        padding: 7px 14px; 
+        font-size: 12px; 
+        font-weight: bold; 
+        border-radius: 4px; 
+        border: none; 
+        cursor: pointer; 
+        color: #fff; 
+        transition: opacity 0.2s;
+    }
+    .btnSm:hover { opacity: 0.9; }
     .btnBlue { background: #2563eb; }
     .btnGreen { background: #16a34a; }
     .btnPurple { background: #9333ea; }
     .btnOrange { background: #ea580c; }
     .btnReset { background: #e2e8f0; color: #333; }
+    .btnSearch { background: #0284c7; color: #fff; }
     
-    /* टेबल */
-    .tableCard { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); overflow: auto; max-height: calc(100vh - 280px); }
+    /* टेबल कार्ड */
+    .tableCard { 
+        background: #fff; 
+        border-radius: 8px; 
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08); 
+        overflow: auto; 
+        max-height: calc(100vh - 270px); 
+    }
     .msTable { width: 100%; border-collapse: collapse; text-align: left; }
-    .msTable th { background: #f8fafc; padding: 10px; border-bottom: 2px solid #e2e8f0; font-size: 12.5px; font-weight: bold; color: #475569; position: sticky; top:0; z-index: 10; }
+    .msTable th { 
+        background: #f8fafc; 
+        padding: 10px; 
+        border-bottom: 2px solid #e2e8f0; 
+        font-size: 12.5px; 
+        font-weight: bold; 
+        color: #475569; 
+        position: sticky; 
+        top: 0; 
+        z-index: 10; 
+    }
     .msTable td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
     .msTable tr:hover { background: #f8fafc; }
     
-    .stPhoto { width: 36px; height: 36px; border-radius: 4px; object-fit: cover; border: 1px solid #ddd; }
-    .badge { padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+    .stPhoto { width: 36px; height: 36px; border-radius: 4px; object-fit: cover; border: 1px solid #ddd; display: block; }
+    .badge { padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; display: inline-block; }
     .badgeActive { background: #dcfce7; color: #15803d; }
     .badgeInactive { background: #fee2e2; color: #b91c1c; }
     .badgePassout { background: #f3e8ff; color: #7e22ce; }
 
     /* ऐक्शन बटन्स */
-    .actions { display: flex; gap: 4px; }
-    .act { padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 3px; border: none; cursor: pointer; color: #fff; }
+    .actionBtns { display: flex; gap: 4px; }
+    .actBtn { padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 3px; border: none; cursor: pointer; color: #fff; }
     .actView { background: #0284c7; }
     .actEdit { background: #16a34a; }
     .actTC { background: #ea580c; }
 
-    /* मॉडल्स (Popup Windows) */
+    /* मॉडल्स */
     .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 9999; }
     .modalBox { background: #fff; border-radius: 8px; width: 750px; max-width: 95%; max-height: 90vh; overflow-y: auto; padding: 22px; position: relative; }
     .modalHeader { display: flex; justify-content: space-between; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 15px; }
@@ -48,58 +107,64 @@
 </style>
 
 <div class="msWrap">
-<!-- फ़िल्टर बार -->
-<div class="filterBar" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-    <input type="text" id="filterSearch" placeholder="Search ID / Mobile / Name" class="formInput" style="width: 170px;">
-    
-    <!-- 🌟 नया स्कूल फ़िल्टर (Column AK) -->
-    <select id="filterSchool" class="formSelect" onchange="loadStudentDirectory()">
-        <option value="all">All Schools</option>
-    </select>
+    <!-- 🌟 फ़िल्टर बार -->
+    <div class="filterPanel">
+        <div class="filterGrid">
+            <input type="text" id="msSearch" placeholder="Search ID / Mobile / Name" class="searchInp">
+            
+            <!-- 🌟 स्कूल फ़िल्टर (Column AK) -->
+            <select id="msSchoolFilter" onchange="loadStudentsData()">
+                <option value="all">All Schools</option>
+            </select>
 
-    <select id="filterSession" class="formSelect" onchange="loadStudentDirectory()">
-        <option value="all">All Sessions</option>
-        <option value="2026-2027" selected>2026-2027</option>
-        <option value="2025-2026">2025-2026</option>
-    </select>
+            <!-- सत्र फ़िल्टर -->
+            <select id="msSessionFilter" onchange="loadStudentsData()">
+                <option value="2026-2027" selected>2026-2027</option>
+            </select>
 
-    <select id="filterClass" class="formSelect" onchange="loadStudentDirectory()">
-        <option value="all">All Classes</option>
-        <option value="Nursery">Nursery</option>
-        <option value="LKG">LKG</option>
-        <option value="UKG">UKG</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-    </select>
+            <!-- क्लास फ़िल्टर -->
+            <select id="msClassFilter" onchange="loadStudentsData()">
+                <option value="All Classes">All Classes</option>
+                <option value="Nursery">Nursery</option>
+                <option value="LKG">LKG</option>
+                <option value="UKG">UKG</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+            </select>
 
-    <select id="filterSection" class="formSelect" onchange="loadStudentDirectory()">
-        <option value="all">All Sections</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-    </select>
+            <!-- सेक्शन फ़िल्टर -->
+            <select id="msSectionFilter" onchange="loadStudentsData()">
+                <option value="All Sections">All Sections</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+            </select>
 
-    <select id="filterStatus" class="formSelect" onchange="loadStudentDirectory()">
-        <option value="all">All Status</option>
-        <option value="Active">Active</option>
-        <option value="Inactive">Inactive</option>
-    </select>
+            <!-- स्टेटस फ़िल्टर -->
+            <select id="msStatusFilter" onchange="loadStudentsData()">
+                <option value="All Status">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Passout">Passout</option>
+            </select>
 
-    <button class="btnPrimary" onclick="loadStudentDirectory()">🔍 Search</button>
-    <button class="btnSecondary" onclick="resetStudentFilters()">Reset</button>
-</div>
+            <button class="btnSm btnSearch" onclick="loadStudentsData()">🔍 Search</button>
+            <button class="btnSm btnReset" onclick="resetFilters()">Reset</button>
+        </div>
     </div>
 
     <!-- बल्क ऐक्शन बार -->
     <div class="bulkBar">
         <div class="bulkLeft">
-            <label style="font-weight:bold; cursor:pointer;"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"> Select All</label>
-           <button class="btnSm btnGreen" onclick="triggerIDCardPrint()">Generate ID Card</button>
+            <label style="font-weight:bold; cursor:pointer; display:flex; align-items:center; gap:5px;">
+                <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"> Select All
+            </label>
+            <button class="btnSm btnGreen" onclick="triggerIDCardPrint()">Generate ID Card</button>
             <button class="btnSm btnPurple" onclick="triggerBulkPrint('sr-print')">Generate SR</button>
             <button class="btnSm btnOrange" onclick="triggerBulkPrint('tc-print')">Generate TC</button>
             <button class="btnSm btnBlue" style="background:#0284c7;" onclick="triggerResultPrint()">Generate Result</button>
@@ -117,7 +182,7 @@
         <table class="msTable">
             <thead>
                 <tr>
-                    <th width="30">#</th>
+                    <th width="35">#</th>
                     <th width="45">Photo</th>
                     <th>Student ID</th>
                     <th>Student Name</th>
@@ -225,6 +290,21 @@
     })();
 
     function initManageModule() {
+        // 1. स्कूल ड्रॉपडाउन लोड करना
+        fetch(`${SCRIPT_URL}?action=getSchoolList`)
+        .then(r => r.json())
+        .then(res => {
+            if (res.status === "SUCCESS" && res.data) {
+                const sSel = document.getElementById("msSchoolFilter");
+                sSel.innerHTML = '<option value="all">All Schools</option>';
+                res.data.forEach(sch => {
+                    sSel.insertAdjacentHTML("beforeend", `<option value="${sch}">${sch}</option>`);
+                });
+            }
+        })
+        .catch(err => console.error("School fetch error:", err));
+
+        // 2. सेशन्स लोड करना
         fetch(`${SCRIPT_URL}?action=getAllSessions`)
         .then(r => r.json())
         .then(res => {
@@ -238,23 +318,29 @@
                 sSelect.innerHTML = `<option value="2026-2027">2026-2027</option>`;
             }
             loadStudentsData();
+        })
+        .catch(() => {
+            loadStudentsData();
         });
     }
 
     function loadStudentsData() {
         const search = document.getElementById("msSearch").value.trim();
+        const school = document.getElementById("msSchoolFilter") ? document.getElementById("msSchoolFilter").value : "all";
         const ses = document.getElementById("msSessionFilter").value;
         const cls = document.getElementById("msClassFilter").value;
         const sec = document.getElementById("msSectionFilter").value;
         const stat = document.getElementById("msStatusFilter").value;
 
         const tbody = document.getElementById("studentTableRows");
-        tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:20px;">Searching Students...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; font-weight:bold;">Searching Students...</td></tr>`;
 
-        fetch(`${SCRIPT_URL}?action=getStudents&search=${encodeURIComponent(search)}&session=${encodeURIComponent(ses)}&className=${encodeURIComponent(cls)}&section=${encodeURIComponent(sec)}&status=${encodeURIComponent(stat)}`)
+        const url = `${SCRIPT_URL}?action=getStudentsList&searchText=${encodeURIComponent(search)}&classFilter=${encodeURIComponent(cls)}&sectionFilter=${encodeURIComponent(sec)}&statusFilter=${encodeURIComponent(stat)}&sessionFilter=${encodeURIComponent(ses)}&schoolFilter=${encodeURIComponent(school)}`;
+
+        fetch(url)
         .then(r => r.json())
         .then(res => {
-            document.getElementById("totalCounter").innerText = `Total Records : ${res.totalRecords}`;
+            document.getElementById("totalCounter").innerText = `Total Records : ${res.totalRecords || 0}`;
             tbody.innerHTML = "";
 
             if (!res.students || res.students.length === 0) {
@@ -269,7 +355,7 @@
                 tbody.innerHTML += `
                     <tr>
                         <td><input type="checkbox" class="rowCb" value="${s.studentId}" onchange="updateSelectedCounter()"></td>
-                        <td><img src="${photoSrc}" class="stPhoto"></td>
+                        <td><img src="${photoSrc}" class="stPhoto" onerror="this.src='https://via.placeholder.com/40'"></td>
                         <td><strong>${s.studentId}</strong></td>
                         <td>${s.studentName}</td>
                         <td>${s.fatherName}</td>
@@ -289,6 +375,9 @@
                 `;
             });
             updateSelectedCounter();
+        })
+        .catch(err => {
+            tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; color:red;">Error: ${err.message}</td></tr>`;
         });
     }
 
@@ -304,92 +393,11 @@
 
     function resetFilters() {
         document.getElementById("msSearch").value = "";
+        if (document.getElementById("msSchoolFilter")) document.getElementById("msSchoolFilter").value = "all";
         document.getElementById("msClassFilter").selectedIndex = 0;
         document.getElementById("msSectionFilter").selectedIndex = 0;
         document.getElementById("msStatusFilter").selectedIndex = 0;
         loadStudentsData();
-    }
-
-    /* TC FORM LOGIC (SINGLE STUDENT) */
-    function openTCModalDirect(sId, name, father, cls) {
-        const ses = document.getElementById("msSessionFilter").value;
-        document.getElementById("tcStudentId").value = sId;
-        document.getElementById("tcStudentName").value = name;
-        document.getElementById("tcFatherName").value = father;
-        document.getElementById("tcCurrentClass").value = cls;
-        document.getElementById("tcCurrentSession").value = ses;
-        document.getElementById("tcInitialClass").value = "";
-        document.getElementById("tcInitialDate").value = "";
-        document.getElementById("tcLeavingDate").value = new Date().toISOString().split('T')[0];
-        document.getElementById("tcReason").value = "";
-        document.getElementById("tcModal").style.display = "flex";
-    }
-
-    function submitTCForm() {
-        const tcData = {
-            studentId: document.getElementById("tcStudentId").value.trim(),
-            studentName: document.getElementById("tcStudentName").value.trim(),
-            fatherName: document.getElementById("tcFatherName").value.trim(),
-            currentClass: document.getElementById("tcCurrentClass").value.trim(),
-            currentSession: document.getElementById("tcCurrentSession").value.trim(),
-            initialClass: document.getElementById("tcInitialClass").value.trim(),
-            initialDate: document.getElementById("tcInitialDate").value.trim(),
-            leavingDate: document.getElementById("tcLeavingDate").value,
-            reason: document.getElementById("tcReason").value.trim()
-        };
-
-        const params = new URLSearchParams();
-        params.append("action", "saveTC");
-        params.append("data", JSON.stringify(tcData));
-
-        fetch(SCRIPT_URL, { method: "POST", body: params })
-        .then(r => r.json())
-        .then(res => {
-            if (res.status === "SUCCESS") {
-                alert(`🎉 TC Saved Successfully!\nAssigned TC Number: ${res.tcNumber}`);
-                closeModal('tcModal');
-                loadStudentsData();
-            } else {
-                alert("Error: " + res.message);
-            }
-        })
-        .catch(err => alert("Error: " + err.message));
-    }
-
-    /* EXCEL/CSV EXPORT */
-    function exportCsvData() {
-        const ses = document.getElementById("msSessionFilter").value;
-        if (!ses) {
-            alert("कृपया सत्र चुनें!");
-            return;
-        }
-
-        fetch(`${SCRIPT_URL}?action=exportStudents&session=${encodeURIComponent(ses)}`)
-        .then(r => r.json())
-        .then(res => {
-            if (res.status !== "SUCCESS" || !res.data || res.data.length <= 1) {
-                alert("इस सत्र के लिए कोई डेटा नहीं मिला।");
-                return;
-            }
-
-            let csvContent = "\uFEFF";
-            res.data.forEach(rowArr => {
-                let row = rowArr.map(val => {
-                    let text = String(val == null ? '' : val).replace(/"/g, '""');
-                    return `"${text}"`;
-                }).join(",");
-                csvContent += row + "\r\n";
-            });
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = `Students_${ses}.csv`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        })
-        .catch(err => alert("Export Error: " + err.message));
     }
 
     /* VIEW MODAL */
@@ -499,6 +507,89 @@
         });
     }
 
+    /* TC FORM LOGIC */
+    function openTCModalDirect(sId, name, father, cls) {
+        const ses = document.getElementById("msSessionFilter").value;
+        document.getElementById("tcStudentId").value = sId;
+        document.getElementById("tcStudentName").value = name;
+        document.getElementById("tcFatherName").value = father;
+        document.getElementById("tcCurrentClass").value = cls;
+        document.getElementById("tcCurrentSession").value = ses;
+        document.getElementById("tcInitialClass").value = "";
+        document.getElementById("tcInitialDate").value = "";
+        document.getElementById("tcLeavingDate").value = new Date().toISOString().split('T')[0];
+        document.getElementById("tcReason").value = "";
+        document.getElementById("tcModal").style.display = "flex";
+    }
+
+    function submitTCForm() {
+        const tcData = {
+            studentId: document.getElementById("tcStudentId").value.trim(),
+            studentName: document.getElementById("tcStudentName").value.trim(),
+            fatherName: document.getElementById("tcFatherName").value.trim(),
+            currentClass: document.getElementById("tcCurrentClass").value.trim(),
+            currentSession: document.getElementById("tcCurrentSession").value.trim(),
+            initialClass: document.getElementById("tcInitialClass").value.trim(),
+            initialDate: document.getElementById("tcInitialDate").value.trim(),
+            leavingDate: document.getElementById("tcLeavingDate").value,
+            reason: document.getElementById("tcReason").value.trim()
+        };
+
+        const params = new URLSearchParams();
+        params.append("action", "saveTC");
+        params.append("data", JSON.stringify(tcData));
+
+        fetch(SCRIPT_URL, { method: "POST", body: params })
+        .then(r => r.json())
+        .then(res => {
+            if (res.status === "SUCCESS") {
+                alert(`🎉 TC Saved Successfully!\nAssigned TC Number: ${res.tcNumber}`);
+                closeModal('tcModal');
+                loadStudentsData();
+            } else {
+                alert("Error: " + res.message);
+            }
+        })
+        .catch(err => alert("Error: " + err.message));
+    }
+
+    /* EXCEL EXPORT */
+    function exportCsvData() {
+        const ses = document.getElementById("msSessionFilter").value;
+        if (!ses) {
+            alert("कृपया सत्र चुनें!");
+            return;
+        }
+
+        fetch(`${SCRIPT_URL}?action=exportStudents&session=${encodeURIComponent(ses)}`)
+        .then(r => r.json())
+        .then(res => {
+            if (res.status !== "SUCCESS" || !res.data || res.data.length <= 1) {
+                alert("इस सत्र के लिए कोई डेटा नहीं मिला।");
+                return;
+            }
+
+            let csvContent = "\uFEFF";
+            res.data.forEach(rowArr => {
+                let row = rowArr.map(val => {
+                    let text = String(val == null ? '' : val).replace(/"/g, '""');
+                    return `"${text}"`;
+                }).join(",");
+                csvContent += row + "\r\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `Students_${ses}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        })
+        .catch(err => alert("Export Error: " + err.message));
+    }
+
+    /* PROMOTION */
     function triggerPromotion() {
         const curSes = document.getElementById("msSessionFilter").value;
         if (!confirm(`क्या आप सत्र ${curSes} के सभी एक्टिव छात्रों को प्रमोट करना चाहते हैं?`)) return;
@@ -519,7 +610,7 @@
         });
     }
 
-    /* BULK PRINTS TRIGGER */
+    /* BULK PRINTS */
     function triggerBulkPrint(moduleName) {
         const selected = [];
         document.querySelectorAll(".rowCb:checked").forEach(cb => selected.push(cb.value));
@@ -529,115 +620,35 @@
             return;
         }
 
-        // चुने हुए छात्रों की आईडी ब्राउज़र स्टोरेज में सुरक्षित करना
         localStorage.setItem("selectedStudentsList", JSON.stringify(selected));
-
-        // tc-print मॉड्यूल लोड करना
-        navigateModule(moduleName, "Transfer Certificate Print");
+        navigateModule(moduleName, "Bulk Print");
     }
 
-    /* SR BULK PRINT TRIGGER */
-function triggerSRPrint() {
-    const selected = [];
-    document.querySelectorAll(".rowCb:checked").forEach(cb => selected.push(cb.value));
+    function triggerResultPrint() {
+        const selected = [];
+        document.querySelectorAll(".rowCb:checked").forEach(cb => selected.push(cb.value));
 
-    if (selected.length === 0) {
-        alert("कृपया कम से कम एक छात्र को चेकबॉक्स से चुनें!");
-        return;
-    }
-
-    // चुने हुए छात्रों की आईडी सेव करना
-    localStorage.setItem("selectedStudentsList", JSON.stringify(selected));
-
-    // sr-print.html मॉड्यूल लोड करना
-    navigateModule('sr-print', "Scholar's Register Print");
-}
-
-    /* RESULT BULK PRINT TRIGGER */
-function triggerResultPrint() {
-    const selected = [];
-    document.querySelectorAll(".rowCb:checked").forEach(cb => selected.push(cb.value));
-
-    if (selected.length === 0) {
-        alert("कृपया कम से कम एक छात्र को चेकबॉक्स से चुनें!");
-        return;
-    }
-
-    localStorage.setItem("selectedStudentsList", JSON.stringify(selected));
-    navigateModule('result-print', "Annual Examination Result");
-}
-
-/* ID CARD BULK PRINT TRIGGER */
-function triggerIDCardPrint() {
-    const selected = [];
-    document.querySelectorAll(".rowCb:checked").forEach(cb => selected.push(cb.value));
-
-    if (selected.length === 0) {
-        alert("कृपया कम से कम एक छात्र को चेकबॉक्स से चुनें!");
-        return;
-    }
-
-    localStorage.setItem("selectedStudentsList", JSON.stringify(selected));
-    navigateModule('idcard-print', "Student ID Cards");
-}
-
-    // पेज लोड होने पर स्कूल लिस्ट लोड करना
-window.initManageStudentsModule = function() {
-    fetchSchoolDropdown();
-    loadStudentDirectory();
-};
-
-function fetchSchoolDropdown() {
-    fetch(`${SCRIPT_URL}?action=getSchoolList`)
-    .then(res => res.json())
-    .then(res => {
-        if (res.status === "SUCCESS" && res.data) {
-            const select = document.getElementById("filterSchool");
-            select.innerHTML = '<option value="all">All Schools</option>';
-            res.data.forEach(sch => {
-                select.insertAdjacentHTML("beforeend", `<option value="${sch}">${sch}</option>`);
-            });
-        }
-    })
-    .catch(err => console.error("School fetch error:", err));
-}
-
-function loadStudentDirectory() {
-    const school = document.getElementById("filterSchool") ? document.getElementById("filterSchool").value : "all";
-    const session = document.getElementById("filterSession").value;
-    const cls = document.getElementById("filterClass").value;
-    const sec = document.getElementById("filterSection").value;
-    const status = document.getElementById("filterStatus").value;
-    const q = document.getElementById("filterSearch").value.trim();
-
-    const url = `${SCRIPT_URL}?action=getStudentsDirectory&filterSchool=${encodeURIComponent(school)}&filterSession=${encodeURIComponent(session)}&filterClass=${encodeURIComponent(cls)}&filterSection=${encodeURIComponent(sec)}&filterStatus=${encodeURIComponent(status)}&searchQuery=${encodeURIComponent(q)}`;
-
-    document.getElementById("studentTableBody").innerHTML = `<tr><td colspan="9" style="text-align:center; padding:20px;">Loading Students...</td></tr>`;
-
-    fetch(url)
-    .then(res => res.json())
-    .then(res => {
-        if (res.status !== "SUCCESS" || !res.data) {
-            document.getElementById("studentTableBody").innerHTML = `<tr><td colspan="9" style="text-align:center; color:red;">No Students Found</td></tr>`;
+        if (selected.length === 0) {
+            alert("कृपया कम से कम एक छात्र को चेकबॉक्स से चुनें!");
             return;
         }
-        renderStudentsTable(res.data);
-    })
-    .catch(err => {
-        document.getElementById("studentTableBody").innerHTML = `<tr><td colspan="9" style="text-align:center; color:red;">Error: ${err.message}</td></tr>`;
-    });
-}
 
-function resetStudentFilters() {
-    if (document.getElementById("filterSchool")) document.getElementById("filterSchool").value = "all";
-    document.getElementById("filterSession").value = "2026-2027";
-    document.getElementById("filterClass").value = "all";
-    document.getElementById("filterSection").value = "all";
-    document.getElementById("filterStatus").value = "all";
-    document.getElementById("filterSearch").value = "";
-    loadStudentDirectory();
-}
-    
+        localStorage.setItem("selectedStudentsList", JSON.stringify(selected));
+        navigateModule('result-print', "Annual Examination Result");
+    }
+
+    function triggerIDCardPrint() {
+        const selected = [];
+        document.querySelectorAll(".rowCb:checked").forEach(cb => selected.push(cb.value));
+
+        if (selected.length === 0) {
+            alert("कृपया कम से कम एक छात्र को चेकबॉक्स से चुनें!");
+            return;
+        }
+
+        localStorage.setItem("selectedStudentsList", JSON.stringify(selected));
+        navigateModule('idcard-print', "Student ID Cards");
+    }
     
     function closeModal(mId) {
         document.getElementById(mId).style.display = "none";
