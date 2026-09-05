@@ -3,7 +3,7 @@
 .resPrintPage {
     background: #cbd5e1;
     padding: 20px 10px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #000;
 }
 
@@ -33,7 +33,7 @@
     max-height: 297mm;
     margin: 0 auto 30px auto;
     background: #ffffff;
-    padding: 10mm 12mm;
+    padding: 10mm 14mm 10mm 14mm;
     box-sizing: border-box;
     border: 3px double #0b3c5d;
     box-shadow: 0 4px 15px rgba(0,0,0,0.15);
@@ -44,20 +44,26 @@
     position: relative;
 }
 
-/* TOP INFO & SCHOOL HEADER */
+/* TOP HEADER */
+.resHeaderWrap {
+    border-bottom: 2px solid #0b3c5d;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
 .resTopHeader {
     display: table;
     width: 100%;
-    margin-bottom: 4px;
 }
 .resTopLeft {
     display: table-cell;
-    width: 20%;
+    width: 14%;
     vertical-align: middle;
 }
 .resTopCenter {
     display: table-cell;
-    width: 65%;
+    width: 71%;
     text-align: center;
     vertical-align: middle;
 }
@@ -70,119 +76,164 @@
 
 .schoolTitle {
     margin: 0;
-    font-size: 22px;
+    font-size: 24px;
     color: #0b3c5d;
     font-weight: 900;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
 }
 .schoolSub {
-    font-size: 11px;
-    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
     color: #333;
     margin: 2px 0;
 }
 .resultBanner {
     background: #0b3c5d;
     color: #fff;
-    padding: 3px 10px;
+    padding: 4px 14px;
     font-size: 12px;
-    font-weight: bold;
-    border-radius: 3px;
+    font-weight: 800;
+    border-radius: 4px;
     display: inline-block;
-    margin-top: 2px;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
 }
 
 .stPhotoBox {
-    width: 75px;
-    height: 85px;
+    width: 82px;
+    height: 98px;
     border: 2px solid #0b3c5d;
     object-fit: cover;
     border-radius: 4px;
+    display: block;
+    margin-left: auto;
+    background: #f8fafc;
 }
 
 /* STUDENT PROFILE GRID */
 .resProfileTable {
     width: 100%;
     border-collapse: collapse;
-    margin: 6px 0;
-    font-size: 11.5px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    flex-shrink: 0;
 }
 .resProfileTable td {
-    padding: 3px 6px;
-    border: 1px solid #94a3b8;
+    padding: 5px 8px;
+    border: 1px solid #64748b;
 }
 
-/* MARKS & CO-SCHOLASTIC LAYOUT */
+/* MAIN BODY (FULL HEIGHT FLEX DISTRIBUTION) */
 .resMainBody {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     flex: 1;
-    margin: 4px 0;
+    margin-bottom: 8px;
     min-height: 0;
 }
+
 .resLeftCol {
     flex: 1.35;
     display: flex;
     flex-direction: column;
+    border: 1.5px solid #0b3c5d;
+    border-radius: 4px;
+    overflow: hidden;
 }
-.resRightCol {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+
+.resTableSectionTitle {
+    font-size: 11.5px;
+    font-weight: 800;
+    background: #0b3c5d;
+    color: #fff;
+    text-align: center;
+    padding: 5px 4px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
 }
 
 .resTable {
     width: 100%;
+    height: 100%;
     border-collapse: collapse;
 }
 .resTable th, .resTable td {
-    border: 1px solid #333;
-    padding: 3px 6px;
-    font-size: 11px;
+    border: 1px solid #cbd5e1;
+    padding: 4px 8px;
+    font-size: 12px;
     text-align: center;
+    vertical-align: middle;
 }
 .resTable th {
     background: #f1f5f9;
-    font-weight: bold;
+    font-weight: 800;
+    color: #0b3c5d;
+    height: 28px;
 }
 
-/* CARDS IN RIGHT COLUMN */
+.resRightCol {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+}
+
 .resBox {
-    border: 1px solid #333;
-    padding: 4px 6px;
+    border: 1.5px solid #0b3c5d;
+    border-radius: 4px;
+    padding: 6px 8px;
     box-sizing: border-box;
+    background: #fff;
 }
 .resBoxTitle {
     background: #f1f5f9;
-    font-size: 10.5px;
-    font-weight: bold;
+    font-size: 11px;
+    font-weight: 800;
+    color: #0b3c5d;
     text-align: center;
-    border-bottom: 1px solid #333;
-    margin: -4px -6px 4px -6px;
-    padding: 2px 0;
+    border-bottom: 1.5px solid #0b3c5d;
+    margin: -6px -8px 6px -8px;
+    padding: 4px 0;
 }
 
-/* FOOTER */
+.resDataRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    font-size: 11.5px;
+    border-bottom: 1px dashed #e2e8f0;
+}
+.resDataRow:last-child {
+    border-bottom: none;
+}
+
+/* FOOTER AREA */
 .resFooter {
-    margin-top: 6px;
-    border-top: 1.5px solid #000;
-    padding-top: 6px;
+    border-top: 2px solid #0b3c5d;
+    padding-top: 8px;
+    flex-shrink: 0;
 }
 .resRemarksRow {
     display: flex;
     justify-content: space-between;
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: bold;
-    margin-bottom: 15px;
+    margin-bottom: 22px;
 }
 .resSigRow {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: bold;
     text-align: center;
+}
+.sigLine {
+    border-top: 1.5px solid #000;
+    padding-top: 3px;
+    min-width: 140px;
 }
 </style>
 
@@ -304,17 +355,16 @@ function renderReportCards(studentsArray) {
             annualObtained += marks;
             annualMarksRows += `
                 <tr>
-                    <td style="text-align:left; font-weight:600;">${sub}</td>
+                    <td style="text-align:left; font-weight:bold; color:#1e293b;">${sub}</td>
                     <td>${maxMarksPerSub}</td>
-                    <td><strong>${marks}</strong></td>
-                    <td>${getSubjectGrade(marks)}</td>
+                    <td style="font-size:13px; font-weight:800; color:#0b3c5d;">${marks}</td>
+                    <td style="font-weight:bold;">${getSubjectGrade(marks)}</td>
                 </tr>
             `;
         });
 
         const annualGrade = getSubjectGrade(Math.round(annualObtained / subjects.length));
         
-        // कंसोलिडेटेड मार्क्स (Quarterly, Half-Yearly)
         const qMarks = Math.round(annualObtained * (getRandomScore(92, 98) / 100));
         const hyMarks = Math.round(annualObtained * (getRandomScore(95, 101) / 100));
         const grandTotal = qMarks + hyMarks + annualObtained;
@@ -324,71 +374,71 @@ function renderReportCards(studentsArray) {
 
         const dobWords = convertDateToWords(st.dob);
         const promoText = getNextPromotionClass(clsClean);
-        const photoSrc = st.photo || "https://via.placeholder.com/80x90";
+        const photoSrc = st.photo || "https://i.postimg.cc/pLt1F2cD/logo-copy.png";
 
         const cardHtml = `
             <div class="resSheet">
                 <!-- TOP HEADER -->
-                <div>
+                <div class="resHeaderWrap">
                     <div class="resTopHeader">
                         <div class="resTopLeft">
-                            <img src="https://i.postimg.cc/pLt1F2cD/logo-copy.png" style="width:70px; height:70px; object-fit:contain;">
+                            <img src="https://i.postimg.cc/pLt1F2cD/logo-copy.png" style="width:75px; height:75px; object-fit:contain; display:block;">
                         </div>
                         <div class="resTopCenter">
-                            <div style="font-size:10px; font-weight:bold; color:#555;">Recognition Number: GOP0958326469</div>
+                            <div style="font-size:10.5px; font-weight:bold; color:#475569;">Recognition Number: GOP0958326469</div>
                             <h1 class="schoolTitle">AMBEDKAR PUBLIC SCHOOL</h1>
                             <div class="schoolSub">Madhopur, Campierganj, Gorakhpur (U.P.)</div>
-                            <div style="font-size:10px; font-weight:bold;">U-DISE Code: 09584109512</div>
+                            <div style="font-size:11px; font-weight:bold; color:#0b3c5d;">U-DISE Code: 09584109512</div>
                             <div class="resultBanner">RESULT OF ANNUAL EXAMINATION (${st.session})</div>
                         </div>
                         <div class="resTopRight">
-                            <img src="${photoSrc}" class="stPhotoBox">
+                            <img src="${photoSrc}" class="stPhotoBox" alt="Student Photo">
                         </div>
                     </div>
-
-                    <!-- PROFILE DETAILS -->
-                    <table class="resProfileTable">
-                        <tr>
-                            <td width="50%"><strong>Student's Name:</strong> ${st.studentName}</td>
-                            <td width="50%"><strong>Student ID:</strong> ${st.studentId} &nbsp;&nbsp;|&nbsp;&nbsp; <strong>Roll No:</strong> ${st.rollNumber}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Father's Name:</strong> ${st.fatherName}</td>
-                            <td><strong>Class & Sec:</strong> ${st.currentClass} - ${st.section}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Mother's Name:</strong> ${st.motherName}</td>
-                            <td><strong>Date of Birth:</strong> ${st.dob}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2"><strong>DOB (In Words):</strong> ${dobWords}</td>
-                        </tr>
-                    </table>
                 </div>
+
+                <!-- PROFILE DETAILS -->
+                <table class="resProfileTable">
+                    <tr>
+                        <td width="50%"><strong>Student's Name:</strong> <span style="font-size:13px; font-weight:bold; text-transform:uppercase;">${st.studentName}</span></td>
+                        <td width="50%"><strong>Student ID:</strong> <strong>${st.studentId}</strong> &nbsp;&nbsp;|&nbsp;&nbsp; <strong>Roll No:</strong> ${st.rollNumber}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Father's Name:</strong> ${st.fatherName}</td>
+                        <td><strong>Class & Sec:</strong> <strong>${st.currentClass} - ${st.section}</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mother's Name:</strong> ${st.motherName}</td>
+                        <td><strong>Date of Birth:</strong> ${st.dob}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><strong>DOB (In Words):</strong> ${dobWords}</td>
+                    </tr>
+                </table>
 
                 <!-- MAIN GRADES SECTION -->
                 <div class="resMainBody">
                     <!-- LEFT: SCHOLASTIC -->
                     <div class="resLeftCol">
-                        <div style="font-size:11px; font-weight:bold; background:#0b3c5d; color:#fff; text-align:center; padding:3px; margin-bottom:2px;">
+                        <div class="resTableSectionTitle">
                             SCHOLASTIC PERFORMANCE (ANNUAL EXAMINATION)
                         </div>
-                        <table class="resTable" style="flex:1;">
+                        <table class="resTable">
                             <thead>
                                 <tr>
-                                    <th width="48%" style="text-align:left;">Subject</th>
-                                    <th width="16%">Max</th>
+                                    <th width="46%" style="text-align:left;">Subject</th>
+                                    <th width="18%">Max</th>
                                     <th width="18%">Gained</th>
                                     <th width="18%">Grade</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 ${annualMarksRows}
-                                <tr style="background:#f8fafc; font-weight:bold;">
-                                    <td style="text-align:left;">Total (Annual Exam)</td>
+                                <tr style="background:#f1f5f9; font-weight:bold; border-top:2px solid #0b3c5d;">
+                                    <td style="text-align:left; font-weight:900;">Total (Annual Exam)</td>
                                     <td>${totalMaxAnnual}</td>
-                                    <td>${annualObtained}</td>
-                                    <td>${annualGrade}</td>
+                                    <td style="font-size:13px; font-weight:900; color:#0b3c5d;">${annualObtained}</td>
+                                    <td style="font-weight:900;">${annualGrade}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -399,36 +449,36 @@ function renderReportCards(studentsArray) {
                         <!-- Co-Scholastic -->
                         <div class="resBox">
                             <div class="resBoxTitle">CO-SCHOLASTIC AREAS</div>
-                            <table style="width:100%; font-size:10.5px; border-collapse:collapse;">
-                                <tr><td>Discipline</td><td align="right"><strong>Well-Behaved</strong></td></tr>
-                                <tr><td>Cleanliness</td><td align="right"><strong>Maintained</strong></td></tr>
-                                <tr><td>Speaking Skill</td><td align="right"><strong>Articulate</strong></td></tr>
-                                <tr><td>Activity Participation</td><td align="right"><strong>Enthusiastic</strong></td></tr>
-                                <tr><td>Homework Regularity</td><td align="right"><strong>Consistent</strong></td></tr>
-                            </table>
+                            <div class="resDataRow"><span>Discipline</span><strong>Well-Behaved</strong></div>
+                            <div class="resDataRow"><span>Cleanliness</span><strong>Maintained</strong></div>
+                            <div class="resDataRow"><span>Speaking Skill</span><strong>Articulate</strong></div>
+                            <div class="resDataRow"><span>Activity Participation</span><strong>Enthusiastic</strong></div>
+                            <div class="resDataRow"><span>Homework Regularity</span><strong>Consistent</strong></div>
                         </div>
 
                         <!-- Attendance -->
                         <div class="resBox">
                             <div class="resBoxTitle">ATTENDANCE RECORD</div>
-                            <table style="width:100%; font-size:10.5px; border-collapse:collapse;">
-                                <tr><td>Working Days:</td><td align="right"><strong>210</strong></td></tr>
-                                <tr><td>Present Days:</td><td align="right"><strong>188</strong></td></tr>
-                                <tr><td>Attendance:</td><td align="right"><strong>89.52%</strong></td></tr>
-                            </table>
+                            <div class="resDataRow"><span>Working Days:</span><strong>210</strong></div>
+                            <div class="resDataRow"><span>Present Days:</span><strong>188</strong></div>
+                            <div class="resDataRow"><span>Attendance:</span><strong style="color:#16a34a;">89.52%</strong></div>
                         </div>
 
                         <!-- Consolidated Progress -->
-                        <div class="resBox" style="flex:1;">
+                        <div class="resBox" style="flex:1; display:flex; flex-direction:column; justify-content:space-between;">
                             <div class="resBoxTitle">CONSOLIDATED PROGRESS SUMMARY</div>
-                            <table style="width:100%; font-size:10.5px; border-collapse:collapse; margin-top:2px;">
-                                <tr><td>1. Quarterly Exam:</td><td align="right">${qMarks}/${totalMaxAnnual}</td></tr>
-                                <tr><td>2. Half Yearly Exam:</td><td align="right">${hyMarks}/${totalMaxAnnual}</td></tr>
-                                <tr><td>3. Annual Exam:</td><td align="right">${annualObtained}/${totalMaxAnnual}</td></tr>
-                                <tr style="border-top:1px solid #555;"><td><strong>Grand Total:</strong></td><td align="right"><strong>${grandTotal}/${grandMax}</strong></td></tr>
-                                <tr><td><strong>Percentage:</strong></td><td align="right"><strong>${grandPercentage}%</strong></td></tr>
-                                <tr><td><strong>Overall Grade:</strong></td><td align="right"><strong>${overallGrade}</strong></td></tr>
-                            </table>
+                            <div class="resDataRow"><span>1. Quarterly Exam:</span><strong>${qMarks}/${totalMaxAnnual}</strong></div>
+                            <div class="resDataRow"><span>2. Half Yearly Exam:</span><strong>${hyMarks}/${totalMaxAnnual}</strong></div>
+                            <div class="resDataRow"><span>3. Annual Exam:</span><strong>${annualObtained}/${totalMaxAnnual}</strong></div>
+                            <div class="resDataRow" style="border-top:1.5px solid #0b3c5d; padding-top:4px;">
+                                <strong>Grand Total:</strong><strong>${grandTotal}/${grandMax}</strong>
+                            </div>
+                            <div class="resDataRow">
+                                <strong>Percentage:</strong><strong style="font-size:13px; color:#0b3c5d;">${grandPercentage}%</strong>
+                            </div>
+                            <div class="resDataRow">
+                                <strong>Overall Grade:</strong><strong style="font-size:13px; color:#0b3c5d;">${overallGrade}</strong>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -437,19 +487,17 @@ function renderReportCards(studentsArray) {
                 <div class="resFooter">
                     <div class="resRemarksRow">
                         <div>Teacher's Remark: <u>Shows consistent progress, good conduct and focus.</u></div>
-                        <div>Promotion Status: <u>${promoText}</u></div>
+                        <div>Promotion Status: <u style="color:#0b3c5d;">${promoText}</u></div>
                     </div>
                     <div class="resSigRow">
                         <div>
                             <div>Date: 05/09/2026</div>
                         </div>
                         <div>
-                            <div>_______________________</div>
-                            <div>Class Teacher</div>
+                            <div class="sigLine">Class Teacher</div>
                         </div>
                         <div>
-                            <div>_______________________</div>
-                            <div>Principal (with Seal)</div>
+                            <div class="sigLine">Principal (with Seal)</div>
                         </div>
                     </div>
                 </div>
@@ -485,25 +533,27 @@ function executeSafeResultPrint() {
             <style>
                 @page {
                     size: A4 portrait;
-                    margin: 6mm 8mm;
+                    margin: 0;
                 }
                 * { box-sizing: border-box; }
-                body {
+                html, body {
                     margin: 0;
                     padding: 0;
                     font-family: Arial, Helvetica, sans-serif;
                     background: #fff;
                     color: #000;
+                    width: 210mm;
+                    height: 297mm;
                 }
                 .resSheet {
-                    width: 100%;
-                    height: 284mm;
-                    max-height: 284mm;
+                    width: 210mm;
+                    height: 297mm;
+                    max-height: 297mm;
                     box-sizing: border-box;
                     page-break-after: always;
                     break-after: page;
                     margin: 0;
-                    padding: 6mm 10mm;
+                    padding: 8mm 12mm;
                     border: 3px double #0b3c5d;
                     display: flex;
                     flex-direction: column;
@@ -514,27 +564,32 @@ function executeSafeResultPrint() {
                     page-break-after: avoid;
                     break-after: avoid;
                 }
-                .resTopHeader { display: table; width: 100%; margin-bottom: 4px; }
-                .resTopLeft { display: table-cell; width: 18%; vertical-align: middle; }
-                .resTopCenter { display: table-cell; width: 67%; text-align: center; vertical-align: middle; }
+                .resHeaderWrap { border-bottom: 2px solid #0b3c5d; padding-bottom: 4px; margin-bottom: 6px; flex-shrink: 0; }
+                .resTopHeader { display: table; width: 100%; }
+                .resTopLeft { display: table-cell; width: 14%; vertical-align: middle; }
+                .resTopCenter { display: table-cell; width: 71%; text-align: center; vertical-align: middle; }
                 .resTopRight { display: table-cell; width: 15%; text-align: right; vertical-align: middle; }
-                .schoolTitle { margin: 0; font-size: 20px; color: #0b3c5d; font-weight: 900; }
-                .schoolSub { font-size: 10.5px; font-weight: bold; color: #333; margin: 1px 0; }
-                .resultBanner { background: #0b3c5d !important; color: #fff !important; padding: 2px 8px; font-size: 11px; font-weight: bold; border-radius: 3px; display: inline-block; -webkit-print-color-adjust: exact; }
-                .stPhotoBox { width: 70px; height: 80px; border: 1.5px solid #0b3c5d; object-fit: cover; }
-                .resProfileTable { width: 100%; border-collapse: collapse; margin: 4px 0; font-size: 11px; }
-                .resProfileTable td { padding: 2.5px 5px; border: 1px solid #000; }
-                .resMainBody { display: flex; gap: 8px; flex: 1; margin: 3px 0; min-height: 0; }
-                .resLeftCol { flex: 1.35; display: flex; flex-direction: column; }
-                .resRightCol { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-                .resTable { width: 100%; border-collapse: collapse; }
-                .resTable th, .resTable td { border: 1px solid #000; padding: 3px 5px; font-size: 10.5px; text-align: center; }
-                .resTable th { background: #f1f5f9 !important; font-weight: bold; -webkit-print-color-adjust: exact; }
-                .resBox { border: 1px solid #000; padding: 3px 5px; }
-                .resBoxTitle { background: #f1f5f9 !important; font-size: 10px; font-weight: bold; text-align: center; border-bottom: 1px solid #000; margin: -3px -5px 3px -5px; padding: 2px 0; -webkit-print-color-adjust: exact; }
-                .resFooter { margin-top: 4px; border-top: 1.5px solid #000; padding-top: 4px; }
-                .resRemarksRow { display: flex; justify-content: space-between; font-size: 10.5px; font-weight: bold; margin-bottom: 15px; }
-                .resSigRow { display: flex; justify-content: space-between; align-items: flex-end; font-size: 10.5px; font-weight: bold; text-align: center; }
+                .schoolTitle { margin: 0; font-size: 22px; color: #0b3c5d; font-weight: 900; }
+                .schoolSub { font-size: 11px; font-weight: bold; color: #333; margin: 1px 0; }
+                .resultBanner { background: #0b3c5d !important; color: #fff !important; padding: 3px 10px; font-size: 11px; font-weight: bold; border-radius: 4px; display: inline-block; -webkit-print-color-adjust: exact; }
+                .stPhotoBox { width: 78px; height: 92px; border: 2px solid #0b3c5d; object-fit: cover; -webkit-print-color-adjust: exact; }
+                .resProfileTable { width: 100%; border-collapse: collapse; margin-bottom: 6px; font-size: 11.5px; flex-shrink: 0; }
+                .resProfileTable td { padding: 4px 6px; border: 1px solid #000; }
+                .resMainBody { display: flex; gap: 8px; flex: 1; margin-bottom: 6px; min-height: 0; }
+                .resLeftCol { flex: 1.35; display: flex; flex-direction: column; border: 1.5px solid #000; }
+                .resTableSectionTitle { font-size: 11px; font-weight: 800; background: #0b3c5d !important; color: #fff !important; text-align: center; padding: 4px; -webkit-print-color-adjust: exact; }
+                .resRightCol { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; }
+                .resTable { width: 100%; height: 100%; border-collapse: collapse; }
+                .resTable th, .resTable td { border: 1px solid #000; padding: 3px 6px; font-size: 11px; text-align: center; }
+                .resTable th { background: #f1f5f9 !important; font-weight: 800; color: #000; -webkit-print-color-adjust: exact; }
+                .resBox { border: 1.5px solid #000; padding: 5px 6px; }
+                .resBoxTitle { background: #f1f5f9 !important; font-size: 10.5px; font-weight: 800; text-align: center; border-bottom: 1.5px solid #000; margin: -5px -6px 5px -6px; padding: 3px 0; -webkit-print-color-adjust: exact; }
+                .resDataRow { display: flex; justify-content: space-between; padding: 2px 0; font-size: 11px; border-bottom: 1px dashed #999; }
+                .resDataRow:last-child { border-bottom: none; }
+                .resFooter { border-top: 2px solid #000; padding-top: 6px; flex-shrink: 0; }
+                .resRemarksRow { display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; margin-bottom: 18px; }
+                .resSigRow { display: flex; justify-content: space-between; align-items: flex-end; font-size: 11.5px; font-weight: bold; text-align: center; }
+                .sigLine { border-top: 1.5px solid #000; padding-top: 2px; min-width: 130px; }
             </style>
         </head>
         <body>
@@ -547,6 +602,6 @@ function executeSafeResultPrint() {
     setTimeout(() => {
         iframe.contentWindow.focus();
         iframe.contentWindow.print();
-    }, 400);
+    }, 450);
 }
 </script>
