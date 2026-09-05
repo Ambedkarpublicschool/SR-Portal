@@ -41,10 +41,10 @@
 
     /* मॉडल्स (Popup Windows) */
     .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 9999; }
-    .modalBox { background: #fff; border-radius: 8px; width: 850px; max-width: 95%; max-height: 90vh; overflow-y: auto; padding: 22px; }
+    .modalBox { background: #fff; border-radius: 8px; width: 750px; max-width: 95%; max-height: 90vh; overflow-y: auto; padding: 22px; position: relative; }
     .modalHeader { display: flex; justify-content: space-between; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 15px; }
     .modalHeader h3 { margin: 0; color: #0b3c5d; }
-    .closeX { cursor: pointer; font-size: 22px; font-weight: bold; color: #888; }
+    .closeX { cursor: pointer; font-size: 24px; font-weight: bold; color: #888; }
 </style>
 
 <div class="msWrap">
@@ -78,9 +78,9 @@
     <div class="bulkBar">
         <div class="bulkLeft">
             <label style="font-weight:bold; cursor:pointer;"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"> Select All</label>
-            <button class="btnSm btnGreen" onclick="triggerBulkPrint('id-card')">Generate ID Card</button>
-            <button class="btnSm btnPurple" onclick="triggerBulkPrint('sr')">Generate SR</button>
-            <button class="btnSm btnOrange" onclick="triggerBulkPrint('tc-print')">Generate TC</button>
+            <button class="btnSm btnGreen" onclick="alert('Next Module')">Generate ID Card</button>
+            <button class="btnSm btnPurple" onclick="alert('Next Module')">Generate SR</button>
+            <button class="btnSm btnOrange" onclick="alert('Next Module')">Generate TC</button>
             <button class="btnSm btnPurple" onclick="triggerPromotion()">Student Promotion</button>
             <button class="btnSm btnBlue" onclick="exportCsvData()">Export Excel</button>
         </div>
@@ -115,22 +115,22 @@
     </div>
 </div>
 
-<!-- ==================== VIEW STUDENT MODAL ==================== -->
+<!-- ==================== VIEW MODAL ==================== -->
 <div id="viewModal" class="modal">
     <div class="modalBox">
         <div class="modalHeader">
-            <h3>Student Profile Details</h3>
+            <h3>Student Profile</h3>
             <span class="closeX" onclick="closeModal('viewModal')">&times;</span>
         </div>
         <div id="viewContent" style="display:flex; gap:20px;"></div>
     </div>
 </div>
 
-<!-- ==================== EDIT STUDENT MODAL ==================== -->
+<!-- ==================== EDIT MODAL ==================== -->
 <div id="editModal" class="modal">
     <div class="modalBox">
         <div class="modalHeader">
-            <h3>Edit Student Record</h3>
+            <h3>Edit Student Details</h3>
             <span class="closeX" onclick="closeModal('editModal')">&times;</span>
         </div>
         <form id="editForm" onsubmit="event.preventDefault(); saveEditedData();">
@@ -145,23 +145,51 @@
 
 <!-- ==================== TC FORM MODAL ==================== -->
 <div id="tcModal" class="modal">
-    <div class="modalBox" style="width:550px;">
+    <div class="modalBox" style="width:600px; border-top: 5px solid #ea580c;">
         <div class="modalHeader">
-            <h3>Transfer Certificate (स्थानांतरण प्रमाण पत्र)</h3>
+            <h3 style="color:#ea580c;">Transfer Certificate (स्थानांतरण प्रमाण पत्र)</h3>
             <span class="closeX" onclick="closeModal('tcModal')">&times;</span>
         </div>
-        <form id="tcForm" onsubmit="event.preventDefault(); saveTCData();">
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                <div><label>Student ID</label><input type="text" id="tcId" readonly style="width:100%; background:#f1f5f9;"></div>
-                <div><label>Student Name</label><input type="text" id="tcName" readonly style="width:100%; background:#f1f5f9;"></div>
-                <div><label>Class</label><input type="text" id="tcClass" readonly style="width:100%; background:#f1f5f9;"></div>
-                <div><label>Session</label><input type="text" id="tcSession" readonly style="width:100%; background:#f1f5f9;"></div>
-                <div><label>Initial Class *</label><input type="text" id="tcInitClass" required style="width:100%;" placeholder="e.g. Nursery"></div>
-                <div><label>Initial Date *</label><input type="text" id="tcInitDate" required style="width:100%;" placeholder="DD/MM/YYYY"></div>
-                <div style="grid-column: span 2;"><label>Date of Leaving *</label><input type="date" id="tcLeaveDate" required style="width:100%;"></div>
-                <div style="grid-column: span 2;"><label>Reason of Leaving</label><textarea id="tcReason" rows="2" style="width:100%;" placeholder="कारण लिखें..."></textarea></div>
+        <form id="tcSingleForm" onsubmit="event.preventDefault(); submitTCForm();">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                <div>
+                    <label style="font-weight:600; font-size:12px;">Student ID</label>
+                    <input type="text" id="tcStudentId" readonly style="width:100%; background:#f1f5f9; padding:8px; border:1px solid #ccc; border-radius:4px;">
+                </div>
+                <div>
+                    <label style="font-weight:600; font-size:12px;">Student Name</label>
+                    <input type="text" id="tcStudentName" readonly style="width:100%; background:#f1f5f9; padding:8px; border:1px solid #ccc; border-radius:4px;">
+                </div>
+                <div>
+                    <label style="font-weight:600; font-size:12px;">Father Name</label>
+                    <input type="text" id="tcFatherName" readonly style="width:100%; background:#f1f5f9; padding:8px; border:1px solid #ccc; border-radius:4px;">
+                </div>
+                <div>
+                    <label style="font-weight:600; font-size:12px;">Current Class</label>
+                    <input type="text" id="tcCurrentClass" readonly style="width:100%; background:#f1f5f9; padding:8px; border:1px solid #ccc; border-radius:4px;">
+                </div>
+                <div style="grid-column: span 2;">
+                    <label style="font-weight:600; font-size:12px;">Current Session</label>
+                    <input type="text" id="tcCurrentSession" readonly style="width:100%; background:#f1f5f9; padding:8px; border:1px solid #ccc; border-radius:4px;">
+                </div>
+                <div>
+                    <label style="font-weight:600; font-size:12px;">Initial Admission Class *</label>
+                    <input type="text" id="tcInitialClass" placeholder="e.g. Nursery, 1" required style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+                </div>
+                <div>
+                    <label style="font-weight:600; font-size:12px;">Initial Admission Date *</label>
+                    <input type="text" id="tcInitialDate" placeholder="DD/MM/YYYY" required style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+                </div>
+                <div style="grid-column: span 2;">
+                    <label style="font-weight:600; font-size:12px;">Date Of Leaving *</label>
+                    <input type="date" id="tcLeavingDate" required style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+                </div>
+                <div style="grid-column: span 2;">
+                    <label style="font-weight:600; font-size:12px;">Reason Of Leaving</label>
+                    <textarea id="tcReason" rows="2" placeholder="कारण लिखें..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;"></textarea>
+                </div>
             </div>
-            <div style="text-align:right; margin-top:18px;">
+            <div style="text-align:right; margin-top:18px; border-top:1px solid #eee; padding-top:12px;">
                 <button type="button" class="btnSm btnReset" onclick="closeModal('tcModal')">Cancel</button>
                 <button type="submit" class="btnSm btnOrange">Save TC Record</button>
             </div>
@@ -175,7 +203,6 @@
     })();
 
     function initManageModule() {
-        // सत्र ड्रॉपडाउन भरना
         fetch(`${SCRIPT_URL}?action=getAllSessions`)
         .then(r => r.json())
         .then(res => {
@@ -213,7 +240,7 @@
                 return;
             }
 
-            res.students.forEach((s, idx) => {
+            res.students.forEach((s) => {
                 const badgeCls = s.status === 'Active' ? 'badgeActive' : (s.status === 'Passout' ? 'badgePassout' : 'badgeInactive');
                 const photoSrc = s.photo || 'https://via.placeholder.com/40';
 
@@ -233,7 +260,7 @@
                             <div class="actionBtns">
                                 <button class="actBtn actView" onclick="openViewModal('${s.studentId}')">View</button>
                                 <button class="actBtn actEdit" onclick="openEditModal('${s.studentId}')">Edit</button>
-                                <button class="actBtn actTC" onclick="openTCModal('${s.studentId}', '${s.studentName}', '${s.fatherName}', '${s.studentClass}')">TC</button>
+                                <button class="actBtn actTC" onclick="openTCModalDirect('${s.studentId}', '${s.studentName}', '${s.fatherName}', '${s.studentClass}')">TC</button>
                             </div>
                         </td>
                     </tr>
@@ -261,6 +288,88 @@
         loadStudentsData();
     }
 
+    /* TC FORM LOGIC (SINGLE STUDENT) */
+    function openTCModalDirect(sId, name, father, cls) {
+        const ses = document.getElementById("msSessionFilter").value;
+        document.getElementById("tcStudentId").value = sId;
+        document.getElementById("tcStudentName").value = name;
+        document.getElementById("tcFatherName").value = father;
+        document.getElementById("tcCurrentClass").value = cls;
+        document.getElementById("tcCurrentSession").value = ses;
+        document.getElementById("tcInitialClass").value = "";
+        document.getElementById("tcInitialDate").value = "";
+        document.getElementById("tcLeavingDate").value = new Date().toISOString().split('T')[0];
+        document.getElementById("tcReason").value = "";
+        document.getElementById("tcModal").style.display = "flex";
+    }
+
+    function submitTCForm() {
+        const tcData = {
+            studentId: document.getElementById("tcStudentId").value.trim(),
+            studentName: document.getElementById("tcStudentName").value.trim(),
+            fatherName: document.getElementById("tcFatherName").value.trim(),
+            currentClass: document.getElementById("tcCurrentClass").value.trim(),
+            currentSession: document.getElementById("tcCurrentSession").value.trim(),
+            initialClass: document.getElementById("tcInitialClass").value.trim(),
+            initialDate: document.getElementById("tcInitialDate").value.trim(),
+            leavingDate: document.getElementById("tcLeavingDate").value,
+            reason: document.getElementById("tcReason").value.trim()
+        };
+
+        const params = new URLSearchParams();
+        params.append("action", "saveTC");
+        params.append("data", JSON.stringify(tcData));
+
+        fetch(SCRIPT_URL, { method: "POST", body: params })
+        .then(r => r.json())
+        .then(res => {
+            if (res.status === "SUCCESS") {
+                alert(`🎉 TC Saved Successfully!\nAssigned TC Number: ${res.tcNumber}`);
+                closeModal('tcModal');
+                loadStudentsData(); // छात्र का स्टेटस Inactive दिखेगा
+            } else {
+                alert("Error: " + res.message);
+            }
+        })
+        .catch(err => alert("Error: " + err.message));
+    }
+
+    /* EXCEL/CSV EXPORT */
+    function exportCsvData() {
+        const ses = document.getElementById("msSessionFilter").value;
+        if (!ses) {
+            alert("कृपया सत्र चुनें!");
+            return;
+        }
+
+        fetch(`${SCRIPT_URL}?action=exportStudents&session=${encodeURIComponent(ses)}`)
+        .then(r => r.json())
+        .then(res => {
+            if (res.status !== "SUCCESS" || !res.data || res.data.length <= 1) {
+                alert("इस सत्र के लिए कोई डेटा नहीं मिला।");
+                return;
+            }
+
+            let csvContent = "\uFEFF";
+            res.data.forEach(rowArr => {
+                let row = rowArr.map(val => {
+                    let text = String(val == null ? '' : val).replace(/"/g, '""');
+                    return `"${text}"`;
+                }).join(",");
+                csvContent += row + "\r\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `Students_${ses}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        })
+        .catch(err => alert("Export Error: " + err.message));
+    }
+
     /* VIEW MODAL */
     function openViewModal(studentId) {
         const ses = document.getElementById("msSessionFilter").value;
@@ -284,7 +393,6 @@
                             <tr><td style="padding:4px; font-weight:bold;">SR Number:</td><td>${d.srNumber}</td></tr>
                             <tr><td style="padding:4px; font-weight:bold;">Status:</td><td>${d.studentStatus}</td></tr>
                             <tr><td style="padding:4px; font-weight:bold;">Address:</td><td>${d.fullAddress}</td></tr>
-                            <tr><td style="padding:4px; font-weight:bold;">Affiliated School:</td><td>${d.actualSchoolName || 'Ambedkar Public School'}</td></tr>
                         </table>
                     </div>
                 `;
@@ -322,10 +430,9 @@
                         </select>
                     </div>
                     <div><label>SR Number</label><input type="text" id="edSR" value="${d.srNumber}" style="width:100%;"></div>
-                    <div><label>Aadhaar</label><input type="text" id="edAadhaar" value="${d.studentAadhaar}" style="width:100%;"></div>
+                    <div><label>Student ID</label><input type="text" value="${d.studentId}" readonly style="width:100%; background:#eee;"></div>
                     <div><label>PEN Number</label><input type="text" id="edPEN" value="${d.penNumber}" style="width:100%;"></div>
                     <div style="grid-column: span 3;"><label>Full Address</label><textarea id="edAddress" rows="2" style="width:100%;">${d.fullAddress}</textarea></div>
-                    <div style="grid-column: span 3;"><label>Actual School (ID Card)</label><input type="text" id="edSchool" value="${d.actualSchoolName || ''}" style="width:100%;"></div>
                     <input type="hidden" id="edPhoto" value="${d.photoLink || ''}">
                 `;
                 document.getElementById("editModal").style.display = "flex";
@@ -347,10 +454,9 @@
             primaryMobile: document.getElementById("edMobile").value,
             studentStatus: document.getElementById("edStatus").value,
             srNumber: document.getElementById("edSR").value,
-            studentAadhaar: document.getElementById("edAadhaar").value,
+            studentAadhaar: "",
             penNumber: document.getElementById("edPEN").value,
             fullAddress: document.getElementById("edAddress").value,
-            actualSchoolName: document.getElementById("edSchool").value,
             photoLink: document.getElementById("edPhoto").value
         };
 
@@ -362,7 +468,7 @@
         .then(r => r.json())
         .then(res => {
             if (res.status === "SUCCESS") {
-                alert("✅ छात्र रिकॉर्ड सफलतापूर्वक अपडेट हो गया!");
+                alert("✅ Record Updated Successfully!");
                 closeModal('editModal');
                 loadStudentsData();
             } else {
@@ -371,48 +477,9 @@
         });
     }
 
-    /* TC MODAL */
-    function openTCModal(sId, name, father, cls) {
-        document.getElementById("tcId").value = sId;
-        document.getElementById("tcName").value = name;
-        document.getElementById("tcFatherName").value = father;
-        document.getElementById("tcClass").value = cls;
-        document.getElementById("tcSession").value = document.getElementById("msSessionFilter").value;
-        document.getElementById("tcLeaveDate").value = new Date().toISOString().split('T')[0];
-        document.getElementById("tcModal").style.display = "flex";
-    }
-
-    function saveTCData() {
-        const payload = {
-            studentId: document.getElementById("tcId").value,
-            studentName: document.getElementById("tcName").value,
-            fatherName: document.getElementById("tcFatherName").value,
-            currentClass: document.getElementById("tcClass").value,
-            currentSession: document.getElementById("tcSession").value,
-            initialClass: document.getElementById("tcInitClass").value,
-            initialDate: document.getElementById("tcInitDate").value,
-            leavingDate: document.getElementById("tcLeaveDate").value,
-            reason: document.getElementById("tcReason").value
-        };
-
-        const params = new URLSearchParams();
-        params.append("action", "saveTC");
-        params.append("data", JSON.stringify(payload));
-
-        fetch(SCRIPT_URL, { method: "POST", body: params })
-        .then(r => r.json())
-        .then(res => {
-            if (res.status === "SUCCESS") {
-                alert(`✅ TC रिकॉर्ड सुरक्षित!\nGenerated TC Number: ${res.tcNumber}`);
-                closeModal('tcModal');
-            }
-        });
-    }
-
-    /* STUDENT PROMOTION */
     function triggerPromotion() {
         const curSes = document.getElementById("msSessionFilter").value;
-        if (!confirm(`क्या आप सत्र ${curSes} के सभी एक्टिव छात्रों को प्रमोट करना चाहते हैं?\n(कक्षा 8 वाले छात्र स्वतः Passout हो जाएँगे)`)) return;
+        if (!confirm(`क्या आप सत्र ${curSes} के सभी एक्टिव छात्रों को प्रमोट करना चाहते हैं?`)) return;
 
         const params = new URLSearchParams();
         params.append("action", "promoteStudents");
@@ -422,30 +489,12 @@
         .then(r => r.json())
         .then(res => {
             if (res.status === "SUCCESS") {
-                alert(`🎉 प्रमोशन सफल!\nPromoted: ${res.promoted} छात्र\nPassout: ${res.passout} छात्र\nअगला सत्र: ${res.nextSession}`);
+                alert(`🎉 Promotion Done! Promoted: ${res.promoted}, Passout: ${res.passout}`);
                 initManageModule();
             } else {
                 alert("Error: " + res.message);
             }
         });
-    }
-
-    /* BULK PRINTS TRIGGER */
-    function triggerBulkPrint(moduleName) {
-        const selected = [];
-        document.querySelectorAll(".rowCb:checked").forEach(cb => selected.push(cb.value));
-
-        if (selected.length === 0) {
-            alert("कृपया कम से कम एक छात्र को चुनें!");
-            return;
-        }
-
-        // ब्राउज़र मेमोरी में चयनित छात्रों की आईडी सहेजना
-        localStorage.setItem("selectedStudentsList", JSON.stringify(selected));
-        localStorage.setItem("selectedSessionForPrint", document.getElementById("msSessionFilter").value);
-
-        // संबंधित मॉड्यूल पर नेविगेट करना
-        navigateModule(moduleName, moduleName.toUpperCase());
     }
 
     function closeModal(mId) {
