@@ -28,7 +28,7 @@
 #printIDBtn { background: #16a34a; color: #fff; }
 #closeIDPrintBtn { background: #dc2626; color: #fff; }
 
-/* A4 SHEET (210mm x 297mm) - HOLDS 9 ID CARDS (3 x 3 GRID) */
+/* A4 SHEET (210mm x 297mm) - 9 CARDS (3x3 GRID) */
 .idA4Sheet {
     width: 210mm;
     height: 297mm;
@@ -60,61 +60,75 @@
     height: 80mm;
     box-sizing: border-box;
     position: relative;
-    border-radius: 6px;
+    border-radius: 8px;
     overflow: hidden;
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-position: center;
-    border: 0.5px solid #cbd5e1;
+    border: 0.5px solid #94a3b8;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* 15mm TOP HEADER */
+/* 🌟 15mm TOP HEADER (CLEAR WHITE & GOLD TEXT ON BLUE) */
 .idHeaderTop {
     height: 15mm;
     width: 100%;
     box-sizing: border-box;
-    padding: 1.5mm 2.5mm 0 2.5mm;
+    padding: 1mm 2mm 0 2mm;
     display: flex;
     align-items: center;
-    gap: 2mm;
+    gap: 1.5mm;
+    z-index: 2;
 }
 
 .idLogoImg {
-    width: 9.5mm;
-    height: 9.5mm;
+    width: 11mm;
+    height: 11mm;
     object-fit: contain;
     flex-shrink: 0;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
 }
 
 .idSchoolMeta {
     flex: 1;
     text-align: center;
-    line-height: 1.1;
+    line-height: 1.15;
     overflow: hidden;
+    padding-right: 1mm;
 }
 
 .idSchoolTitle {
-    font-size: 5.5pt;
+    font-size: 6.5pt;
     font-weight: 900;
-    color: #0b3c5d;
+    color: #ffffff;
     text-transform: uppercase;
-    white-space: nowrap;
+    letter-spacing: 0.2px;
+    white-space: normal;
+    line-height: 1.1;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .idSchoolSub {
-    font-size: 3.5pt;
+    font-size: 4pt;
     font-weight: 700;
-    color: #333;
-    white-space: nowrap;
+    color: #fef08a;
+    line-height: 1.1;
+    margin-top: 0.5mm;
+    text-shadow: 0 1px 1.5px rgba(0,0,0,0.7);
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
 }
 
-/* 45mm x 60mm INNER CONTENT AREA (2.5mm SIDES MARGIN) */
+/* 🌟 45mm x 60mm INNER CONTENT AREA */
 .idMainContent {
     width: 45mm;
     height: 60mm;
@@ -123,50 +137,56 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
+    z-index: 2;
 }
 
-/* PHOTO & NAME */
+/* BIGGER PHOTO & BOLD NAME */
 .idPhotoFrame {
-    width: 17mm;
-    height: 21mm;
-    border: 1px solid #0284c7;
-    border-radius: 3px;
+    width: 20mm;
+    height: 24mm;
+    border: 1.5px solid #0284c7;
+    border-radius: 4px;
     overflow: hidden;
     background: #f8fafc;
-    margin-top: 1mm;
+    margin-top: 1.5mm;
     flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
 .idPhotoFrame img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
 .idStudentName {
-    font-size: 6.5pt;
+    font-size: 7.5pt;
     font-weight: 900;
     color: #991b1b;
     text-transform: uppercase;
     text-align: center;
     margin: 1.5mm 0 1mm 0;
-    line-height: 1;
+    line-height: 1.1;
     width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    letter-spacing: 0.3px;
 }
 
-/* DETAILS TABLE */
+/* RICH & BALANCED DETAILS GRID */
 .idDetailsGrid {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0.7mm;
-    font-size: 4pt;
+    gap: 0.8mm;
+    font-size: 4.6pt;
     line-height: 1.15;
     color: #0f172a;
     font-weight: 700;
+    padding: 0 0.5mm;
 }
 
 .idRow {
@@ -175,18 +195,21 @@
 }
 
 .idLbl {
-    width: 15mm;
+    width: 17mm;
     flex-shrink: 0;
     color: #000;
+    font-weight: 800;
 }
 
 .idVal {
     flex: 1;
+    font-weight: 800;
+    color: #1e293b;
     white-space: normal;
     word-break: break-word;
 }
 
-/* QR CODE AREA */
+/* BOTTOM QR CODE */
 .idQrRow {
     width: 100%;
     margin-top: auto;
@@ -196,10 +219,12 @@
 }
 
 .idQrCode {
-    width: 9.5mm;
-    height: 9.5mm;
+    width: 11mm;
+    height: 11mm;
     border: 0.5px solid #fff;
     border-radius: 2px;
+    background: #fff;
+    padding: 0.3mm;
 }
 
 /* 5mm BOTTOM SPACE */
@@ -258,7 +283,6 @@ function renderSingleIDCard(item) {
     const st = item.student;
     const sch = item.school;
 
-    // QR Code डेटा (छात्र का नाम और पिता का नाम)
     const qrText = encodeURIComponent(`Name: ${st.studentName}\nFather: ${st.fatherName}`);
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${qrText}`;
 
@@ -268,16 +292,16 @@ function renderSingleIDCard(item) {
 
     return `
         <div class="idCardBox" style="background-image: url('${bgImage}');">
-            <!-- 15mm Top Header -->
+            <!-- 15mm Header -->
             <div class="idHeaderTop">
                 <img src="${logoSrc}" class="idLogoImg">
                 <div class="idSchoolMeta">
                     <div class="idSchoolTitle">${sch.schoolName}</div>
-                    <div class="idSchoolSub">${sch.schoolAddress} ${sch.contactNumber}</div>
+                    <div class="idSchoolSub">${sch.schoolAddress} &nbsp;Mob: ${sch.contactNumber}</div>
                 </div>
             </div>
 
-            <!-- 45mm x 60mm Inner Content -->
+            <!-- 45mm x 60mm Content -->
             <div class="idMainContent">
                 <div class="idPhotoFrame">
                     <img src="${photoSrc}">
@@ -309,7 +333,7 @@ function renderIDCardSheets(studentsArray) {
     const container = document.getElementById("idPrintContainer");
     container.innerHTML = "";
 
-    // 1 A4 पेज पर ठीक 9 कार्ड्स
+    // 1 A4 पर ठीक 9 कार्ड
     for (let i = 0; i < studentsArray.length; i += 9) {
         const batch = studentsArray.slice(i, i + 9);
         let cardsHtml = "";
@@ -385,7 +409,7 @@ function executeSafeIDPrint() {
                     height: 80mm;
                     box-sizing: border-box;
                     position: relative;
-                    border-radius: 6px;
+                    border-radius: 8px;
                     overflow: hidden;
                     background-size: 100% 100%;
                     background-repeat: no-repeat;
@@ -393,21 +417,21 @@ function executeSafeIDPrint() {
                     display: flex;
                     flex-direction: column;
                 }
-                .idHeaderTop { height: 15mm; width: 100%; box-sizing: border-box; padding: 1.5mm 2.5mm 0 2.5mm; display: flex; align-items: center; gap: 2mm; }
-                .idLogoImg { width: 9.5mm; height: 9.5mm; object-fit: contain; flex-shrink: 0; }
-                .idSchoolMeta { flex: 1; text-align: center; line-height: 1.1; overflow: hidden; }
-                .idSchoolTitle { font-size: 5.5pt; font-weight: 900; color: #0b3c5d; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-                .idSchoolSub { font-size: 3.5pt; font-weight: 700; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-                .idMainContent { width: 45mm; height: 60mm; margin: 0 auto; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; }
-                .idPhotoFrame { width: 17mm; height: 21mm; border: 1px solid #0284c7; border-radius: 3px; overflow: hidden; background: #f8fafc; margin-top: 1mm; flex-shrink: 0; }
-                .idPhotoFrame img { width: 100%; height: 100%; object-fit: cover; }
-                .idStudentName { font-size: 6.5pt; font-weight: 900; color: #991b1b; text-transform: uppercase; text-align: center; margin: 1.5mm 0 1mm 0; line-height: 1; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-                .idDetailsGrid { width: 100%; display: flex; flex-direction: column; gap: 0.7mm; font-size: 4pt; line-height: 1.15; color: #0f172a; font-weight: 700; }
+                .idHeaderTop { height: 15mm; width: 100%; box-sizing: border-box; padding: 1mm 2mm 0 2mm; display: flex; align-items: center; gap: 1.5mm; z-index: 2; }
+                .idLogoImg { width: 11mm; height: 11mm; object-fit: contain; flex-shrink: 0; }
+                .idSchoolMeta { flex: 1; text-align: center; line-height: 1.15; overflow: hidden; padding-right: 1mm; }
+                .idSchoolTitle { font-size: 6.5pt; font-weight: 900; color: #ffffff !important; text-transform: uppercase; line-height: 1.1; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
+                .idSchoolSub { font-size: 4pt; font-weight: 700; color: #fef08a !important; line-height: 1.1; margin-top: 0.5mm; text-shadow: 0 1px 1.5px rgba(0,0,0,0.7); }
+                .idMainContent { width: 45mm; height: 60mm; margin: 0 auto; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; }
+                .idPhotoFrame { width: 20mm; height: 24mm; border: 1.5px solid #0284c7; border-radius: 4px; overflow: hidden; background: #f8fafc; margin-top: 1.5mm; flex-shrink: 0; }
+                .idPhotoFrame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+                .idStudentName { font-size: 7.5pt; font-weight: 900; color: #991b1b !important; text-transform: uppercase; text-align: center; margin: 1.5mm 0 1mm 0; line-height: 1.1; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+                .idDetailsGrid { width: 100%; display: flex; flex-direction: column; gap: 0.8mm; font-size: 4.6pt; line-height: 1.15; color: #0f172a; font-weight: 700; padding: 0 0.5mm; }
                 .idRow { display: flex; align-items: flex-start; }
-                .idLbl { width: 15mm; flex-shrink: 0; color: #000; }
-                .idVal { flex: 1; white-space: normal; word-break: break-word; }
+                .idLbl { width: 17mm; flex-shrink: 0; color: #000; font-weight: 800; }
+                .idVal { flex: 1; font-weight: 800; color: #1e293b; white-space: normal; word-break: break-word; }
                 .idQrRow { width: 100%; margin-top: auto; display: flex; align-items: flex-end; padding-bottom: 0.5mm; }
-                .idQrCode { width: 9.5mm; height: 9.5mm; }
+                .idQrCode { width: 11mm; height: 11mm; border: 0.5px solid #fff; border-radius: 2px; background: #fff; padding: 0.3mm; }
                 .idBottomSpace { height: 5mm; width: 100%; flex-shrink: 0; }
             </style>
         </head>
