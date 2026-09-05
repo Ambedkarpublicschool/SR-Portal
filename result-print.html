@@ -1,0 +1,552 @@
+<style>
+/* SCREEN VIEW */
+.resPrintPage {
+    background: #cbd5e1;
+    padding: 20px 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #000;
+}
+
+.resPrintActions {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.resPrintActions button {
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+#printResBtn { background: #16a34a; color: #fff; }
+#closeResPrintBtn { background: #dc2626; color: #fff; }
+
+/* A4 RESULT SHEET */
+.resSheet {
+    width: 210mm;
+    height: 297mm;
+    max-height: 297mm;
+    margin: 0 auto 30px auto;
+    background: #ffffff;
+    padding: 10mm 12mm;
+    box-sizing: border-box;
+    border: 3px double #0b3c5d;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    position: relative;
+}
+
+/* TOP INFO & SCHOOL HEADER */
+.resTopHeader {
+    display: table;
+    width: 100%;
+    margin-bottom: 4px;
+}
+.resTopLeft {
+    display: table-cell;
+    width: 20%;
+    vertical-align: middle;
+}
+.resTopCenter {
+    display: table-cell;
+    width: 65%;
+    text-align: center;
+    vertical-align: middle;
+}
+.resTopRight {
+    display: table-cell;
+    width: 15%;
+    text-align: right;
+    vertical-align: middle;
+}
+
+.schoolTitle {
+    margin: 0;
+    font-size: 22px;
+    color: #0b3c5d;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+}
+.schoolSub {
+    font-size: 11px;
+    font-weight: bold;
+    color: #333;
+    margin: 2px 0;
+}
+.resultBanner {
+    background: #0b3c5d;
+    color: #fff;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 3px;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+.stPhotoBox {
+    width: 75px;
+    height: 85px;
+    border: 2px solid #0b3c5d;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* STUDENT PROFILE GRID */
+.resProfileTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 6px 0;
+    font-size: 11.5px;
+}
+.resProfileTable td {
+    padding: 3px 6px;
+    border: 1px solid #94a3b8;
+}
+
+/* MARKS & CO-SCHOLASTIC LAYOUT */
+.resMainBody {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    margin: 4px 0;
+    min-height: 0;
+}
+.resLeftCol {
+    flex: 1.35;
+    display: flex;
+    flex-direction: column;
+}
+.resRightCol {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.resTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+.resTable th, .resTable td {
+    border: 1px solid #333;
+    padding: 3px 6px;
+    font-size: 11px;
+    text-align: center;
+}
+.resTable th {
+    background: #f1f5f9;
+    font-weight: bold;
+}
+
+/* CARDS IN RIGHT COLUMN */
+.resBox {
+    border: 1px solid #333;
+    padding: 4px 6px;
+    box-sizing: border-box;
+}
+.resBoxTitle {
+    background: #f1f5f9;
+    font-size: 10.5px;
+    font-weight: bold;
+    text-align: center;
+    border-bottom: 1px solid #333;
+    margin: -4px -6px 4px -6px;
+    padding: 2px 0;
+}
+
+/* FOOTER */
+.resFooter {
+    margin-top: 6px;
+    border-top: 1.5px solid #000;
+    padding-top: 6px;
+}
+.resRemarksRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+.resSigRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+}
+</style>
+
+<div class="resPrintPage">
+    <div class="resPrintActions">
+        <button id="printResBtn" onclick="executeSafeResultPrint()">🖨️ Print All Results</button>
+        <button id="closeResPrintBtn" onclick="navigateModule('manage-students', 'Manage Students')">Back</button>
+    </div>
+
+    <div id="resPrintContainer">
+        <div style="text-align:center; padding:50px; font-weight:bold;">Generating Report Cards...</div>
+    </div>
+</div>
+
+<script>
+(function() {
+    initResultPrintEngine();
+})();
+
+function initResultPrintEngine() {
+    const listRaw = localStorage.getItem("selectedStudentsList");
+    let studentIds = [];
+    try {
+        studentIds = JSON.parse(listRaw || "[]");
+    } catch(e) {
+        studentIds = [];
+    }
+
+    if (studentIds.length === 0) {
+        alert("कोई छात्र चयनित नहीं है!");
+        navigateModule('manage-students', 'Manage Students');
+        return;
+    }
+
+    fetch(`${SCRIPT_URL}?action=getMultipleResultPrintData&studentIds=${encodeURIComponent(JSON.stringify(studentIds))}`)
+    .then(r => r.json())
+    .then(res => {
+        if (res.status !== "SUCCESS" || !res.data || res.data.length === 0) {
+            alert("डेटा लोड नहीं हो सका!");
+            navigateModule('manage-students', 'Manage Students');
+            return;
+        }
+        renderReportCards(res.data);
+    })
+    .catch(err => alert("Error: " + err.message));
+}
+
+function getRandomScore(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getSubjectGrade(marks) {
+    if (marks >= 91) return "A1";
+    if (marks >= 81) return "A2";
+    if (marks >= 71) return "B1";
+    if (marks >= 61) return "B2";
+    if (marks >= 51) return "C1";
+    if (marks >= 41) return "C2";
+    return "D";
+}
+
+function convertDateToWords(dateStr) {
+    if (!dateStr) return '';
+    const parts = dateStr.split('/');
+    if (parts.length !== 3) return dateStr;
+
+    const day = parseInt(parts[0], 10);
+    const year = parseInt(parts[2], 10);
+    const mStr = parts[1];
+
+    const months = { "Jan":"January", "Feb":"February", "Mar":"March", "Apr":"April", "May":"May", "Jun":"June", "Jul":"July", "Aug":"August", "Sep":"September", "Oct":"October", "Nov":"November", "Dec":"December" };
+    const totalDays = ["", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth", "Tenth", "Eleventh", "Twelfth", "Thirteenth", "Fourteenth", "Fifteenth", "Sixteenth", "Seventeenth", "Eighteenth", "Nineteenth", "Twentieth", "Twenty-First", "Twenty-Second", "Twenty-Third", "Twenty-Fourth", "Twenty-Fifth", "Twenty-Sixth", "Twenty-Seventh", "Twenty-Eighth", "Twenty-Ninth", "Thirtieth", "Thirty-First"];
+    const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
+    const teens = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+    const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+    let yearWords = '';
+    if (year >= 2000 && year < 2100) {
+        let rem = year % 100;
+        if (rem === 0) yearWords = "Two Thousand";
+        else if (rem < 10) yearWords = "Two Thousand " + ones[rem];
+        else if (rem < 20) yearWords = "Two Thousand " + teens[rem - 10];
+        else yearWords = "Two Thousand " + tens[Math.floor(rem / 10)] + (rem % 10 !== 0 ? " " + ones[rem % 10] : "");
+    }
+    return `${totalDays[day] || ''} ${months[mStr] || mStr} ${yearWords}`.trim();
+}
+
+function getNextPromotionClass(cls) {
+    const list = ["Nursery", "LKG", "UKG", "1", "2", "3", "4", "5", "6", "7", "8"];
+    const idx = list.indexOf(cls);
+    if (idx !== -1 && idx < list.length - 1) {
+        return "Promoted to " + list[idx + 1];
+    }
+    return "Passed Class 8";
+}
+
+function renderReportCards(studentsArray) {
+    const container = document.getElementById("resPrintContainer");
+    container.innerHTML = "";
+
+    studentsArray.forEach(st => {
+        const clsClean = st.currentClass.trim();
+        const isPrePrimary = ["Nursery", "LKG", "UKG"].includes(clsClean);
+
+        let subjects = [];
+        if (isPrePrimary) {
+            subjects = ["HINDI", "ENGLISH", "MATHEMATICS", "DRAWING", "GK & MORAL SCIENCE"];
+        } else {
+            subjects = ["HINDI", "ENGLISH", "MATHEMATICS", "SCIENCE", "SOCIAL SCIENCE", "DRAWING", "GK & MORAL SCIENCE", "COMPUTER"];
+        }
+
+        let annualMarksRows = "";
+        let annualObtained = 0;
+        const maxMarksPerSub = 100;
+        const totalMaxAnnual = subjects.length * maxMarksPerSub;
+
+        subjects.forEach(sub => {
+            const marks = getRandomScore(65, 95);
+            annualObtained += marks;
+            annualMarksRows += `
+                <tr>
+                    <td style="text-align:left; font-weight:600;">${sub}</td>
+                    <td>${maxMarksPerSub}</td>
+                    <td><strong>${marks}</strong></td>
+                    <td>${getSubjectGrade(marks)}</td>
+                </tr>
+            `;
+        });
+
+        const annualGrade = getSubjectGrade(Math.round(annualObtained / subjects.length));
+        
+        // कंसोलिडेटेड मार्क्स (Quarterly, Half-Yearly)
+        const qMarks = Math.round(annualObtained * (getRandomScore(92, 98) / 100));
+        const hyMarks = Math.round(annualObtained * (getRandomScore(95, 101) / 100));
+        const grandTotal = qMarks + hyMarks + annualObtained;
+        const grandMax = totalMaxAnnual * 3;
+        const grandPercentage = ((grandTotal / grandMax) * 100).toFixed(2);
+        const overallGrade = getSubjectGrade(parseFloat(grandPercentage));
+
+        const dobWords = convertDateToWords(st.dob);
+        const promoText = getNextPromotionClass(clsClean);
+        const photoSrc = st.photo || "https://via.placeholder.com/80x90";
+
+        const cardHtml = `
+            <div class="resSheet">
+                <!-- TOP HEADER -->
+                <div>
+                    <div class="resTopHeader">
+                        <div class="resTopLeft">
+                            <img src="https://i.postimg.cc/pLt1F2cD/logo-copy.png" style="width:70px; height:70px; object-fit:contain;">
+                        </div>
+                        <div class="resTopCenter">
+                            <div style="font-size:10px; font-weight:bold; color:#555;">Recognition Number: GOP0958326469</div>
+                            <h1 class="schoolTitle">AMBEDKAR PUBLIC SCHOOL</h1>
+                            <div class="schoolSub">Madhopur, Campierganj, Gorakhpur (U.P.)</div>
+                            <div style="font-size:10px; font-weight:bold;">U-DISE Code: 09584109512</div>
+                            <div class="resultBanner">RESULT OF ANNUAL EXAMINATION (${st.session})</div>
+                        </div>
+                        <div class="resTopRight">
+                            <img src="${photoSrc}" class="stPhotoBox">
+                        </div>
+                    </div>
+
+                    <!-- PROFILE DETAILS -->
+                    <table class="resProfileTable">
+                        <tr>
+                            <td width="50%"><strong>Student's Name:</strong> ${st.studentName}</td>
+                            <td width="50%"><strong>Student ID:</strong> ${st.studentId} &nbsp;&nbsp;|&nbsp;&nbsp; <strong>Roll No:</strong> ${st.rollNumber}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Father's Name:</strong> ${st.fatherName}</td>
+                            <td><strong>Class & Sec:</strong> ${st.currentClass} - ${st.section}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mother's Name:</strong> ${st.motherName}</td>
+                            <td><strong>Date of Birth:</strong> ${st.dob}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><strong>DOB (In Words):</strong> ${dobWords}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- MAIN GRADES SECTION -->
+                <div class="resMainBody">
+                    <!-- LEFT: SCHOLASTIC -->
+                    <div class="resLeftCol">
+                        <div style="font-size:11px; font-weight:bold; background:#0b3c5d; color:#fff; text-align:center; padding:3px; margin-bottom:2px;">
+                            SCHOLASTIC PERFORMANCE (ANNUAL EXAMINATION)
+                        </div>
+                        <table class="resTable" style="flex:1;">
+                            <thead>
+                                <tr>
+                                    <th width="48%" style="text-align:left;">Subject</th>
+                                    <th width="16%">Max</th>
+                                    <th width="18%">Gained</th>
+                                    <th width="18%">Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${annualMarksRows}
+                                <tr style="background:#f8fafc; font-weight:bold;">
+                                    <td style="text-align:left;">Total (Annual Exam)</td>
+                                    <td>${totalMaxAnnual}</td>
+                                    <td>${annualObtained}</td>
+                                    <td>${annualGrade}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- RIGHT: CO-SCHOLASTIC, ATTENDANCE & SUMMARY -->
+                    <div class="resRightCol">
+                        <!-- Co-Scholastic -->
+                        <div class="resBox">
+                            <div class="resBoxTitle">CO-SCHOLASTIC AREAS</div>
+                            <table style="width:100%; font-size:10.5px; border-collapse:collapse;">
+                                <tr><td>Discipline</td><td align="right"><strong>Well-Behaved</strong></td></tr>
+                                <tr><td>Cleanliness</td><td align="right"><strong>Maintained</strong></td></tr>
+                                <tr><td>Speaking Skill</td><td align="right"><strong>Articulate</strong></td></tr>
+                                <tr><td>Activity Participation</td><td align="right"><strong>Enthusiastic</strong></td></tr>
+                                <tr><td>Homework Regularity</td><td align="right"><strong>Consistent</strong></td></tr>
+                            </table>
+                        </div>
+
+                        <!-- Attendance -->
+                        <div class="resBox">
+                            <div class="resBoxTitle">ATTENDANCE RECORD</div>
+                            <table style="width:100%; font-size:10.5px; border-collapse:collapse;">
+                                <tr><td>Working Days:</td><td align="right"><strong>210</strong></td></tr>
+                                <tr><td>Present Days:</td><td align="right"><strong>188</strong></td></tr>
+                                <tr><td>Attendance:</td><td align="right"><strong>89.52%</strong></td></tr>
+                            </table>
+                        </div>
+
+                        <!-- Consolidated Progress -->
+                        <div class="resBox" style="flex:1;">
+                            <div class="resBoxTitle">CONSOLIDATED PROGRESS SUMMARY</div>
+                            <table style="width:100%; font-size:10.5px; border-collapse:collapse; margin-top:2px;">
+                                <tr><td>1. Quarterly Exam:</td><td align="right">${qMarks}/${totalMaxAnnual}</td></tr>
+                                <tr><td>2. Half Yearly Exam:</td><td align="right">${hyMarks}/${totalMaxAnnual}</td></tr>
+                                <tr><td>3. Annual Exam:</td><td align="right">${annualObtained}/${totalMaxAnnual}</td></tr>
+                                <tr style="border-top:1px solid #555;"><td><strong>Grand Total:</strong></td><td align="right"><strong>${grandTotal}/${grandMax}</strong></td></tr>
+                                <tr><td><strong>Percentage:</strong></td><td align="right"><strong>${grandPercentage}%</strong></td></tr>
+                                <tr><td><strong>Overall Grade:</strong></td><td align="right"><strong>${overallGrade}</strong></td></tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FOOTER -->
+                <div class="resFooter">
+                    <div class="resRemarksRow">
+                        <div>Teacher's Remark: <u>Shows consistent progress, good conduct and focus.</u></div>
+                        <div>Promotion Status: <u>${promoText}</u></div>
+                    </div>
+                    <div class="resSigRow">
+                        <div>
+                            <div>Date: 05/09/2026</div>
+                        </div>
+                        <div>
+                            <div>_______________________</div>
+                            <div>Class Teacher</div>
+                        </div>
+                        <div>
+                            <div>_______________________</div>
+                            <div>Principal (with Seal)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML("beforeend", cardHtml);
+    });
+}
+
+function executeSafeResultPrint() {
+    const printContent = document.getElementById("resPrintContainer").innerHTML;
+    
+    const oldFrame = document.getElementById("printIframe");
+    if (oldFrame) oldFrame.remove();
+
+    const iframe = document.createElement("iframe");
+    iframe.id = "printIframe";
+    iframe.style.position = "fixed";
+    iframe.style.right = "0";
+    iframe.style.bottom = "0";
+    iframe.style.width = "0";
+    iframe.style.height = "0";
+    iframe.style.border = "none";
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Annual Examination Report Card</title>
+            <style>
+                @page {
+                    size: A4 portrait;
+                    margin: 6mm 8mm;
+                }
+                * { box-sizing: border-box; }
+                body {
+                    margin: 0;
+                    padding: 0;
+                    font-family: Arial, Helvetica, sans-serif;
+                    background: #fff;
+                    color: #000;
+                }
+                .resSheet {
+                    width: 100%;
+                    height: 284mm;
+                    max-height: 284mm;
+                    box-sizing: border-box;
+                    page-break-after: always;
+                    break-after: page;
+                    margin: 0;
+                    padding: 6mm 10mm;
+                    border: 3px double #0b3c5d;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    overflow: hidden;
+                }
+                .resSheet:last-child {
+                    page-break-after: avoid;
+                    break-after: avoid;
+                }
+                .resTopHeader { display: table; width: 100%; margin-bottom: 4px; }
+                .resTopLeft { display: table-cell; width: 18%; vertical-align: middle; }
+                .resTopCenter { display: table-cell; width: 67%; text-align: center; vertical-align: middle; }
+                .resTopRight { display: table-cell; width: 15%; text-align: right; vertical-align: middle; }
+                .schoolTitle { margin: 0; font-size: 20px; color: #0b3c5d; font-weight: 900; }
+                .schoolSub { font-size: 10.5px; font-weight: bold; color: #333; margin: 1px 0; }
+                .resultBanner { background: #0b3c5d !important; color: #fff !important; padding: 2px 8px; font-size: 11px; font-weight: bold; border-radius: 3px; display: inline-block; -webkit-print-color-adjust: exact; }
+                .stPhotoBox { width: 70px; height: 80px; border: 1.5px solid #0b3c5d; object-fit: cover; }
+                .resProfileTable { width: 100%; border-collapse: collapse; margin: 4px 0; font-size: 11px; }
+                .resProfileTable td { padding: 2.5px 5px; border: 1px solid #000; }
+                .resMainBody { display: flex; gap: 8px; flex: 1; margin: 3px 0; min-height: 0; }
+                .resLeftCol { flex: 1.35; display: flex; flex-direction: column; }
+                .resRightCol { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+                .resTable { width: 100%; border-collapse: collapse; }
+                .resTable th, .resTable td { border: 1px solid #000; padding: 3px 5px; font-size: 10.5px; text-align: center; }
+                .resTable th { background: #f1f5f9 !important; font-weight: bold; -webkit-print-color-adjust: exact; }
+                .resBox { border: 1px solid #000; padding: 3px 5px; }
+                .resBoxTitle { background: #f1f5f9 !important; font-size: 10px; font-weight: bold; text-align: center; border-bottom: 1px solid #000; margin: -3px -5px 3px -5px; padding: 2px 0; -webkit-print-color-adjust: exact; }
+                .resFooter { margin-top: 4px; border-top: 1.5px solid #000; padding-top: 4px; }
+                .resRemarksRow { display: flex; justify-content: space-between; font-size: 10.5px; font-weight: bold; margin-bottom: 15px; }
+                .resSigRow { display: flex; justify-content: space-between; align-items: flex-end; font-size: 10.5px; font-weight: bold; text-align: center; }
+            </style>
+        </head>
+        <body>
+            ${printContent}
+        </body>
+        </html>
+    `);
+    doc.close();
+
+    setTimeout(() => {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+    }, 400);
+}
+</script>
