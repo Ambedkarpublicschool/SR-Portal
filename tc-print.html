@@ -1,7 +1,5 @@
 <style>
-/* ==========================================================================
-   PAGE & GENERAL LAYOUT
-   ========================================================================== */
+/* PAGE & GENERAL LAYOUT */
 .tcPrintPage {
     background: #f4f6f9;
     padding: 20px;
@@ -266,6 +264,17 @@ function initTCPrintEngine() {
     });
 }
 
+/**
+ * 1 अप्रैल या रविवार होने पर अगला कार्य दिवस (Working Day) निकालने का लॉजिक
+ */
+function getSmartAdmissionDate(year) {
+    const d = new Date(year, 3, 1); // 1 April (Month 3 in JS is April)
+    if (d.getDay() === 0) { // Sunday
+        return `02-04-${year}`;
+    }
+    return `01-04-${year}`;
+}
+
 function convertDateToWords(dateStr) {
     if (!dateStr) return '';
     const parts = dateStr.split('-');
@@ -288,6 +297,13 @@ function convertDateToWords(dateStr) {
         else if (rem < 10) yearWords = "Two Thousand " + ones[rem];
         else if (rem < 20) yearWords = "Two Thousand " + teens[rem - 10];
         else yearWords = "Two Thousand " + tens[Math.floor(rem / 10)] + (rem % 10 !== 0 ? " " + ones[rem % 10] : "");
+    } else if (year >= 1900 && year < 2000) {
+        let secondPart = year % 100; 
+        let secondPartWords = "";
+        if (secondPart < 10 && secondPart > 0) secondPartWords = "Zero " + ones[secondPart];
+        else if (secondPart >= 10 && secondPart < 20) secondPartWords = teens[secondPart - 10];
+        else if (secondPart >= 20) secondPartWords = tens[Math.floor(secondPart / 10)] + (secondPart % 10 !== 0 ? " " + ones[secondPart % 10] : "");
+        yearWords = "Nineteen " + secondPartWords;
     } else {
         yearWords = year.toString(); 
     }
@@ -322,23 +338,44 @@ function renderTCSheets(studentsArray) {
         let tableRowsHtml = "";
         let baseYear = parseInt(lastSes.split("-")[0], 10) || 2026;
 
+        // वर्तमान कक्षा छोड़ने की तिथि
+        const finalLeavingDate = data.tc.leavingDate || `31-03-${baseYear + 1}`;
+
+        // चेक: क्या अंतिम छोड़ने की तिथि 31 मार्च से पहले की है?
+        let isBeforeMarch31 = false;
+        if (data.tc.leavingDate) {
+            const parts = data.tc.leavingDate.split("-");
+            if (parts.length === 3) {
+                const lDay = parseInt(parts[0], 10);
+                const lMonth = parseInt(parts[1], 10);
+                // यदि महीना मार्च (3) से पहले है या मार्च में 31 से पहले है, अथवा वर्ष पहले का है
+                if (lMonth < 3 || (lMonth === 3 && lDay < 31) || (lMonth > 3 && parseInt(parts[2], 10) === baseYear)) {
+                    isBeforeMarch31 = true;
+                }
+            }
+        }
+
         schoolClasses.forEach((clsName, idx) => {
             if (idx >= startIdx && idx <= endIdx) {
                 const diff = endIdx - idx;
                 const clsStartYear = baseYear - diff;
                 const clsEndYear = clsStartYear + 1;
                 const calculatedSession = `${clsStartYear}-${clsEndYear}`;
-                const admDate = `01-04-${clsStartYear}`;
-                const leavDate = (idx === endIdx) ? (data.tc.classLeavingDate || `31-03-${clsEndYear}`) : `31-03-${clsEndYear}`;
+                
+                // स्वतः निर्मित प्रवेश तिथि (1st April या Sunday पर Next Working Day)
+                const admDate = getSmartAdmissionDate(clsStartYear);
 
                 if (idx === endIdx) {
+                    // अंतिम कक्षा के लिए परिणाम: 31 मार्च से पूर्व छोड़ने पर Studying, अन्यथा Pass
+                    const finalResult = isBeforeMarch31 ? "Studying" : "Pass";
+
                     tableRowsHtml += `
                         <tr style="font-weight:bold;">
                             <td>${clsName}</td>
                             <td>${lastSes}</td>
-                            <td>${data.tc.admissionDate || admDate}</td>
-                            <td>${data.tc.leavingDate || leavDate}</td>
-                            <td>${data.tc.result || 'Pass'}</td>
+                            <td>${admDate}</td>
+                            <td>${finalLeavingDate}</td>
+                            <td>${finalResult}</td>
                             <td>${data.tc.remarks || 'Good'}</td>
                         </tr>
                     `;
@@ -348,7 +385,7 @@ function renderTCSheets(studentsArray) {
                             <td>${clsName}</td>
                             <td>${calculatedSession}</td>
                             <td>${admDate}</td>
-                            <td>${leavDate}</td>
+                            <td>31-03-${clsEndYear}</td>
                             <td>Pass</td>
                             <td>Good</td>
                         </tr>
