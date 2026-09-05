@@ -104,7 +104,7 @@
     padding-bottom: 2px;
 }
 
-/* TABLES (STATIC TOP & BOTTOM) */
+/* TABLES */
 .tcMetaTable, .tcInfoTable, .tcLeavingTable {
     width: 100%;
     border-collapse: collapse;
@@ -139,7 +139,7 @@
     flex-shrink: 0;
 }
 
-/* DYNAMIC ACADEMIC HISTORY CONTAINER (FLEXIBLE HEIGHT) */
+/* DYNAMIC ACADEMIC HISTORY CONTAINER */
 .tcAcademicWrapper {
     flex: 1;
     display: flex;
@@ -184,7 +184,7 @@
     flex-shrink: 0;
 }
 
-/* SIGNATURES (LOCKED TO BOTTOM) */
+/* SIGNATURES */
 .tcSignatureArea {
     display: table;
     width: 100%;
@@ -333,24 +333,7 @@ function renderTCSheets(studentsArray) {
 
         let baseYear = parseInt(lastSes.split("-")[0], 10) || 2026;
         const finalLeavingDate = data.tc.leavingDate || `31-03-${baseYear + 1}`;
-
-        let isLeavingMidSession = false;
-        if (data.tc.leavingDate) {
-            const parts = data.tc.leavingDate.split("-");
-            if (parts.length === 3) {
-                const lDay = parseInt(parts[0], 10);
-                const lMonth = parseInt(parts[1], 10);
-                const lYear = parseInt(parts[2], 10);
-
-                if (lYear === baseYear) {
-                    isLeavingMidSession = true;
-                } else if (lYear === (baseYear + 1)) {
-                    if (lMonth < 3 || (lMonth === 3 && lDay < 31)) {
-                        isLeavingMidSession = true;
-                    }
-                }
-            }
-        }
+        const finalResult = data.tc.finalResult || "Studying";
 
         let tableRowsHtml = "";
 
@@ -364,8 +347,6 @@ function renderTCSheets(studentsArray) {
                 const admDate = getSmartAdmissionDate(clsStartYear);
 
                 if (idx === endIdx) {
-                    const finalResult = isLeavingMidSession ? "Studying" : "Pass";
-
                     tableRowsHtml += `
                         <tr style="font-weight:bold;">
                             <td>${clsName}</td>
@@ -421,7 +402,7 @@ function renderTCSheets(studentsArray) {
 
                 <table class="tcMetaTable">
                     <tr>
-                        <td><span class="lbl">TC Number:</span> <strong>${data.tc.tcNumber || 'TC01'}</strong></td>
+                        <td><span class="lbl">TC Number:</span> <strong>${data.tc.tcNumber}</strong></td>
                         <td><span class="lbl">SR Number:</span> <strong>${data.tc.srNumber || '-'}</strong></td>
                     </tr>
                 </table>
@@ -500,7 +481,7 @@ function renderTCSheets(studentsArray) {
                     </tr>
                     <tr>
                         <td class="lbl">Reason for Leaving School</td>
-                        <td>${data.tc.leavingReason || '-'}</td>
+                        <td>${data.tc.leavingReason}</td>
                     </tr>
                 </table>
 
