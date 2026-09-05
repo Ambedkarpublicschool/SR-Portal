@@ -1,9 +1,11 @@
 <style>
-/* PAGE & GENERAL LAYOUT */
+/* ==========================================================================
+   1. SCREEN VIEW STYLES
+   ========================================================================== */
 .tcPrintPage {
     background: #f4f6f9;
     padding: 20px;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #000;
 }
 
@@ -14,27 +16,28 @@
 
 .tcPrintActions button {
     border: none;
-    padding: 10px 22px;
+    padding: 10px 24px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
     font-weight: bold;
-    margin: 0 5px;
+    margin: 0 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
 }
 
 #printTCBtn { background: #16a34a; color: #fff; }
 #closeTCPrintBtn { background: #dc2626; color: #fff; }
 
-/* SHEET CONTAINER (A4 SIZE) */
+/* A4 SHEET WRAPPER (SCREEN) */
 .tcLegalSheet {
     width: 210mm;
     min-height: 297mm;
-    margin: 0 auto 25px auto;
-    background: #fff;
+    margin: 0 auto 30px auto;
+    background: #ffffff;
     padding: 12mm 15mm;
     box-sizing: border-box;
-    border: 1px solid #ddd;
-    box-shadow: 0 0 10px rgba(0,0,0,.15);
+    border: 1px solid #d1d5db;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     position: relative;
 }
 
@@ -71,6 +74,7 @@
     font-size: 24px;
     color: #0b3c5d;
     font-weight: 800;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
 }
 
@@ -98,14 +102,14 @@
 .tcMetaTable, .tcInfoTable, .tcAcademicTable, .tcLeavingTable {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     background: #fff;
 }
 
 .tcMetaTable td, .tcInfoTable td, .tcAcademicTable td, .tcAcademicTable th, .tcLeavingTable td {
     border: 1px solid #444;
-    padding: 6px 10px;
-    font-size: 12.5px;
+    padding: 5px 8px;
+    font-size: 12px;
     color: #000;
     vertical-align: middle;
 }
@@ -118,8 +122,8 @@
 .tcInfoTable td[colspan="3"] { width: 78%; }
 
 .tcSectionHeading {
-    margin: 14px 0 6px;
-    font-size: 13.5px;
+    margin: 12px 0 6px;
+    font-size: 13px;
     text-align: center;
     color: #0b3c5d;
     font-weight: bold;
@@ -127,16 +131,16 @@
 }
 
 .tcAcademicTable th {
-    background: #f0f0f0;
+    background: #f1f5f9;
     text-align: center;
     font-weight: bold;
-    font-size: 11.5px;
+    font-size: 11px;
 }
 
 .tcAcademicTable td {
     text-align: center;
-    height: 24px;
-    font-size: 12px;
+    height: 22px;
+    font-size: 11.5px;
 }
 
 .tcLeavingTable td.lbl { width: 35%; }
@@ -144,17 +148,17 @@
 .tcCertificateText {
     border: 1px solid #555;
     padding: 8px 12px;
-    margin: 15px 0 25px;
+    margin: 12px 0 20px;
     line-height: 1.4;
     text-align: justify;
-    font-size: 11.5px;
+    font-size: 11px;
 }
 
 /* SIGNATURE AREA */
 .tcSignatureArea {
     display: table;
     width: 100%;
-    margin-top: 35px;
+    margin-top: 30px;
 }
 
 .tcSignatureArea .sigBox {
@@ -169,7 +173,7 @@
     width: 30%;
     text-align: center;
     vertical-align: bottom;
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: bold;
 }
 
@@ -183,27 +187,47 @@
     font-weight: bold;
 }
 
-/* PRINT MEDIA QUERIES (A4 FORCED PAGE BREAK) */
+/* ==========================================================================
+   2. PRINT MEDIA RULES (PORTAL NAVBAR/HEADER HIDING FIX)
+   ========================================================================== */
 @page {
     size: A4 portrait;
-    margin: 10mm;
+    margin: 8mm;
 }
 
 @media print {
-    html, body {
-        background: #fff !important;
+    /* पोर्टल का टॉप बार, साइडबार व पूरा पेरेंट स्ट्रक्चर छिपाएं */
+    body * {
+        visibility: hidden !important;
+    }
+
+    header, nav, .sidebar, .top-nav, .topBar, .navBar, .tcPrintActions {
+        display: none !important;
+        height: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
     }
 
-    .tcPrintActions { display: none !important; }
+    /* केवल TC कंटेनर और उसके अंदर की शीट दृश्यमान होगी */
+    #tcPrintContainer, #tcPrintContainer * {
+        visibility: visible !important;
+    }
+
+    #tcPrintContainer {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 
     .tcLegalSheet {
         width: 100% !important;
-        min-height: 0 !important;
+        min-height: auto !important;
         height: auto !important;
         margin: 0 !important;
-        padding: 4mm !important;
+        padding: 0 !important;
         border: none !important;
         box-shadow: none !important;
         page-break-after: always !important;
@@ -213,6 +237,13 @@
     .tcLegalSheet:last-child {
         page-break-after: avoid !important;
         break-after: avoid !important;
+    }
+
+    /* टेबल बॉर्डर प्रिंट में गहरे दिखें */
+    .tcMetaTable td, .tcInfoTable td, .tcAcademicTable td, .tcAcademicTable th, .tcLeavingTable td, .tcCertificateText {
+        border-color: #000 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 }
 </style>
@@ -252,27 +283,35 @@ function initTCPrintEngine() {
     .then(r => r.json())
     .then(res => {
         if (res.status !== "SUCCESS" || !res.data || res.data.length === 0) {
-            alert("टीसी डेटा प्राप्त नहीं हुआ। सुनिश्चित करें कि छात्र का टीसी फॉर्म पहले भरा गया हो!");
+            alert("टीसी डेटा लोड नहीं हो सका!");
             navigateModule('manage-students', 'Manage Students');
             return;
         }
-
         renderTCSheets(res.data);
     })
-    .catch(err => {
-        alert("Error loading TC: " + err.message);
-    });
+    .catch(err => alert("Error loading TC: " + err.message));
 }
 
 /**
- * 1 अप्रैल या रविवार होने पर अगला कार्य दिवस (Working Day) निकालने का लॉजिक
+ * 1 अप्रैल (रविवार होने पर 2 अप्रैल) निकालने का फ़ंक्शन
  */
 function getSmartAdmissionDate(year) {
-    const d = new Date(year, 3, 1); // 1 April (Month 3 in JS is April)
+    const d = new Date(year, 3, 1); // 1st April
     if (d.getDay() === 0) { // Sunday
         return `02-04-${year}`;
     }
     return `01-04-${year}`;
+}
+
+/**
+ * पिछली कक्षाओं के लिए 31 मार्च (रविवार होने पर 30 मार्च) निकालने का फ़ंक्शन
+ */
+function getSmartLeavingDate(year) {
+    const d = new Date(year, 2, 31); // 31st March
+    if (d.getDay() === 0) { // Sunday
+        return `30-03-${year}`;
+    }
+    return `31-03-${year}`;
 }
 
 function convertDateToWords(dateStr) {
@@ -297,13 +336,6 @@ function convertDateToWords(dateStr) {
         else if (rem < 10) yearWords = "Two Thousand " + ones[rem];
         else if (rem < 20) yearWords = "Two Thousand " + teens[rem - 10];
         else yearWords = "Two Thousand " + tens[Math.floor(rem / 10)] + (rem % 10 !== 0 ? " " + ones[rem % 10] : "");
-    } else if (year >= 1900 && year < 2000) {
-        let secondPart = year % 100; 
-        let secondPartWords = "";
-        if (secondPart < 10 && secondPart > 0) secondPartWords = "Zero " + ones[secondPart];
-        else if (secondPart >= 10 && secondPart < 20) secondPartWords = teens[secondPart - 10];
-        else if (secondPart >= 20) secondPartWords = tens[Math.floor(secondPart / 10)] + (secondPart % 10 !== 0 ? " " + ones[secondPart % 10] : "");
-        yearWords = "Nineteen " + secondPartWords;
     } else {
         yearWords = year.toString(); 
     }
@@ -314,18 +346,14 @@ function renderTCSheets(studentsArray) {
     const container = document.getElementById("tcPrintContainer");
     container.innerHTML = "";
 
-    const noHistory = [];
+    const schoolClasses = ["Nursery", "LKG", "UKG", "1", "2", "3", "4", "5", "6", "7", "8"];
 
     studentsArray.forEach(data => {
-        if (!data.hasHistory) {
-            noHistory.push(data.student.studentId);
-        }
-
         const dobWords = convertDateToWords(data.student.dob);
-        const schoolClasses = data.school.recognitionClasses; // Nursery to 8
 
+        // 1. Initial Class (TC_History) और Last Class (Student_Master)
         const initCls = String(data.initialClass || "Nursery").trim();
-        const lastCls = String(data.tc.lastClass || data.student.currentClass).trim();
+        const lastCls = String(data.student.currentClass || data.tc.lastClass).trim();
         const lastSes = String(data.tc.lastSession || "2026-2027").trim();
 
         let startIdx = schoolClasses.indexOf(initCls);
@@ -335,25 +363,30 @@ function renderTCSheets(studentsArray) {
         if (endIdx === -1) endIdx = schoolClasses.length - 1;
         if (startIdx > endIdx) startIdx = endIdx;
 
-        let tableRowsHtml = "";
         let baseYear = parseInt(lastSes.split("-")[0], 10) || 2026;
-
-        // वर्तमान कक्षा छोड़ने की तिथि
         const finalLeavingDate = data.tc.leavingDate || `31-03-${baseYear + 1}`;
 
-        // चेक: क्या अंतिम छोड़ने की तिथि 31 मार्च से पहले की है?
-        let isBeforeMarch31 = false;
+        // 2. Result का नियम (अंतिम कक्षा): क्या 31 मार्च से पहले छोड़ रहा है?
+        let isLeavingMidSession = false;
         if (data.tc.leavingDate) {
             const parts = data.tc.leavingDate.split("-");
             if (parts.length === 3) {
                 const lDay = parseInt(parts[0], 10);
                 const lMonth = parseInt(parts[1], 10);
-                // यदि महीना मार्च (3) से पहले है या मार्च में 31 से पहले है, अथवा वर्ष पहले का है
-                if (lMonth < 3 || (lMonth === 3 && lDay < 31) || (lMonth > 3 && parseInt(parts[2], 10) === baseYear)) {
-                    isBeforeMarch31 = true;
+                const lYear = parseInt(parts[2], 10);
+
+                if (lYear === baseYear) {
+                    isLeavingMidSession = true;
+                } else if (lYear === (baseYear + 1)) {
+                    if (lMonth < 3 || (lMonth === 3 && lDay < 31)) {
+                        isLeavingMidSession = true;
+                    }
                 }
             }
         }
+
+        // 3. Academic History Table का निर्माण
+        let tableRowsHtml = "";
 
         schoolClasses.forEach((clsName, idx) => {
             if (idx >= startIdx && idx <= endIdx) {
@@ -362,17 +395,16 @@ function renderTCSheets(studentsArray) {
                 const clsEndYear = clsStartYear + 1;
                 const calculatedSession = `${clsStartYear}-${clsEndYear}`;
                 
-                // स्वतः निर्मित प्रवेश तिथि (1st April या Sunday पर Next Working Day)
                 const admDate = getSmartAdmissionDate(clsStartYear);
 
                 if (idx === endIdx) {
-                    // अंतिम कक्षा के लिए परिणाम: 31 मार्च से पूर्व छोड़ने पर Studying, अन्यथा Pass
-                    const finalResult = isBeforeMarch31 ? "Studying" : "Pass";
+                    // अंतिम कक्षा
+                    const finalResult = isLeavingMidSession ? "Studying" : "Pass";
 
                     tableRowsHtml += `
                         <tr style="font-weight:bold;">
                             <td>${clsName}</td>
-                            <td>${lastSes}</td>
+                            <td>${calculatedSession}</td>
                             <td>${admDate}</td>
                             <td>${finalLeavingDate}</td>
                             <td>${finalResult}</td>
@@ -380,20 +412,24 @@ function renderTCSheets(studentsArray) {
                         </tr>
                     `;
                 } else {
+                    // पिछली कक्षाएं
+                    const leavDate = getSmartLeavingDate(clsEndYear);
+
                     tableRowsHtml += `
                         <tr>
                             <td>${clsName}</td>
                             <td>${calculatedSession}</td>
                             <td>${admDate}</td>
-                            <td>31-03-${clsEndYear}</td>
+                            <td>${leavDate}</td>
                             <td>Pass</td>
                             <td>Good</td>
                         </tr>
                     `;
                 }
             } else {
+                // Initial Class से पहले की कक्षाओं में केवल डैश (-)
                 tableRowsHtml += `
-                    <tr style="color:#aaa;">
+                    <tr style="color:#888;">
                         <td>${clsName}</td>
                         <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
                     </tr>
@@ -422,7 +458,7 @@ function renderTCSheets(studentsArray) {
 
                 <table class="tcMetaTable">
                     <tr>
-                        <td><span class="lbl">TC Number:</span> <strong>${data.tc.tcNumber || 'PENDING'}</strong></td>
+                        <td><span class="lbl">TC Number:</span> <strong>${data.tc.tcNumber || 'TC01'}</strong></td>
                         <td><span class="lbl">SR Number:</span> <strong>${data.tc.srNumber || '-'}</strong></td>
                     </tr>
                 </table>
@@ -523,9 +559,5 @@ function renderTCSheets(studentsArray) {
         `;
         container.insertAdjacentHTML("beforeend", sheetHtml);
     });
-
-    if (noHistory.length > 0) {
-        alert("सूचना: निम्नलिखित छात्रों का TC Form पहले से नहीं भरा गया था, इसलिए उनका TC Number खाली दिखेगा:\n" + noHistory.join(", "));
-    }
 }
 </script>
