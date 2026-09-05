@@ -1,0 +1,420 @@
+<style>
+/* ==========================================================================
+   1. SCREEN VIEW STYLES
+   ========================================================================== */
+.srPrintPage {
+    background: #cbd5e1;
+    padding: 20px 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #000;
+}
+
+.srPrintActions {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.srPrintActions button {
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+#printSRBtn { background: #16a34a; color: #fff; }
+#closeSRPrintBtn { background: #dc2626; color: #fff; }
+
+/* A4 CONTAINER (Holds 2 SR Cards per Page) */
+.srA4Sheet {
+    width: 210mm;
+    height: 297mm;
+    max-height: 297mm;
+    margin: 0 auto 30px auto;
+    background: #ffffff;
+    padding: 8mm 12mm;
+    box-sizing: border-box;
+    border: 1px solid #94a3b8;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+/* INDIVIDUAL SR CARD (EXACTLY HALF OF A4) */
+.srCard {
+    width: 100%;
+    height: 48.5%;
+    border: 1.5px solid #000;
+    box-sizing: border-box;
+    padding: 6px 10px 4px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    background: #fff;
+}
+
+/* TOP META BAR */
+.srTopBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+
+/* HEADING */
+.srHeaderTitle {
+    text-align: center;
+    margin-bottom: 4px;
+}
+.srHeaderTitle h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+.srHeaderTitle div {
+    font-size: 10.5px;
+}
+
+/* TABLES STYLING */
+.srTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 3px;
+}
+.srTable th, .srTable td {
+    border: 1px solid #000;
+    padding: 2px 4px;
+    font-size: 10.5px;
+    vertical-align: middle;
+}
+.srTable th {
+    background: #f8fafc;
+    font-weight: bold;
+    text-align: center;
+    font-size: 10px;
+}
+
+/* RIGHT TOP SR NUMBER BOX */
+.srBigNumberBox {
+    position: absolute;
+    right: 12px;
+    top: 6px;
+    text-align: right;
+}
+.srBigNumber {
+    font-size: 26px;
+    font-weight: 900;
+    color: #000;
+    line-height: 1;
+}
+
+/* STUDENT BASIC INFO GRID */
+.srInfoRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+    margin-bottom: 2px;
+}
+
+/* FOOTER BAR */
+.srCardFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    border-top: 1px dashed #666;
+    padding-top: 2px;
+    margin-top: 2px;
+}
+</style>
+
+<div class="srPrintPage">
+    <div class="srPrintActions">
+        <button id="printSRBtn" onclick="executeSafeSRPrint()">🖨️ Print All SR Forms</button>
+        <button id="closeSRPrintBtn" onclick="navigateModule('manage-students', 'Manage Students')">Back</button>
+    </div>
+
+    <div id="srPrintContainer">
+        <div style="text-align:center; padding:50px; font-weight:bold;">Loading Scholar Records...</div>
+    </div>
+</div>
+
+<script>
+(function() {
+    initSRPrintEngine();
+})();
+
+function initSRPrintEngine() {
+    const listRaw = localStorage.getItem("selectedStudentsList");
+    let studentIds = [];
+    try {
+        studentIds = JSON.parse(listRaw || "[]");
+    } catch(e) {
+        studentIds = [];
+    }
+
+    if (studentIds.length === 0) {
+        alert("कोई छात्र चयनित नहीं है!");
+        navigateModule('manage-students', 'Manage Students');
+        return;
+    }
+
+    fetch(`${SCRIPT_URL}?action=getMultipleSRPrintData&studentIds=${encodeURIComponent(JSON.stringify(studentIds))}`)
+    .then(r => r.json())
+    .then(res => {
+        if (res.status !== "SUCCESS" || !res.data || res.data.length === 0) {
+            alert("SR डेटा लोड नहीं हो सका!");
+            navigateModule('manage-students', 'Manage Students');
+            return;
+        }
+        renderSRSheets(res.data);
+    })
+    .catch(err => alert("Error loading SR: " + err.message));
+}
+
+function convertDateToWords(dateStr) {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr; 
+
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10);
+    const year = parseInt(parts[2], 10);
+
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const totalDays = ["", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth", "Tenth", "Eleventh", "Twelfth", "Thirteenth", "Fourteenth", "Fifteenth", "Sixteenth", "Seventeenth", "Eighteenth", "Nineteenth", "Twentieth", "Twenty-First", "Twenty-Second", "Twenty-Third", "Twenty-Fourth", "Twenty-Fifth", "Twenty-Sixth", "Twenty-Seventh", "Twenty-Eighth", "Twenty-Ninth", "Thirtieth", "Thirty-First"];
+    const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
+    const teens = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+    const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+    let yearWords = '';
+    if (year >= 2000 && year < 2100) {
+        let rem = year % 100;
+        if (rem === 0) yearWords = "Two Thousand";
+        else if (rem < 10) yearWords = "Two Thousand " + ones[rem];
+        else if (rem < 20) yearWords = "Two Thousand " + teens[rem - 10];
+        else yearWords = "Two Thousand " + tens[Math.floor(rem / 10)] + (rem % 10 !== 0 ? " " + ones[rem % 10] : "");
+    } else {
+        yearWords = year.toString(); 
+    }
+    return `${totalDays[day] || ''} ${months[month - 1] || ''} ${yearWords}`.trim();
+}
+
+function renderSRSingleCard(st) {
+    const dobWords = convertDateToWords(st.dob);
+    const dobParts = (st.dob || "--").split("-");
+    const dDay = dobParts[0] || "";
+    const dMonth = dobParts[1] || "";
+    const dYear = dobParts[2] || "";
+
+    return `
+        <div class="srCard">
+            <div class="srBigNumberBox">
+                <div style="font-size:10px; font-weight:bold;">पंजिका सं०</div>
+                <div class="srBigNumber">${st.srNumber || '-'}</div>
+            </div>
+
+            <div class="srTopBar">
+                <div>प्रवेश फाइल सं०: ....................</div>
+                <div style="margin-right:80px;">स्थानान्तरण प्रमाण पत्र सं०: ....................</div>
+            </div>
+
+            <div class="srHeaderTitle">
+                <h3>छात्र पत्रावली तथा स्थानान्तरण प्रमाण-पत्र</h3>
+                <div>(Scholar's Register & Transfer Certificate Form)</div>
+            </div>
+
+            <table class="srTable">
+                <thead>
+                    <tr>
+                        <th width="24%">छात्र/छात्रा का नाम राष्ट्रीयता एवं जाति यदि हिन्दू हो अथवा धर्म<br><span style="font-size:8px;">Name of Scholar with nationality Caste Hindu otherwise religion</span></th>
+                        <th width="14%">छात्र का आधार कार्ड नं०<br><span style="font-size:8px;">Scholar's Aadhar No.</span></th>
+                        <th width="26%">संरक्षक/पिता अथवा पति का नाम पता तथा वृत्ति<br><span style="font-size:8px;">Name Address & Occupation of Father, Guardian or Husband</span></th>
+                        <th width="22%">माता का नाम पता तथा वृत्ति<br><span style="font-size:8px;">Name of Mother, address & occupation</span></th>
+                        <th width="14%">अन्तिम संस्था जिसमें पढ़ा/पढ़ी हो<br><span style="font-size:8px;">The Last Institution attended</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="height:55px;">
+                            <strong>${st.studentName}</strong><br>
+                            INDIAN<br>
+                            ${st.caste ? st.caste + ' / ' : ''}${st.religion}
+                        </td>
+                        <td style="text-align:center;">${st.studentAadhaar || '-'}</td>
+                        <td>
+                            <strong>${st.fatherName}</strong><br>
+                            ${st.fullAddress || '-'}<br>
+                            व्यवसाय: ${st.fatherOccupation || '-'}<br>
+                            Mob: ${st.primaryMobile}
+                        </td>
+                        <td>
+                            <strong>${st.motherName}</strong><br>
+                            ${st.fullAddress || '-'}<br>
+                            वृत्ति: ${st.motherOccupation || 'House Wife'}
+                        </td>
+                        <td>${st.previousSchoolDetails || 'Same School'}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="srInfoRow" style="margin-top:2px;">
+                <div><strong>जन्मतिथि / Date of Birth:</strong> Date: <u>${dDay}</u> Month: <u>${dMonth}</u> Year: <u>${dYear}</u></div>
+                <div><strong>छात्र/छात्रा का PEN नं :</strong> ${st.penNumber || '-'}</div>
+            </div>
+            <div class="srInfoRow">
+                <div><strong>जन्मतिथि (शब्दों में):</strong> ${dobWords}</div>
+                <div><strong>अपार आई. डी. / APAAR ID:</strong> ........................................</div>
+            </div>
+
+            <table class="srTable" style="margin-top:4px;">
+                <thead>
+                    <tr>
+                        <th width="8%">कक्षा</th>
+                        <th width="12%">प्रवेश तिथि</th>
+                        <th width="10%">कक्षोन्नति</th>
+                        <th width="12%">निष्कासन तिथि</th>
+                        <th width="26%">निष्कासन का कारण जैसे शुल्क का आशोधन, कुटुम्ब का प्रस्थान</th>
+                        <th width="22%">प्रस्थान के समय छात्र के सम्बन्ध में विवरण (वर्ष / कार्य / आचरण)</th>
+                        <th width="10%">हस्ताक्षर</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="height:26px; text-align:center;">
+                        <td><strong>${st.currentClass}</strong></td>
+                        <td>${st.admissionDate || '-'}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="srCardFooter">
+                <div>विद्यालय का यू डायस कोड : <strong>9584109512</strong></div>
+                <div>निष्कासन फाइल सं०: ....................</div>
+            </div>
+        </div>
+    `;
+}
+
+function renderSRSheets(studentsArray) {
+    const container = document.getElementById("srPrintContainer");
+    container.innerHTML = "";
+
+    // 2 छात्रों के जोड़े बनाकर A4 पन्ने पर रेंडर करना
+    for (let i = 0; i < studentsArray.length; i += 2) {
+        const student1 = studentsArray[i];
+        const student2 = studentsArray[i + 1] || null;
+
+        const sheetHtml = `
+            <div class="srA4Sheet">
+                ${renderSRSingleCard(student1)}
+                ${student2 ? renderSRSingleCard(student2) : '<div class="srCard" style="border:1px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#888;">[रिक्त स्थान / Blank]</div>'}
+            </div>
+        `;
+        container.insertAdjacentHTML("beforeend", sheetHtml);
+    }
+}
+
+function executeSafeSRPrint() {
+    const printContent = document.getElementById("srPrintContainer").innerHTML;
+    
+    const oldFrame = document.getElementById("printIframe");
+    if (oldFrame) oldFrame.remove();
+
+    const iframe = document.createElement("iframe");
+    iframe.id = "printIframe";
+    iframe.style.position = "fixed";
+    iframe.style.right = "0";
+    iframe.style.bottom = "0";
+    iframe.style.width = "0";
+    iframe.style.height = "0";
+    iframe.style.border = "none";
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Scholar Register Print</title>
+            <style>
+                @page {
+                    size: A4 portrait;
+                    margin: 6mm 8mm;
+                }
+                * { box-sizing: border-box; }
+                body {
+                    margin: 0;
+                    padding: 0;
+                    font-family: Arial, Helvetica, sans-serif;
+                    background: #fff;
+                    color: #000;
+                }
+                .srA4Sheet {
+                    width: 100%;
+                    height: 285mm;
+                    max-height: 285mm;
+                    box-sizing: border-box;
+                    page-break-after: always;
+                    break-after: page;
+                    margin: 0;
+                    padding: 0;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                }
+                .srA4Sheet:last-child {
+                    page-break-after: avoid;
+                    break-after: avoid;
+                }
+                .srCard {
+                    width: 100%;
+                    height: 48.5%;
+                    border: 1.5px solid #000;
+                    box-sizing: border-box;
+                    padding: 6px 10px 4px 10px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    position: relative;
+                    background: #fff;
+                }
+                .srTopBar { display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 2px; }
+                .srHeaderTitle { text-align: center; margin-bottom: 4px; }
+                .srHeaderTitle h3 { margin: 0; font-size: 14px; font-weight: bold; }
+                .srHeaderTitle div { font-size: 10px; }
+                .srTable { width: 100%; border-collapse: collapse; margin-bottom: 3px; }
+                .srTable th, .srTable td { border: 1px solid #000; padding: 2.5px 4px; font-size: 10.5px; vertical-align: middle; }
+                .srTable th { background: #f8fafc; font-weight: bold; text-align: center; font-size: 9.5px; }
+                .srBigNumberBox { position: absolute; right: 12px; top: 6px; text-align: right; }
+                .srBigNumber { font-size: 26px; font-weight: 900; line-height: 1; }
+                .srInfoRow { display: flex; justify-content: space-between; font-size: 10.5px; margin-bottom: 2px; }
+                .srCardFooter { display: flex; justify-content: space-between; align-items: center; font-size: 10px; border-top: 1px dashed #666; padding-top: 2px; }
+            </style>
+        </head>
+        <body>
+            ${printContent}
+        </body>
+        </html>
+    `);
+    doc.close();
+
+    setTimeout(() => {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+    }, 400);
+}
+</script>
