@@ -3,41 +3,41 @@
    1. SCREEN VIEW STYLES
    ========================================================================== */
 .tcPrintPage {
-    background: #f4f6f9;
-    padding: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #e2e8f0;
+    padding: 15px;
+    font-family: Arial, Helvetica, sans-serif;
     color: #000;
 }
 
 .tcPrintActions {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .tcPrintActions button {
     border: none;
-    padding: 10px 24px;
-    border-radius: 6px;
+    padding: 8px 20px;
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bold;
-    margin: 0 6px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    margin: 0 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 #printTCBtn { background: #16a34a; color: #fff; }
 #closeTCPrintBtn { background: #dc2626; color: #fff; }
 
-/* A4 SHEET WRAPPER (SCREEN) */
+/* SCREEN CONTAINER (A4 DIMENSIONS) */
 .tcLegalSheet {
     width: 210mm;
     min-height: 297mm;
-    margin: 0 auto 30px auto;
+    margin: 0 auto 20px auto;
     background: #ffffff;
-    padding: 12mm 15mm;
+    padding: 10mm 12mm;
     box-sizing: border-box;
-    border: 1px solid #d1d5db;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     position: relative;
 }
 
@@ -45,20 +45,20 @@
 .tcHeader {
     display: table;
     width: 100%;
-    border-bottom: 2px solid #000;
-    padding-bottom: 8px;
-    margin-bottom: 12px;
+    border-bottom: 1.5px solid #000;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .tcLogoArea {
     display: table-cell;
     vertical-align: middle;
-    width: 15%;
+    width: 14%;
 }
 
 .tcLogoArea img {
-    width: 75px;
-    height: 75px;
+    width: 65px;
+    height: 65px;
     object-fit: contain;
 }
 
@@ -66,12 +66,12 @@
     display: table-cell;
     vertical-align: middle;
     text-align: center;
-    width: 85%;
+    width: 86%;
 }
 
 .tcSchoolArea h1 {
-    margin: 0 0 4px 0;
-    font-size: 24px;
+    margin: 0 0 2px 0;
+    font-size: 22px;
     color: #0b3c5d;
     font-weight: 800;
     letter-spacing: 0.5px;
@@ -79,39 +79,40 @@
 }
 
 .tcSchoolArea div {
-    font-size: 12.5px;
+    font-size: 11.5px;
     color: #333;
 }
 
 .tcTitleArea {
     text-align: center;
-    margin: 12px 0 16px;
+    margin: 8px 0 10px;
 }
 
 .tcTitleArea h2 {
     display: inline-block;
     margin: 0;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 800;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
     border-bottom: 1px solid #000;
-    padding-bottom: 2px;
+    padding-bottom: 1px;
 }
 
 /* TABLES STYLES */
 .tcMetaTable, .tcInfoTable, .tcAcademicTable, .tcLeavingTable {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     background: #fff;
 }
 
 .tcMetaTable td, .tcInfoTable td, .tcAcademicTable td, .tcAcademicTable th, .tcLeavingTable td {
     border: 1px solid #444;
-    padding: 5px 8px;
-    font-size: 12px;
+    padding: 4px 6px;
+    font-size: 11.5px;
     color: #000;
     vertical-align: middle;
+    line-height: 1.2;
 }
 
 .tcMetaTable td { width: 50%; }
@@ -122,8 +123,8 @@
 .tcInfoTable td[colspan="3"] { width: 78%; }
 
 .tcSectionHeading {
-    margin: 12px 0 6px;
-    font-size: 13px;
+    margin: 8px 0 4px;
+    font-size: 12px;
     text-align: center;
     color: #0b3c5d;
     font-weight: bold;
@@ -134,31 +135,33 @@
     background: #f1f5f9;
     text-align: center;
     font-weight: bold;
-    font-size: 11px;
+    font-size: 10.5px;
+    padding: 4px;
 }
 
 .tcAcademicTable td {
     text-align: center;
-    height: 22px;
-    font-size: 11.5px;
+    height: 19px;
+    font-size: 11px;
+    padding: 2px 4px;
 }
 
 .tcLeavingTable td.lbl { width: 35%; }
 
 .tcCertificateText {
     border: 1px solid #555;
-    padding: 8px 12px;
-    margin: 12px 0 20px;
-    line-height: 1.4;
+    padding: 6px 10px;
+    margin: 8px 0 14px;
+    line-height: 1.3;
     text-align: justify;
-    font-size: 11px;
+    font-size: 10.5px;
 }
 
 /* SIGNATURE AREA */
 .tcSignatureArea {
     display: table;
     width: 100%;
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
 .tcSignatureArea .sigBox {
@@ -173,42 +176,44 @@
     width: 30%;
     text-align: center;
     vertical-align: bottom;
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: bold;
 }
 
 .tcSignatureArea .sigBox .line {
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     font-weight: bold;
 }
 
 .tcSignatureArea .sigBox .txt {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
 }
 
 /* ==========================================================================
-   2. PRINT MEDIA RULES (PORTAL NAVBAR/HEADER HIDING FIX)
+   2. STRICT PRINT MEDIA RULES (ZERO TOP GAP & 100% SCALE A4 FIT)
    ========================================================================== */
 @page {
     size: A4 portrait;
-    margin: 8mm;
+    margin: 0 !important; /* ब्राउज़र का अतिरिक्त टॉप मार्जिन पूरी तरह समाप्त */
 }
 
 @media print {
-    /* पोर्टल का टॉप बार, साइडबार व पूरा पेरेंट स्ट्रक्चर छिपाएं */
-    body * {
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        width: 210mm !important;
+        height: auto !important;
         visibility: hidden !important;
     }
 
+    /* पैरेंट फ्रेम और साइडबार पूरी तरह हटाएँ */
     header, nav, .sidebar, .top-nav, .topBar, .navBar, .tcPrintActions {
         display: none !important;
-        height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
     }
 
-    /* केवल TC कंटेनर और उसके अंदर की शीट दृश्यमान होगी */
+    /* प्रिंट कंटेनर को बिल्कुल पेज के कोने (0,0) से शुरू करें */
     #tcPrintContainer, #tcPrintContainer * {
         visibility: visible !important;
     }
@@ -217,21 +222,23 @@
         position: absolute !important;
         left: 0 !important;
         top: 0 !important;
-        width: 100% !important;
+        width: 210mm !important;
         margin: 0 !important;
         padding: 0 !important;
     }
 
     .tcLegalSheet {
-        width: 100% !important;
-        min-height: auto !important;
-        height: auto !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        box-sizing: border-box !important;
+        padding: 8mm 12mm 6mm 12mm !important; /* संतुलित प्रिंट मार्जिन */
         margin: 0 !important;
-        padding: 0 !important;
         border: none !important;
         box-shadow: none !important;
         page-break-after: always !important;
         break-after: page !important;
+        overflow: hidden !important;
     }
 
     .tcLegalSheet:last-child {
@@ -239,7 +246,6 @@
         break-after: avoid !important;
     }
 
-    /* टेबल बॉर्डर प्रिंट में गहरे दिखें */
     .tcMetaTable td, .tcInfoTable td, .tcAcademicTable td, .tcAcademicTable th, .tcLeavingTable td, .tcCertificateText {
         border-color: #000 !important;
         -webkit-print-color-adjust: exact !important;
@@ -292,23 +298,17 @@ function initTCPrintEngine() {
     .catch(err => alert("Error loading TC: " + err.message));
 }
 
-/**
- * 1 अप्रैल (रविवार होने पर 2 अप्रैल) निकालने का फ़ंक्शन
- */
 function getSmartAdmissionDate(year) {
-    const d = new Date(year, 3, 1); // 1st April
-    if (d.getDay() === 0) { // Sunday
+    const d = new Date(year, 3, 1);
+    if (d.getDay() === 0) {
         return `02-04-${year}`;
     }
     return `01-04-${year}`;
 }
 
-/**
- * पिछली कक्षाओं के लिए 31 मार्च (रविवार होने पर 30 मार्च) निकालने का फ़ंक्शन
- */
 function getSmartLeavingDate(year) {
-    const d = new Date(year, 2, 31); // 31st March
-    if (d.getDay() === 0) { // Sunday
+    const d = new Date(year, 2, 31);
+    if (d.getDay() === 0) {
         return `30-03-${year}`;
     }
     return `31-03-${year}`;
@@ -336,6 +336,13 @@ function convertDateToWords(dateStr) {
         else if (rem < 10) yearWords = "Two Thousand " + ones[rem];
         else if (rem < 20) yearWords = "Two Thousand " + teens[rem - 10];
         else yearWords = "Two Thousand " + tens[Math.floor(rem / 10)] + (rem % 10 !== 0 ? " " + ones[rem % 10] : "");
+    } else if (year >= 1900 && year < 2000) {
+        let secondPart = year % 100; 
+        let secondPartWords = "";
+        if (secondPart < 10 && secondPart > 0) secondPartWords = "Zero " + ones[secondPart];
+        else if (secondPart >= 10 && secondPart < 20) secondPartWords = teens[secondPart - 10];
+        else if (secondPart >= 20) secondPartWords = tens[Math.floor(secondPart / 10)] + (secondPart % 10 !== 0 ? " " + ones[secondPart % 10] : "");
+        yearWords = "Nineteen " + secondPartWords;
     } else {
         yearWords = year.toString(); 
     }
@@ -351,7 +358,6 @@ function renderTCSheets(studentsArray) {
     studentsArray.forEach(data => {
         const dobWords = convertDateToWords(data.student.dob);
 
-        // 1. Initial Class (TC_History) और Last Class (Student_Master)
         const initCls = String(data.initialClass || "Nursery").trim();
         const lastCls = String(data.student.currentClass || data.tc.lastClass).trim();
         const lastSes = String(data.tc.lastSession || "2026-2027").trim();
@@ -366,7 +372,6 @@ function renderTCSheets(studentsArray) {
         let baseYear = parseInt(lastSes.split("-")[0], 10) || 2026;
         const finalLeavingDate = data.tc.leavingDate || `31-03-${baseYear + 1}`;
 
-        // 2. Result का नियम (अंतिम कक्षा): क्या 31 मार्च से पहले छोड़ रहा है?
         let isLeavingMidSession = false;
         if (data.tc.leavingDate) {
             const parts = data.tc.leavingDate.split("-");
@@ -385,7 +390,6 @@ function renderTCSheets(studentsArray) {
             }
         }
 
-        // 3. Academic History Table का निर्माण
         let tableRowsHtml = "";
 
         schoolClasses.forEach((clsName, idx) => {
@@ -398,7 +402,6 @@ function renderTCSheets(studentsArray) {
                 const admDate = getSmartAdmissionDate(clsStartYear);
 
                 if (idx === endIdx) {
-                    // अंतिम कक्षा
                     const finalResult = isLeavingMidSession ? "Studying" : "Pass";
 
                     tableRowsHtml += `
@@ -412,7 +415,6 @@ function renderTCSheets(studentsArray) {
                         </tr>
                     `;
                 } else {
-                    // पिछली कक्षाएं
                     const leavDate = getSmartLeavingDate(clsEndYear);
 
                     tableRowsHtml += `
@@ -427,7 +429,6 @@ function renderTCSheets(studentsArray) {
                     `;
                 }
             } else {
-                // Initial Class से पहले की कक्षाओं में केवल डैश (-)
                 tableRowsHtml += `
                     <tr style="color:#888;">
                         <td>${clsName}</td>
@@ -446,7 +447,7 @@ function renderTCSheets(studentsArray) {
                     <div class="tcSchoolArea">
                         <h1>${data.school.schoolName}</h1>
                         <div>${data.school.address}</div>
-                        <div style="font-weight:bold; margin-top:3px;">
+                        <div style="font-weight:bold; margin-top:2px;">
                             UDISE: ${data.school.udise} | Recognition: Nursery to 8th
                         </div>
                     </div>
@@ -492,7 +493,7 @@ function renderTCSheets(studentsArray) {
                         <td class="lbl">DOB (In Figure)</td>
                         <td>${data.student.dob}</td>
                         <td class="lbl">DOB (In Words)</td>
-                        <td style="font-size:11px;">${dobWords}</td>
+                        <td style="font-size:10.5px;">${dobWords}</td>
                     </tr>
                     <tr>
                         <td class="lbl">Religion</td>
