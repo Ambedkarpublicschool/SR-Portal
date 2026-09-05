@@ -324,16 +324,16 @@ function renderSingleIDCard(item) {
     const sch = item.school;
 
     const PRIMARY_LOGO = "https://i.postimg.cc/pLt1F2cD/logo-copy.png";
-    const rawLogo = sch.logoLink ? formatImgUrl(sch.logoLink) : PRIMARY_LOGO;
-    const rawPhoto = st.photo ? formatImgUrl(st.photo) : PRIMARY_LOGO;
+    const rawLogo = sch.logoLink || PRIMARY_LOGO;
+    const rawPhoto = st.photo || PRIMARY_LOGO;
     const bgImage = sch.bgLink || "https://i.postimg.cc/cJfwsrpq/Chat-GPT-Image-Sep-5-2026-06-04-26-PM.png";
 
     const qrText = encodeURIComponent(`Name: ${st.studentName}\nFather: ${st.fatherName}`);
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${qrText}`;
 
     return `
-        <div class="idCardBox" style="background-image: url('${bgImage}');">
-            <!-- 🌟 Top 15mm Header (Only Logo & Dynamic School Name) -->
+        <div class="idCardBox" style="background-image: url('${bgImage}') !important; background-size: 100% 100% !important; background-repeat: no-repeat !important; background-position: center !important;">
+            <!-- 🌟 Top 15mm Header (School Profile से डायनामिक लोगो व नाम) -->
             <div class="idHeaderTop">
                 <img src="${rawLogo}" class="idLogoImg" onerror="this.onerror=null;this.src='${PRIMARY_LOGO}';">
                 <div class="idSchoolMeta">
@@ -363,7 +363,7 @@ function renderSingleIDCard(item) {
                 </div>
             </div>
 
-            <!-- 🌟 Seamless Edge-to-Edge Flush Bottom Bar with Black Top Border -->
+            <!-- 🌟 Bottom 6mm Space with Dynamic School Address & Contact -->
             <div class="idBottomSpace">
                 <div class="idFooterText">${sch.schoolAddress} | Mob. ${sch.contactNumber}</div>
             </div>
