@@ -71,7 +71,7 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
-/* 🌟 TOP 15mm HEADER (ONLY LOGO & DYNAMIC SCHOOL NAME) */
+/* 🌟 TOP 15mm HEADER */
 .idHeaderTop {
     height: 15mm;
     width: 100%;
@@ -105,7 +105,6 @@
     overflow: hidden;
 }
 
-/* DYNAMIC SCHOOL TITLE: TALL STRETCHED FONT, AUTO WRAP 2 LINES */
 .idSchoolTitle {
     width: 100%;
     font-size: 7.8pt;
@@ -141,7 +140,6 @@
     z-index: 2;
 }
 
-/* PHOTO FRAME */
 .idPhotoFrame {
     width: 19.5mm;
     height: 21mm;
@@ -160,7 +158,6 @@
     display: block;
 }
 
-/* STUDENT NAME */
 .idStudentName {
     font-size: 7.2pt;
     font-weight: 900;
@@ -176,7 +173,6 @@
     letter-spacing: 0.2px;
 }
 
-/* STUDENT DETAILS GRID */
 .idDetailsGrid {
     width: 100%;
     display: flex;
@@ -209,7 +205,6 @@
     word-break: break-word;
 }
 
-/* BOTTOM QR CODE */
 .idQrRow {
     width: 100%;
     margin-top: auto;
@@ -228,37 +223,27 @@
     padding: 0.3mm;
 }
 
-/* 🌟 STYLISH GRADIENT BADGE BOX FOR ADDRESS & CONTACT OVER OLD BG */
+/* 🌟 INTEGRATED FULL-WIDTH BOTTOM FOOTER (CHOUKOR FLUSH DESIGN & BLACK BORDER) */
 .idBottomSpace {
+    width: 100%;
     height: 6mm;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 0 1.5mm 0.8mm 1.5mm;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 5;
-    flex-shrink: 0;
-}
-
-.idFooterBadge {
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
+    margin: 0;
     padding: 0.5mm 1.5mm;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    border-radius: 3.5px;
+    border-radius: 0; /* पूरी तरह चौकोर */
     background: linear-gradient(135deg, #0284c7 0%, #dc2626 50%, #16a34a 100%);
-    border: 0.8px solid #fde047;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.45);
+    border-top: 1px solid #000000; /* ब्लैक बॉर्डर */
+    z-index: 5;
+    flex-shrink: 0;
 }
 
 .idFooterText {
-    font-size: 3.8pt;
+    font-size: 3.9pt;
     font-weight: 900;
     color: #ffffff;
     line-height: 1.05;
@@ -340,7 +325,7 @@ function renderSingleIDCard(item) {
 
     return `
         <div class="idCardBox" style="background-image: url('${bgImage}');">
-            <!-- 🌟 Top 15mm Header (Logo & Auto-Wrapping School Name) -->
+            <!-- Top Header -->
             <div class="idHeaderTop">
                 <img src="${rawLogo}" class="idLogoImg" onerror="this.onerror=null;this.src='${PRIMARY_LOGO}';">
                 <div class="idSchoolMeta">
@@ -348,7 +333,7 @@ function renderSingleIDCard(item) {
                 </div>
             </div>
 
-            <!-- Content Area (46mm x 59mm) -->
+            <!-- Content Area -->
             <div class="idMainContent">
                 <div class="idPhotoFrame">
                     <img src="${rawPhoto}" onerror="this.onerror=null;this.src='${PRIMARY_LOGO}';">
@@ -370,11 +355,9 @@ function renderSingleIDCard(item) {
                 </div>
             </div>
 
-            <!-- 🌟 Bottom 6mm Space with Blue-Red-Green Gradient Box -->
+            <!-- Full-Width Bottom Flush Footer -->
             <div class="idBottomSpace">
-                <div class="idFooterBadge">
-                    <div class="idFooterText">${sch.schoolAddress} | Mob. ${sch.contactNumber}</div>
-                </div>
+                <div class="idFooterText">${sch.schoolAddress} | Mob. ${sch.contactNumber}</div>
             </div>
         </div>
     `;
@@ -585,32 +568,23 @@ function executeSafeIDPrint() {
                     padding: 0.3mm;
                 }
                 .idBottomSpace {
+                    width: 100%;
                     height: 6mm;
-                    width: 100%;
-                    box-sizing: border-box;
-                    padding: 0 1.5mm 0.8mm 1.5mm;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 5;
-                    flex-shrink: 0;
-                }
-                .idFooterBadge {
-                    width: 100%;
-                    height: 100%;
-                    box-sizing: border-box;
+                    margin: 0;
                     padding: 0.5mm 1.5mm;
+                    box-sizing: border-box;
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
                     align-items: center;
                     text-align: center;
-                    border-radius: 3.5px;
+                    border-radius: 0;
                     background: linear-gradient(135deg, #0284c7 0%, #dc2626 50%, #16a34a 100%) !important;
-                    border: 0.8px solid #fde047;
+                    border-top: 1px solid #000000;
+                    flex-shrink: 0;
                 }
                 .idFooterText {
-                    font-size: 3.8pt;
+                    font-size: 3.9pt;
                     font-weight: 900;
                     color: #ffffff !important;
                     line-height: 1.05;
