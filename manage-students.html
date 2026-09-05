@@ -1,0 +1,454 @@
+<style>
+    .msWrap { font-size: 13px; }
+    /* फ़िल्टर बार */
+    .filterPanel { background: #fff; padding: 14px 18px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 14px; }
+    .filterGrid { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .filterGrid input, .filterGrid select { padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; outline: none; height: 38px; }
+    .searchInp { width: 240px; }
+    
+    /* बल्क ऐक्शन बार */
+    .bulkBar { background: #fff; padding: 10px 18px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .bulkLeft { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .bulkRight { font-size: 13px; font-weight: bold; color: #0b3c5d; }
+    
+    /* बटन्स */
+    .btnSm { padding: 6px 12px; font-size: 12px; font-weight: bold; border-radius: 4px; border: none; cursor: pointer; color: #fff; }
+    .btnBlue { background: #2563eb; }
+    .btnGreen { background: #16a34a; }
+    .btnPurple { background: #9333ea; }
+    .btnOrange { background: #ea580c; }
+    .btnReset { background: #e2e8f0; color: #333; }
+    
+    /* टेबल */
+    .tableCard { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); overflow: auto; max-height: calc(100vh - 280px); }
+    .msTable { width: 100%; border-collapse: collapse; text-align: left; }
+    .msTable th { background: #f8fafc; padding: 10px; border-bottom: 2px solid #e2e8f0; font-size: 12.5px; font-weight: bold; color: #475569; position: sticky; top:0; z-index: 10; }
+    .msTable td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    .msTable tr:hover { background: #f8fafc; }
+    
+    .stPhoto { width: 36px; height: 36px; border-radius: 4px; object-fit: cover; border: 1px solid #ddd; }
+    .badge { padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+    .badgeActive { background: #dcfce7; color: #15803d; }
+    .badgeInactive { background: #fee2e2; color: #b91c1c; }
+    .badgePassout { background: #f3e8ff; color: #7e22ce; }
+
+    /* ऐक्शन बटन्स */
+    .actionBtns { display: flex; gap: 4px; }
+    .actBtn { padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 3px; border: none; cursor: pointer; color: #fff; }
+    .actView { background: #0284c7; }
+    .actEdit { background: #16a34a; }
+    .actTC { background: #ea580c; }
+
+    /* मॉडल्स (Popup Windows) */
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 9999; }
+    .modalBox { background: #fff; border-radius: 8px; width: 850px; max-width: 95%; max-height: 90vh; overflow-y: auto; padding: 22px; }
+    .modalHeader { display: flex; justify-content: space-between; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 15px; }
+    .modalHeader h3 { margin: 0; color: #0b3c5d; }
+    .closeX { cursor: pointer; font-size: 22px; font-weight: bold; color: #888; }
+</style>
+
+<div class="msWrap">
+    <!-- फ़िल्टर बार -->
+    <div class="filterPanel">
+        <div class="filterGrid">
+            <input type="text" id="msSearch" class="searchInp" placeholder="Search ID / Mobile / Name" onkeypress="if(event.key==='Enter') loadStudentsData()">
+            <select id="msSessionFilter" onchange="loadStudentsData()"></select>
+            <select id="msClassFilter" onchange="loadStudentsData()">
+                <option value="">All Classes</option>
+                <option value="Nursery">Nursery</option><option value="LKG">LKG</option><option value="UKG">UKG</option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
+            </select>
+            <select id="msSectionFilter" onchange="loadStudentsData()">
+                <option value="">All Sections</option>
+                <option value="A">A</option>
+            </select>
+            <select id="msStatusFilter" onchange="loadStudentsData()">
+                <option value="">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Passout">Passout</option>
+            </select>
+            <button class="btnSm btnBlue" onclick="loadStudentsData()">🔍 Search</button>
+            <button class="btnSm btnReset" onclick="resetFilters()">Reset</button>
+        </div>
+    </div>
+
+    <!-- बल्क ऐक्शन बार -->
+    <div class="bulkBar">
+        <div class="bulkLeft">
+            <label style="font-weight:bold; cursor:pointer;"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"> Select All</label>
+            <button class="btnSm btnGreen" onclick="triggerBulkPrint('id-card')">Generate ID Card</button>
+            <button class="btnSm btnPurple" onclick="triggerBulkPrint('sr')">Generate SR</button>
+            <button class="btnSm btnOrange" onclick="triggerBulkPrint('tc-print')">Generate TC</button>
+            <button class="btnSm btnPurple" onclick="triggerPromotion()">Student Promotion</button>
+            <button class="btnSm btnBlue" onclick="exportCsvData()">Export Excel</button>
+        </div>
+        <div class="bulkRight">
+            <span id="selectedCounter">Selected : 0</span> &nbsp;|&nbsp; 
+            <span id="totalCounter">Total Records : 0</span>
+        </div>
+    </div>
+
+    <!-- डेटा टेबल -->
+    <div class="tableCard">
+        <table class="msTable">
+            <thead>
+                <tr>
+                    <th width="30">#</th>
+                    <th width="45">Photo</th>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Father Name</th>
+                    <th>Class</th>
+                    <th>Sec</th>
+                    <th>Roll No</th>
+                    <th>Mobile</th>
+                    <th>Status</th>
+                    <th width="140">Action</th>
+                </tr>
+            </thead>
+            <tbody id="studentTableRows">
+                <tr><td colspan="11" style="text-align:center; padding:30px;">Loading Students...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ==================== VIEW STUDENT MODAL ==================== -->
+<div id="viewModal" class="modal">
+    <div class="modalBox">
+        <div class="modalHeader">
+            <h3>Student Profile Details</h3>
+            <span class="closeX" onclick="closeModal('viewModal')">&times;</span>
+        </div>
+        <div id="viewContent" style="display:flex; gap:20px;"></div>
+    </div>
+</div>
+
+<!-- ==================== EDIT STUDENT MODAL ==================== -->
+<div id="editModal" class="modal">
+    <div class="modalBox">
+        <div class="modalHeader">
+            <h3>Edit Student Record</h3>
+            <span class="closeX" onclick="closeModal('editModal')">&times;</span>
+        </div>
+        <form id="editForm" onsubmit="event.preventDefault(); saveEditedData();">
+            <div id="editFieldsGrid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px;"></div>
+            <div style="text-align:right; margin-top:20px;">
+                <button type="button" class="btnSm btnReset" onclick="closeModal('editModal')">Close</button>
+                <button type="submit" class="btnSm btnGreen">Update Student</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ==================== TC FORM MODAL ==================== -->
+<div id="tcModal" class="modal">
+    <div class="modalBox" style="width:550px;">
+        <div class="modalHeader">
+            <h3>Transfer Certificate (स्थानांतरण प्रमाण पत्र)</h3>
+            <span class="closeX" onclick="closeModal('tcModal')">&times;</span>
+        </div>
+        <form id="tcForm" onsubmit="event.preventDefault(); saveTCData();">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div><label>Student ID</label><input type="text" id="tcId" readonly style="width:100%; background:#f1f5f9;"></div>
+                <div><label>Student Name</label><input type="text" id="tcName" readonly style="width:100%; background:#f1f5f9;"></div>
+                <div><label>Class</label><input type="text" id="tcClass" readonly style="width:100%; background:#f1f5f9;"></div>
+                <div><label>Session</label><input type="text" id="tcSession" readonly style="width:100%; background:#f1f5f9;"></div>
+                <div><label>Initial Class *</label><input type="text" id="tcInitClass" required style="width:100%;" placeholder="e.g. Nursery"></div>
+                <div><label>Initial Date *</label><input type="text" id="tcInitDate" required style="width:100%;" placeholder="DD/MM/YYYY"></div>
+                <div style="grid-column: span 2;"><label>Date of Leaving *</label><input type="date" id="tcLeaveDate" required style="width:100%;"></div>
+                <div style="grid-column: span 2;"><label>Reason of Leaving</label><textarea id="tcReason" rows="2" style="width:100%;" placeholder="कारण लिखें..."></textarea></div>
+            </div>
+            <div style="text-align:right; margin-top:18px;">
+                <button type="button" class="btnSm btnReset" onclick="closeModal('tcModal')">Cancel</button>
+                <button type="submit" class="btnSm btnOrange">Save TC Record</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function() {
+        initManageModule();
+    })();
+
+    function initManageModule() {
+        // सत्र ड्रॉपडाउन भरना
+        fetch(`${SCRIPT_URL}?action=getAllSessions`)
+        .then(r => r.json())
+        .then(res => {
+            const sSelect = document.getElementById("msSessionFilter");
+            sSelect.innerHTML = "";
+            if (res.sessions && res.sessions.length > 0) {
+                res.sessions.forEach(ses => {
+                    sSelect.innerHTML += `<option value="${ses}">${ses}</option>`;
+                });
+            } else {
+                sSelect.innerHTML = `<option value="2026-2027">2026-2027</option>`;
+            }
+            loadStudentsData();
+        });
+    }
+
+    function loadStudentsData() {
+        const search = document.getElementById("msSearch").value.trim();
+        const ses = document.getElementById("msSessionFilter").value;
+        const cls = document.getElementById("msClassFilter").value;
+        const sec = document.getElementById("msSectionFilter").value;
+        const stat = document.getElementById("msStatusFilter").value;
+
+        const tbody = document.getElementById("studentTableRows");
+        tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:20px;">Searching Students...</td></tr>`;
+
+        fetch(`${SCRIPT_URL}?action=getStudents&search=${encodeURIComponent(search)}&session=${encodeURIComponent(ses)}&className=${encodeURIComponent(cls)}&section=${encodeURIComponent(sec)}&status=${encodeURIComponent(stat)}`)
+        .then(r => r.json())
+        .then(res => {
+            document.getElementById("totalCounter").innerText = `Total Records : ${res.totalRecords}`;
+            tbody.innerHTML = "";
+
+            if (!res.students || res.students.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; color:#888;">No Students Found</td></tr>`;
+                return;
+            }
+
+            res.students.forEach((s, idx) => {
+                const badgeCls = s.status === 'Active' ? 'badgeActive' : (s.status === 'Passout' ? 'badgePassout' : 'badgeInactive');
+                const photoSrc = s.photo || 'https://via.placeholder.com/40';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><input type="checkbox" class="rowCb" value="${s.studentId}" onchange="updateSelectedCounter()"></td>
+                        <td><img src="${photoSrc}" class="stPhoto"></td>
+                        <td><strong>${s.studentId}</strong></td>
+                        <td>${s.studentName}</td>
+                        <td>${s.fatherName}</td>
+                        <td>${s.studentClass}</td>
+                        <td>${s.section}</td>
+                        <td>${s.rollNo || '-'}</td>
+                        <td>${s.mobile}</td>
+                        <td><span class="badge ${badgeCls}">${s.status}</span></td>
+                        <td>
+                            <div class="actionBtns">
+                                <button class="actBtn actView" onclick="openViewModal('${s.studentId}')">View</button>
+                                <button class="actBtn actEdit" onclick="openEditModal('${s.studentId}')">Edit</button>
+                                <button class="actBtn actTC" onclick="openTCModal('${s.studentId}', '${s.studentName}', '${s.fatherName}', '${s.studentClass}')">TC</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            updateSelectedCounter();
+        });
+    }
+
+    function toggleSelectAll(master) {
+        document.querySelectorAll(".rowCb").forEach(cb => cb.checked = master.checked);
+        updateSelectedCounter();
+    }
+
+    function updateSelectedCounter() {
+        const count = document.querySelectorAll(".rowCb:checked").length;
+        document.getElementById("selectedCounter").innerText = `Selected : ${count}`;
+    }
+
+    function resetFilters() {
+        document.getElementById("msSearch").value = "";
+        document.getElementById("msClassFilter").selectedIndex = 0;
+        document.getElementById("msSectionFilter").selectedIndex = 0;
+        document.getElementById("msStatusFilter").selectedIndex = 0;
+        loadStudentsData();
+    }
+
+    /* VIEW MODAL */
+    function openViewModal(studentId) {
+        const ses = document.getElementById("msSessionFilter").value;
+        fetch(`${SCRIPT_URL}?action=getSingleStudent&studentId=${encodeURIComponent(studentId)}&session=${encodeURIComponent(ses)}`)
+        .then(r => r.json())
+        .then(res => {
+            if (res.status === "SUCCESS") {
+                const d = res.data;
+                const pImg = d.photoLink ? `<img src="${d.photoLink}" style="width:130px; height:150px; object-fit:cover; border-radius:6px; border:1px solid #ccc;">` : `<div style="width:130px; height:150px; background:#eee; display:flex; align-items:center; justify-content:center;">No Photo</div>`;
+                
+                document.getElementById("viewContent").innerHTML = `
+                    <div style="flex-shrink:0;">${pImg}</div>
+                    <div style="flex:1;">
+                        <h2 style="margin:0 0 10px; color:#0b3c5d;">${d.studentName} (${d.studentId})</h2>
+                        <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                            <tr><td style="padding:4px; font-weight:bold; width:35%;">Father Name:</td><td>${d.fatherName}</td></tr>
+                            <tr><td style="padding:4px; font-weight:bold;">Mother Name:</td><td>${d.motherName}</td></tr>
+                            <tr><td style="padding:4px; font-weight:bold;">Class & Section:</td><td>${d.currentClass} - ${d.section} (Roll: ${d.rollNumber || '-'})</td></tr>
+                            <tr><td style="padding:4px; font-weight:bold;">Date of Birth:</td><td>${d.dob} (${d.gender})</td></tr>
+                            <tr><td style="padding:4px; font-weight:bold;">Mobile:</td><td>${d.primaryMobile}</td></tr>
+                            <tr><td style="padding:4px; font-weight:bold;">SR Number:</td><td>${d.srNumber}</td></tr>
+                            <tr><td style="padding:4px; font-weight:bold;">Status:</td><td>${d.studentStatus}</td></tr>
+                            <tr><td style="padding:4px; font-weight:bold;">Address:</td><td>${d.fullAddress}</td></tr>
+                            <tr><td style="padding:4px; font-weight:bold;">Affiliated School:</td><td>${d.actualSchoolName || 'Ambedkar Public School'}</td></tr>
+                        </table>
+                    </div>
+                `;
+                document.getElementById("viewModal").style.display = "flex";
+            }
+        });
+    }
+
+    /* EDIT MODAL */
+    function openEditModal(studentId) {
+        const ses = document.getElementById("msSessionFilter").value;
+        fetch(`${SCRIPT_URL}?action=getSingleStudent&studentId=${encodeURIComponent(studentId)}&session=${encodeURIComponent(ses)}`)
+        .then(r => r.json())
+        .then(res => {
+            if (res.status === "SUCCESS") {
+                const d = res.data;
+                const grid = document.getElementById("editFieldsGrid");
+                grid.innerHTML = `
+                    <input type="hidden" id="edStudentId" value="${d.studentId}">
+                    <input type="hidden" id="edSession" value="${d.currentSession}">
+                    <div><label>Name</label><input type="text" id="edName" value="${d.studentName}" style="width:100%;"></div>
+                    <div><label>Father Name</label><input type="text" id="edFather" value="${d.fatherName}" style="width:100%;"></div>
+                    <div><label>Mother Name</label><input type="text" id="edMother" value="${d.motherName}" style="width:100%;"></div>
+                    <div><label>Class</label><input type="text" id="edClass" value="${d.currentClass}" style="width:100%;"></div>
+                    <div><label>Section</label><input type="text" id="edSec" value="${d.section}" style="width:100%;"></div>
+                    <div><label>Roll Number</label><input type="text" id="edRoll" value="${d.rollNumber}" style="width:100%;"></div>
+                    <div><label>DOB</label><input type="date" id="edDob" value="${d.dob}" style="width:100%;"></div>
+                    <div><label>Mobile</label><input type="text" id="edMobile" value="${d.primaryMobile}" style="width:100%;"></div>
+                    <div>
+                        <label>Status</label>
+                        <select id="edStatus" style="width:100%;">
+                            <option value="Active" ${d.studentStatus==='Active'?'selected':''}>Active</option>
+                            <option value="Inactive" ${d.studentStatus==='Inactive'?'selected':''}>Inactive</option>
+                            <option value="Passout" ${d.studentStatus==='Passout'?'selected':''}>Passout</option>
+                        </select>
+                    </div>
+                    <div><label>SR Number</label><input type="text" id="edSR" value="${d.srNumber}" style="width:100%;"></div>
+                    <div><label>Aadhaar</label><input type="text" id="edAadhaar" value="${d.studentAadhaar}" style="width:100%;"></div>
+                    <div><label>PEN Number</label><input type="text" id="edPEN" value="${d.penNumber}" style="width:100%;"></div>
+                    <div style="grid-column: span 3;"><label>Full Address</label><textarea id="edAddress" rows="2" style="width:100%;">${d.fullAddress}</textarea></div>
+                    <div style="grid-column: span 3;"><label>Actual School (ID Card)</label><input type="text" id="edSchool" value="${d.actualSchoolName || ''}" style="width:100%;"></div>
+                    <input type="hidden" id="edPhoto" value="${d.photoLink || ''}">
+                `;
+                document.getElementById("editModal").style.display = "flex";
+            }
+        });
+    }
+
+    function saveEditedData() {
+        const payload = {
+            studentId: document.getElementById("edStudentId").value,
+            currentSession: document.getElementById("edSession").value,
+            studentName: document.getElementById("edName").value,
+            fatherName: document.getElementById("edFather").value,
+            motherName: document.getElementById("edMother").value,
+            currentClass: document.getElementById("edClass").value,
+            section: document.getElementById("edSec").value,
+            rollNumber: document.getElementById("edRoll").value,
+            dob: document.getElementById("edDob").value,
+            primaryMobile: document.getElementById("edMobile").value,
+            studentStatus: document.getElementById("edStatus").value,
+            srNumber: document.getElementById("edSR").value,
+            studentAadhaar: document.getElementById("edAadhaar").value,
+            penNumber: document.getElementById("edPEN").value,
+            fullAddress: document.getElementById("edAddress").value,
+            actualSchoolName: document.getElementById("edSchool").value,
+            photoLink: document.getElementById("edPhoto").value
+        };
+
+        const params = new URLSearchParams();
+        params.append("action", "updateStudent");
+        params.append("data", JSON.stringify(payload));
+
+        fetch(SCRIPT_URL, { method: "POST", body: params })
+        .then(r => r.json())
+        .then(res => {
+            if (res.status === "SUCCESS") {
+                alert("✅ छात्र रिकॉर्ड सफलतापूर्वक अपडेट हो गया!");
+                closeModal('editModal');
+                loadStudentsData();
+            } else {
+                alert("Error: " + res.message);
+            }
+        });
+    }
+
+    /* TC MODAL */
+    function openTCModal(sId, name, father, cls) {
+        document.getElementById("tcId").value = sId;
+        document.getElementById("tcName").value = name;
+        document.getElementById("tcFatherName").value = father;
+        document.getElementById("tcClass").value = cls;
+        document.getElementById("tcSession").value = document.getElementById("msSessionFilter").value;
+        document.getElementById("tcLeaveDate").value = new Date().toISOString().split('T')[0];
+        document.getElementById("tcModal").style.display = "flex";
+    }
+
+    function saveTCData() {
+        const payload = {
+            studentId: document.getElementById("tcId").value,
+            studentName: document.getElementById("tcName").value,
+            fatherName: document.getElementById("tcFatherName").value,
+            currentClass: document.getElementById("tcClass").value,
+            currentSession: document.getElementById("tcSession").value,
+            initialClass: document.getElementById("tcInitClass").value,
+            initialDate: document.getElementById("tcInitDate").value,
+            leavingDate: document.getElementById("tcLeaveDate").value,
+            reason: document.getElementById("tcReason").value
+        };
+
+        const params = new URLSearchParams();
+        params.append("action", "saveTC");
+        params.append("data", JSON.stringify(payload));
+
+        fetch(SCRIPT_URL, { method: "POST", body: params })
+        .then(r => r.json())
+        .then(res => {
+            if (res.status === "SUCCESS") {
+                alert(`✅ TC रिकॉर्ड सुरक्षित!\nGenerated TC Number: ${res.tcNumber}`);
+                closeModal('tcModal');
+            }
+        });
+    }
+
+    /* STUDENT PROMOTION */
+    function triggerPromotion() {
+        const curSes = document.getElementById("msSessionFilter").value;
+        if (!confirm(`क्या आप सत्र ${curSes} के सभी एक्टिव छात्रों को प्रमोट करना चाहते हैं?\n(कक्षा 8 वाले छात्र स्वतः Passout हो जाएँगे)`)) return;
+
+        const params = new URLSearchParams();
+        params.append("action", "promoteStudents");
+        params.append("session", curSes);
+
+        fetch(SCRIPT_URL, { method: "POST", body: params })
+        .then(r => r.json())
+        .then(res => {
+            if (res.status === "SUCCESS") {
+                alert(`🎉 प्रमोशन सफल!\nPromoted: ${res.promoted} छात्र\nPassout: ${res.passout} छात्र\nअगला सत्र: ${res.nextSession}`);
+                initManageModule();
+            } else {
+                alert("Error: " + res.message);
+            }
+        });
+    }
+
+    /* BULK PRINTS TRIGGER */
+    function triggerBulkPrint(moduleName) {
+        const selected = [];
+        document.querySelectorAll(".rowCb:checked").forEach(cb => selected.push(cb.value));
+
+        if (selected.length === 0) {
+            alert("कृपया कम से कम एक छात्र को चुनें!");
+            return;
+        }
+
+        // ब्राउज़र मेमोरी में चयनित छात्रों की आईडी सहेजना
+        localStorage.setItem("selectedStudentsList", JSON.stringify(selected));
+        localStorage.setItem("selectedSessionForPrint", document.getElementById("msSessionFilter").value);
+
+        // संबंधित मॉड्यूल पर नेविगेट करना
+        navigateModule(moduleName, moduleName.toUpperCase());
+    }
+
+    function closeModal(mId) {
+        document.getElementById(mId).style.display = "none";
+    }
+</script>
