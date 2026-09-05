@@ -71,7 +71,7 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
-/* 🌟 TOP 15mm HEADER (DEDICATED ONLY TO LOGO & DYNAMIC SCHOOL NAME) */
+/* 🌟 TOP 15mm HEADER (ONLY LOGO & DYNAMIC SCHOOL NAME) */
 .idHeaderTop {
     height: 15mm;
     width: 100%;
@@ -105,7 +105,7 @@
     overflow: hidden;
 }
 
-/* DYNAMIC SCHOOL TITLE: TALLER STRETCHED FONT, WRAPS UP TO 2 LINES AUTOMATICALLY */
+/* DYNAMIC SCHOOL TITLE: TALL STRETCHED FONT, AUTO WRAP 2 LINES */
 .idSchoolTitle {
     width: 100%;
     font-size: 7.8pt;
@@ -115,7 +115,7 @@
     text-align: center;
     line-height: 1.05;
     letter-spacing: 0.1px;
-    transform: scaleY(1.15); /* Gives tall, prominent height without overflowing width */
+    transform: scaleY(1.15);
     transform-origin: center;
     white-space: normal;
     word-break: break-word;
@@ -129,7 +129,7 @@
 /* 🌟 INNER CONTENT AREA */
 .idMainContent {
     width: 46mm;
-    height: 60mm;
+    height: 59mm;
     margin: 0 auto;
     box-sizing: border-box;
     display: flex;
@@ -215,7 +215,7 @@
     margin-top: auto;
     display: flex;
     align-items: flex-end;
-    padding-bottom: 0.5mm;
+    padding-bottom: 0.4mm;
     z-index: 3;
 }
 
@@ -228,27 +228,41 @@
     padding: 0.3mm;
 }
 
-/* 🌟 BOTTOM 5mm FOOTER: DEDICATED TO ADDRESS & CONTACT NUMBER */
+/* 🌟 STYLISH GRADIENT BADGE BOX FOR ADDRESS & CONTACT OVER OLD BG */
 .idBottomSpace {
-    height: 5mm;
+    height: 6mm;
     width: 100%;
     box-sizing: border-box;
-    padding: 0 2mm;
+    padding: 0 1.5mm 0.8mm 1.5mm;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5;
+    flex-shrink: 0;
+}
+
+.idFooterBadge {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0.5mm 1.5mm;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    z-index: 2;
-    flex-shrink: 0;
+    border-radius: 3.5px;
+    background: linear-gradient(135deg, #0284c7 0%, #dc2626 50%, #16a34a 100%);
+    border: 0.8px solid #fde047;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.45);
 }
 
 .idFooterText {
-    font-size: 4.1pt;
-    font-weight: 800;
+    font-size: 3.8pt;
+    font-weight: 900;
     color: #ffffff;
-    line-height: 1.08;
-    text-shadow: 0 1px 2px #000000;
+    line-height: 1.05;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.9);
     white-space: normal;
     word-break: break-word;
     display: -webkit-box;
@@ -326,7 +340,7 @@ function renderSingleIDCard(item) {
 
     return `
         <div class="idCardBox" style="background-image: url('${bgImage}');">
-            <!-- 🌟 Top 15mm Header (Only Logo & Dynamic School Name) -->
+            <!-- 🌟 Top 15mm Header (Logo & Auto-Wrapping School Name) -->
             <div class="idHeaderTop">
                 <img src="${rawLogo}" class="idLogoImg" onerror="this.onerror=null;this.src='${PRIMARY_LOGO}';">
                 <div class="idSchoolMeta">
@@ -334,7 +348,7 @@ function renderSingleIDCard(item) {
                 </div>
             </div>
 
-            <!-- Content Area (45mm x 60mm) -->
+            <!-- Content Area (46mm x 59mm) -->
             <div class="idMainContent">
                 <div class="idPhotoFrame">
                     <img src="${rawPhoto}" onerror="this.onerror=null;this.src='${PRIMARY_LOGO}';">
@@ -356,9 +370,11 @@ function renderSingleIDCard(item) {
                 </div>
             </div>
 
-            <!-- 🌟 Bottom 5mm Footer (Address & Contact in 1 or 2 lines) -->
+            <!-- 🌟 Bottom 6mm Space with Blue-Red-Green Gradient Box -->
             <div class="idBottomSpace">
-                <div class="idFooterText">${sch.schoolAddress} &nbsp;|&nbsp; Mob. ${sch.contactNumber}</div>
+                <div class="idFooterBadge">
+                    <div class="idFooterText">${sch.schoolAddress} | Mob. ${sch.contactNumber}</div>
+                </div>
             </div>
         </div>
     `;
@@ -500,7 +516,7 @@ function executeSafeIDPrint() {
                 }
                 .idMainContent {
                     width: 46mm;
-                    height: 60mm;
+                    height: 59mm;
                     margin: 0 auto;
                     box-sizing: border-box;
                     display: flex;
@@ -558,7 +574,7 @@ function executeSafeIDPrint() {
                     margin-top: auto;
                     display: flex;
                     align-items: flex-end;
-                    padding-bottom: 0.5mm;
+                    padding-bottom: 0.4mm;
                 }
                 .idQrCode {
                     width: 9.8mm;
@@ -569,23 +585,35 @@ function executeSafeIDPrint() {
                     padding: 0.3mm;
                 }
                 .idBottomSpace {
-                    height: 5mm;
+                    height: 6mm;
                     width: 100%;
                     box-sizing: border-box;
-                    padding: 0 2mm;
+                    padding: 0 1.5mm 0.8mm 1.5mm;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 5;
+                    flex-shrink: 0;
+                }
+                .idFooterBadge {
+                    width: 100%;
+                    height: 100%;
+                    box-sizing: border-box;
+                    padding: 0.5mm 1.5mm;
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
                     align-items: center;
                     text-align: center;
-                    z-index: 2;
-                    flex-shrink: 0;
+                    border-radius: 3.5px;
+                    background: linear-gradient(135deg, #0284c7 0%, #dc2626 50%, #16a34a 100%) !important;
+                    border: 0.8px solid #fde047;
                 }
                 .idFooterText {
-                    font-size: 4.1pt;
-                    font-weight: 800;
+                    font-size: 3.8pt;
+                    font-weight: 900;
                     color: #ffffff !important;
-                    line-height: 1.08;
+                    line-height: 1.05;
                     text-shadow: 0 1px 2px #000000;
                     white-space: normal;
                     word-break: break-word;
