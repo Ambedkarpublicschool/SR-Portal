@@ -320,18 +320,15 @@ function renderSingleIDCard(item) {
     const st = item.student;
     const sch = item.school;
 
-    // डिफ़ॉल्ट प्राइमरी लोगो (सदा उपलब्ध)
     const PRIMARY_LOGO = "https://i.postimg.cc/pLt1F2cD/logo-copy.png";
     const rawLogo = sch.logoLink ? formatImgUrl(sch.logoLink) : PRIMARY_LOGO;
     const rawPhoto = st.photo ? formatImgUrl(st.photo) : PRIMARY_LOGO;
 
-    // QR Code डेटा
     const qrText = encodeURIComponent(`Name: ${st.studentName}\nFather: ${st.fatherName}`);
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${qrText}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${qrText}`;
 
     return `
         <div class="idCardBox">
-            <!-- 15.5mm Header (Line 1: Name, Line 2: Address, Line 3: Contact) -->
             <div class="idHeaderTop">
                 <img src="${rawLogo}" class="idLogoImg" onerror="this.onerror=null;this.src='${PRIMARY_LOGO}';">
                 <div class="idSchoolMeta">
@@ -341,7 +338,6 @@ function renderSingleIDCard(item) {
                 </div>
             </div>
 
-            <!-- 45mm x 60mm Content Area -->
             <div class="idMainContent">
                 <div class="idPhotoFrame">
                     <img src="${rawPhoto}" onerror="this.onerror=null;this.src='${PRIMARY_LOGO}';">
@@ -359,11 +355,10 @@ function renderSingleIDCard(item) {
                 </div>
 
                 <div class="idQrRow">
-                    <img src="${qrUrl}" class="idQrCode">
+                    <img src="${qrUrl}" class="idQrCode" loading="lazy">
                 </div>
             </div>
 
-            <!-- Bottom Accent Wave -->
             <div class="idBottomWave"></div>
         </div>
     `;
