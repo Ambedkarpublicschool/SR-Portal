@@ -500,4 +500,25 @@
     function closeModal(mId) {
         document.getElementById(mId).style.display = "none";
     }
+
+    /* BULK PRINTS TRIGGER */
+    function triggerBulkPrint(moduleName) {
+        const selected = [];
+        document.querySelectorAll(".rowCb:checked").forEach(cb => selected.push(cb.value));
+
+        if (selected.length === 0) {
+            alert("कृपया कम से कम एक छात्र को चेकबॉक्स से चुनें!");
+            return;
+        }
+
+        // चुने हुए छात्रों की आईडी ब्राउज़र स्टोरेज में सुरक्षित करना
+        localStorage.setItem("selectedStudentsList", JSON.stringify(selected));
+
+        // tc-print मॉड्यूल लोड करना
+        navigateModule(moduleName, "Transfer Certificate Print");
+    }
+
+    function closeModal(mId) {
+        document.getElementById(mId).style.display = "none";
+    }
 </script>
