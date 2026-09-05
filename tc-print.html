@@ -1,0 +1,494 @@
+<style>
+/* ==========================================================================
+   PAGE & GENERAL LAYOUT
+   ========================================================================== */
+.tcPrintPage {
+    background: #f4f6f9;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #000;
+}
+
+.tcPrintActions {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.tcPrintActions button {
+    border: none;
+    padding: 10px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0 5px;
+}
+
+#printTCBtn { background: #16a34a; color: #fff; }
+#closeTCPrintBtn { background: #dc2626; color: #fff; }
+
+/* SHEET CONTAINER (A4 SIZE) */
+.tcLegalSheet {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto 25px auto;
+    background: #fff;
+    padding: 12mm 15mm;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0,0,0,.15);
+    position: relative;
+}
+
+/* HEADER SECTION */
+.tcHeader {
+    display: table;
+    width: 100%;
+    border-bottom: 2px solid #000;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+.tcLogoArea {
+    display: table-cell;
+    vertical-align: middle;
+    width: 15%;
+}
+
+.tcLogoArea img {
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+}
+
+.tcSchoolArea {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    width: 85%;
+}
+
+.tcSchoolArea h1 {
+    margin: 0 0 4px 0;
+    font-size: 24px;
+    color: #0b3c5d;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.tcSchoolArea div {
+    font-size: 12.5px;
+    color: #333;
+}
+
+.tcTitleArea {
+    text-align: center;
+    margin: 12px 0 16px;
+}
+
+.tcTitleArea h2 {
+    display: inline-block;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #000;
+    padding-bottom: 2px;
+}
+
+/* TABLES STYLES */
+.tcMetaTable, .tcInfoTable, .tcAcademicTable, .tcLeavingTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+    background: #fff;
+}
+
+.tcMetaTable td, .tcInfoTable td, .tcAcademicTable td, .tcAcademicTable th, .tcLeavingTable td {
+    border: 1px solid #444;
+    padding: 6px 10px;
+    font-size: 12.5px;
+    color: #000;
+    vertical-align: middle;
+}
+
+.tcMetaTable td { width: 50%; }
+.lbl { font-weight: bold; background: #fafafa; }
+
+.tcInfoTable td.lbl { width: 22%; }
+.tcInfoTable td:not(.lbl) { width: 28%; }
+.tcInfoTable td[colspan="3"] { width: 78%; }
+
+.tcSectionHeading {
+    margin: 14px 0 6px;
+    font-size: 13.5px;
+    text-align: center;
+    color: #0b3c5d;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.tcAcademicTable th {
+    background: #f0f0f0;
+    text-align: center;
+    font-weight: bold;
+    font-size: 11.5px;
+}
+
+.tcAcademicTable td {
+    text-align: center;
+    height: 24px;
+    font-size: 12px;
+}
+
+.tcLeavingTable td.lbl { width: 35%; }
+
+.tcCertificateText {
+    border: 1px solid #555;
+    padding: 8px 12px;
+    margin: 15px 0 25px;
+    line-height: 1.4;
+    text-align: justify;
+    font-size: 11.5px;
+}
+
+/* SIGNATURE AREA */
+.tcSignatureArea {
+    display: table;
+    width: 100%;
+    margin-top: 35px;
+}
+
+.tcSignatureArea .sigBox {
+    display: table-cell;
+    width: 35%;
+    text-align: center;
+    vertical-align: bottom;
+}
+
+.tcSignatureArea .dateBox {
+    display: table-cell;
+    width: 30%;
+    text-align: center;
+    vertical-align: bottom;
+    font-size: 12.5px;
+    font-weight: bold;
+}
+
+.tcSignatureArea .sigBox .line {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.tcSignatureArea .sigBox .txt {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* PRINT MEDIA QUERIES (A4 FORCED PAGE BREAK) */
+@page {
+    size: A4 portrait;
+    margin: 10mm;
+}
+
+@media print {
+    html, body {
+        background: #fff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .tcPrintActions { display: none !important; }
+
+    .tcLegalSheet {
+        width: 100% !important;
+        min-height: 0 !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 4mm !important;
+        border: none !important;
+        box-shadow: none !important;
+        page-break-after: always !important;
+        break-after: page !important;
+    }
+
+    .tcLegalSheet:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+    }
+}
+</style>
+
+<div class="tcPrintPage">
+    <div class="tcPrintActions">
+        <button id="printTCBtn" onclick="window.print()">🖨️ Print All TC</button>
+        <button id="closeTCPrintBtn" onclick="navigateModule('manage-students', 'Manage Students')">Back</button>
+    </div>
+
+    <div id="tcPrintContainer">
+        <div style="text-align:center; padding:50px; font-weight:bold;">Loading TC Data...</div>
+    </div>
+</div>
+
+<script>
+(function() {
+    initTCPrintEngine();
+})();
+
+function initTCPrintEngine() {
+    const listRaw = localStorage.getItem("selectedStudentsList");
+    let studentIds = [];
+    try {
+        studentIds = JSON.parse(listRaw || "[]");
+    } catch(e) {
+        studentIds = [];
+    }
+
+    if (studentIds.length === 0) {
+        alert("कोई छात्र चयनित नहीं है!");
+        navigateModule('manage-students', 'Manage Students');
+        return;
+    }
+
+    fetch(`${SCRIPT_URL}?action=getMultipleTCPrintData&studentIds=${encodeURIComponent(JSON.stringify(studentIds))}`)
+    .then(r => r.json())
+    .then(res => {
+        if (res.status !== "SUCCESS" || !res.data || res.data.length === 0) {
+            alert("टीसी डेटा प्राप्त नहीं हुआ। सुनिश्चित करें कि छात्र का टीसी फॉर्म पहले भरा गया हो!");
+            navigateModule('manage-students', 'Manage Students');
+            return;
+        }
+
+        renderTCSheets(res.data);
+    })
+    .catch(err => {
+        alert("Error loading TC: " + err.message);
+    });
+}
+
+function convertDateToWords(dateStr) {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr; 
+
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10);
+    const year = parseInt(parts[2], 10);
+
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const totalDays = ["", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth", "Tenth", "Eleventh", "Twelfth", "Thirteenth", "Fourteenth", "Fifteenth", "Sixteenth", "Seventeenth", "Eighteenth", "Nineteenth", "Twentieth", "Twenty-First", "Twenty-Second", "Twenty-Third", "Twenty-Fourth", "Twenty-Fifth", "Twenty-Sixth", "Twenty-Seventh", "Twenty-Eighth", "Twenty-Ninth", "Thirtieth", "Thirty-First"];
+    const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
+    const teens = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+    const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+
+    let yearWords = '';
+    if (year >= 2000 && year < 2100) {
+        let rem = year % 100;
+        if (rem === 0) yearWords = "Two Thousand";
+        else if (rem < 10) yearWords = "Two Thousand " + ones[rem];
+        else if (rem < 20) yearWords = "Two Thousand " + teens[rem - 10];
+        else yearWords = "Two Thousand " + tens[Math.floor(rem / 10)] + (rem % 10 !== 0 ? " " + ones[rem % 10] : "");
+    } else {
+        yearWords = year.toString(); 
+    }
+    return `${totalDays[day] || ''} ${months[month - 1] || ''} ${yearWords}`.trim();
+}
+
+function renderTCSheets(studentsArray) {
+    const container = document.getElementById("tcPrintContainer");
+    container.innerHTML = "";
+
+    const noHistory = [];
+
+    studentsArray.forEach(data => {
+        if (!data.hasHistory) {
+            noHistory.push(data.student.studentId);
+        }
+
+        const dobWords = convertDateToWords(data.student.dob);
+        const schoolClasses = data.school.recognitionClasses; // Nursery to 8
+
+        const initCls = String(data.initialClass || "Nursery").trim();
+        const lastCls = String(data.tc.lastClass || data.student.currentClass).trim();
+        const lastSes = String(data.tc.lastSession || "2026-2027").trim();
+
+        let startIdx = schoolClasses.indexOf(initCls);
+        let endIdx = schoolClasses.indexOf(lastCls);
+
+        if (startIdx === -1) startIdx = 0;
+        if (endIdx === -1) endIdx = schoolClasses.length - 1;
+        if (startIdx > endIdx) startIdx = endIdx;
+
+        let tableRowsHtml = "";
+        let baseYear = parseInt(lastSes.split("-")[0], 10) || 2026;
+
+        schoolClasses.forEach((clsName, idx) => {
+            if (idx >= startIdx && idx <= endIdx) {
+                const diff = endIdx - idx;
+                const clsStartYear = baseYear - diff;
+                const clsEndYear = clsStartYear + 1;
+                const calculatedSession = `${clsStartYear}-${clsEndYear}`;
+                const admDate = `01-04-${clsStartYear}`;
+                const leavDate = (idx === endIdx) ? (data.tc.classLeavingDate || `31-03-${clsEndYear}`) : `31-03-${clsEndYear}`;
+
+                if (idx === endIdx) {
+                    tableRowsHtml += `
+                        <tr style="font-weight:bold;">
+                            <td>${clsName}</td>
+                            <td>${lastSes}</td>
+                            <td>${data.tc.admissionDate || admDate}</td>
+                            <td>${data.tc.leavingDate || leavDate}</td>
+                            <td>${data.tc.result || 'Pass'}</td>
+                            <td>${data.tc.remarks || 'Good'}</td>
+                        </tr>
+                    `;
+                } else {
+                    tableRowsHtml += `
+                        <tr>
+                            <td>${clsName}</td>
+                            <td>${calculatedSession}</td>
+                            <td>${admDate}</td>
+                            <td>${leavDate}</td>
+                            <td>Pass</td>
+                            <td>Good</td>
+                        </tr>
+                    `;
+                }
+            } else {
+                tableRowsHtml += `
+                    <tr style="color:#aaa;">
+                        <td>${clsName}</td>
+                        <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+                    </tr>
+                `;
+            }
+        });
+
+        const sheetHtml = `
+            <div class="tcLegalSheet">
+                <div class="tcHeader">
+                    <div class="tcLogoArea">
+                        <img src="${data.school.logo}" alt="Logo">
+                    </div>
+                    <div class="tcSchoolArea">
+                        <h1>${data.school.schoolName}</h1>
+                        <div>${data.school.address}</div>
+                        <div style="font-weight:bold; margin-top:3px;">
+                            UDISE: ${data.school.udise} | Recognition: Nursery to 8th
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tcTitleArea">
+                    <h2>TRANSFER CERTIFICATE</h2>
+                </div>
+
+                <table class="tcMetaTable">
+                    <tr>
+                        <td><span class="lbl">TC Number:</span> <strong>${data.tc.tcNumber || 'PENDING'}</strong></td>
+                        <td><span class="lbl">SR Number:</span> <strong>${data.tc.srNumber || '-'}</strong></td>
+                    </tr>
+                </table>
+
+                <table class="tcInfoTable">
+                    <tr>
+                        <td class="lbl">Student Name</td>
+                        <td><strong>${data.student.studentName}</strong></td>
+                        <td class="lbl">Father Name</td>
+                        <td>${data.student.fatherName}</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl">Mother Name</td>
+                        <td>${data.student.motherName}</td>
+                        <td class="lbl">Father Occupation</td>
+                        <td>${data.student.fatherOccupation || '-'}</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl">PEN Number</td>
+                        <td>${data.student.penNumber || '-'}</td>
+                        <td class="lbl">Student ID</td>
+                        <td>${data.student.studentId}</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl">Class Last Studied</td>
+                        <td><strong>Class ${lastCls}</strong></td>
+                        <td class="lbl">Blood Group</td>
+                        <td>${data.student.bloodGroup || '-'}</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl">DOB (In Figure)</td>
+                        <td>${data.student.dob}</td>
+                        <td class="lbl">DOB (In Words)</td>
+                        <td style="font-size:11px;">${dobWords}</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl">Religion</td>
+                        <td>${data.student.religion || '-'}</td>
+                        <td class="lbl">Category / Caste</td>
+                        <td>${data.student.category || '-'} (${data.student.caste || '-'})</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl">School Last Attended</td>
+                        <td colspan="3">${data.student.previousSchool}</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl">Permanent Address</td>
+                        <td colspan="3">${data.student.address}</td>
+                    </tr>
+                </table>
+
+                <div class="tcSectionHeading">Academic History</div>
+                <table class="tcAcademicTable">
+                    <thead>
+                        <tr>
+                            <th width="12%">Class</th>
+                            <th width="18%">Session</th>
+                            <th width="20%">Date of Admission</th>
+                            <th width="20%">Date of Leaving</th>
+                            <th width="15%">Result</th>
+                            <th width="15%">Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tableRowsHtml}
+                    </tbody>
+                </table>
+
+                <table class="tcLeavingTable">
+                    <tr>
+                        <td class="lbl">Date of Leaving School</td>
+                        <td>${data.tc.leavingDate || '-'}</td>
+                    </tr>
+                    <tr>
+                        <td class="lbl">Reason for Leaving School</td>
+                        <td>${data.tc.leavingReason || '-'}</td>
+                    </tr>
+                </table>
+
+                <div class="tcCertificateText">
+                    Certified that the above information is in accordance with the school register. No change in any entry is to be made except by the authority issuing the certificate.
+                </div>
+
+                <div class="tcSignatureArea">
+                    <div class="dateBox">
+                        Date: <span>${data.tc.issueDate}</span>
+                    </div>
+                    <div class="sigBox">
+                        <div class="line">_______________________</div>
+                        <div class="txt">Prepared by</div>
+                    </div>
+                    <div class="sigBox">
+                        <div class="line">_______________________</div>
+                        <div class="txt">Principal (with Seal)</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML("beforeend", sheetHtml);
+    });
+
+    if (noHistory.length > 0) {
+        alert("सूचना: निम्नलिखित छात्रों का TC Form पहले से नहीं भरा गया था, इसलिए उनका TC Number खाली दिखेगा:\n" + noHistory.join(", "));
+    }
+}
+</script>
