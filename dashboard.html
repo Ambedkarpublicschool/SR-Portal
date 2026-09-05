@@ -1,0 +1,262 @@
+<style>
+    .dashContainer { padding: 10px 0; }
+    
+    /* मेट्रिक्स कार्ड्स ग्रिड */
+    .kpiGrid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    .kpiCard {
+        background: #fff;
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        border-left: 5px solid #0b3c5d;
+        display: flex;
+        flex-direction: column;
+    }
+    .kpiCard.kpiActive { border-left-color: #16a34a; }
+    .kpiCard.kpiInactive { border-left-color: #dc2626; }
+    .kpiCard.kpiPassout { border-left-color: #9333ea; }
+    
+    .kpiTitle { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 6px; }
+    .kpiValue { font-size: 26px; font-weight: 800; color: #0b3c5d; }
+    .kpiCard.kpiActive .kpiValue { color: #16a34a; }
+    .kpiCard.kpiInactive .kpiValue { color: #dc2626; }
+    .kpiCard.kpiPassout .kpiValue { color: #9333ea; }
+
+    /* चार्ट व ब्रेकडाउन लेआउट */
+    .contentGrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    .panelBox {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        overflow: hidden;
+    }
+    .panelHeader {
+        background: #f8fafc;
+        padding: 12px 18px;
+        border-bottom: 1px solid #e2e8f0;
+        font-weight: 700;
+        color: #0b3c5d;
+        font-size: 14px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .panelBody { padding: 18px; }
+
+    /* टेबल स्टाइल */
+    .summaryTable { width: 100%; border-collapse: collapse; }
+    .summaryTable th, .summaryTable td {
+        padding: 9px 12px;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 13px;
+        text-align: left;
+    }
+    .summaryTable th { background: #f8fafc; font-weight: 700; color: #475569; }
+    .summaryTable td:last-child, .summaryTable th:last-child { text-align: right; }
+
+    /* कैनवास कंटेनर */
+    .chartWrapper { position: relative; height: 260px; width: 100%; display: flex; justify-content: center; }
+
+    @media (max-width: 900px) {
+        .kpiGrid { grid-template-columns: repeat(2, 1fr); }
+        .contentGrid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 550px) {
+        .kpiGrid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="dashContainer">
+    <!-- शीर्ष मेट्रिक्स -->
+    <div class="kpiGrid">
+        <div class="kpiCard">
+            <div class="kpiTitle">Total Enrolled (<span id="sessionTag">2026-2027</span>)</div>
+            <div class="kpiValue" id="valTotal">0</div>
+        </div>
+        <div class="kpiCard kpiActive">
+            <div class="kpiTitle">Active Students</div>
+            <div class="kpiValue" id="valActive">0</div>
+        </div>
+        <div class="kpiCard kpiInactive">
+            <div class="kpiTitle">Inactive Students</div>
+            <div class="kpiValue" id="valInactive">0</div>
+        </div>
+        <div class="kpiCard kpiPassout">
+            <div class="kpiTitle">Total Passout</div>
+            <div class="kpiValue" id="valPassout">0</div>
+        </div>
+    </div>
+
+    <!-- चार्ट और क्लास ब्रेकडाउन -->
+    <div class="contentGrid">
+        <div class="panelBox">
+            <div class="panelHeader">
+                <span>Active vs Inactive Status</span>
+            </div>
+            <div class="panelBody">
+                <div class="chartWrapper">
+                    <canvas id="statusPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="panelBox">
+            <div class="panelHeader">
+                <span>Class-Wise Breakdown</span>
+            </div>
+            <div class="panelBody" style="max-height: 290px; overflow-y: auto;">
+                <table class="summaryTable">
+                    <thead>
+                        <tr>
+                            <th>Class</th>
+                            <th>Total Students</th>
+                        </tr>
+                    </thead>
+                    <tbody id="classTableBody">
+                        <tr><td colspan="2" style="text-align:center;">डेटा लोड हो रहा है...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- स्कूल-वाइज ब्रेकडाउन -->
+    <div class="panelBox">
+        <div class="panelHeader">
+            <span>School-Wise Enrolled Students (Affiliated Schools)</span>
+        </div>
+        <div class="panelBody" style="overflow-x: auto;">
+            <table class="summaryTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>School Name & Address</th>
+                        <th>Total Students</th>
+                    </tr>
+                </thead>
+                <tbody id="schoolTableBody">
+                    <tr><td colspan="3" style="text-align:center;">डेटा लोड हो रहा है...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        loadDashboardStats();
+    })();
+
+    function loadDashboardStats() {
+        fetch(`${SCRIPT_URL}?action=getDashboardMetrics`)
+        .then(r => r.json())
+        .then(res => {
+            if (res.status === "SUCCESS") {
+                document.getElementById("sessionTag").innerText = res.session;
+                document.getElementById("valTotal").innerText = res.totalStudents;
+                document.getElementById("valActive").innerText = res.activeCount;
+                document.getElementById("valInactive").innerText = res.inactiveCount;
+                document.getElementById("valPassout").innerText = res.passoutCount;
+
+                renderPieChart(res.activeCount, res.inactiveCount);
+                renderClassTable(res.classBreakdown);
+                renderSchoolTable(res.schoolBreakdown);
+            }
+        })
+        .catch(err => {
+            console.error("Dashboard fetch error:", err);
+            document.getElementById("classTableBody").innerHTML = `<tr><td colspan="2" style="color:red; text-align:center;">लोड करने में त्रुटि: ${err.message}</td></tr>`;
+        });
+    }
+
+    function renderPieChart(active, inactive) {
+        const ctx = document.getElementById('statusPieChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Active', 'Inactive'],
+                datasets: [{
+                    data: [active, inactive],
+                    backgroundColor: ['#16a34a', '#dc2626'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    }
+
+    function renderClassTable(classMap) {
+        const tbody = document.getElementById("classTableBody");
+        tbody.innerHTML = "";
+        const classOrder = ["Nursery", "LKG", "UKG", "1", "2", "3", "4", "5", "6", "7", "8"];
+        
+        let hasData = false;
+        classOrder.forEach(cls => {
+            if (classMap[cls] !== undefined) {
+                hasData = true;
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>Class ${cls}</strong></td>
+                        <td>${classMap[cls]}</td>
+                    </tr>
+                `;
+            }
+        });
+
+        // यदि कोई अन्य क्लास मौजूद हो जो लिस्ट में न हो
+        Object.keys(classMap).forEach(cls => {
+            if (!classOrder.includes(cls)) {
+                hasData = true;
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>Class ${cls}</strong></td>
+                        <td>${classMap[cls]}</td>
+                    </tr>
+                `;
+            }
+        });
+
+        if (!hasData) {
+            tbody.innerHTML = `<tr><td colspan="2" style="text-align:center; color:#888;">वर्तमान सत्र में कोई छात्र दर्ज नहीं है।</td></tr>`;
+        }
+    }
+
+    function renderSchoolTable(schoolMap) {
+        const tbody = document.getElementById("schoolTableBody");
+        tbody.innerHTML = "";
+        
+        const schools = Object.keys(schoolMap);
+        if (schools.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#888;">कोई स्कूल डेटा उपलब्ध नहीं है।</td></tr>`;
+            return;
+        }
+
+        schools.forEach((sch, idx) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td><strong>${sch}</strong></td>
+                    <td>${schoolMap[sch]}</td>
+                </tr>
+            `;
+        });
+    }
+</script>
