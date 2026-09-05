@@ -110,7 +110,7 @@
     <!-- 🌟 फ़िल्टर बार -->
     <div class="filterPanel">
         <div class="filterGrid">
-            <input type="text" id="msSearch" placeholder="Search ID / Mobile / Name" class="searchInp">
+            <input type="text" id="msSearch" placeholder="Search ID / Mobile / Name" class="searchInp" onkeyup="if(event.key === 'Enter') loadStudentsData(true)">
             
             <!-- 🌟 स्कूल फ़िल्टर (Column AK) -->
             <select id="msSchoolFilter" onchange="loadStudentsData(true)">
@@ -290,38 +290,25 @@
     })();
 
     function initManageModule() {
-        // 1. स्कूल ड्रॉपडाउन लोकल कैश से लोड करना
-        const cachedSchools = localStorage.getItem("cached_school_list");
-        if (cachedSchools) {
-            populateSchoolDropdown(JSON.parse(cachedSchools));
-        } else {
-            fetch(`${SCRIPT_URL}?action=getSchoolList`)
-            .then(r => r.json())
-            .then(res => {
-                if (res.status === "SUCCESS" && res.data) {
-                    localStorage.setItem("cached_school_list", JSON.stringify(res.data));
-                    populateSchoolDropdown(res.data);
-                }
-            })
-            .catch(err => console.error("School fetch error:", err));
-        }
+        // 1. स्कूल ड्रॉपडाउन लोड करना (Student_Master Col AK से)
+        fetch(`${SCRIPT_URL}?action=getSchoolList`)
+        .then(r => r.json())
+        .then(res => {
+            if (res.status === "SUCCESS" && res.data) {
+                populateSchoolDropdown(res.data);
+            }
+        })
+        .catch(err => console.error("School fetch error:", err));
 
-        // 2. सेशन्स लोकल कैश से लोड करना
-        const cachedSessions = localStorage.getItem("cached_sessions_list");
-        if (cachedSessions) {
-            populateSessionDropdown(JSON.parse(cachedSessions));
-            loadStudentsData(false); // फ़ास्ट लोकल मेमोरी लोड
-        } else {
-            fetch(`${SCRIPT_URL}?action=getAllSessions`)
-            .then(r => r.json())
-            .then(res => {
-                const list = (res.sessions && res.sessions.length > 0) ? res.sessions : ["2026-2027"];
-                localStorage.setItem("cached_sessions_list", JSON.stringify(list));
-                populateSessionDropdown(list);
-                loadStudentsData(false);
-            })
-            .catch(() => loadStudentsData(false));
-        }
+        // 2. सत्र सूची लोड करना
+        fetch(`${SCRIPT_URL}?action=getAllSessions`)
+        .then(r => r.json())
+        .then(res => {
+            const list = (res.sessions && res.sessions.length > 0) ? res.sessions : ["2026-2027"];
+            populateSessionDropdown(list);
+            loadStudentsData(false);
+        })
+        .catch(() => loadStudentsData(false));
     }
 
     function populateSchoolDropdown(schools) {
@@ -341,7 +328,7 @@
     }
 
     /**
-     * 🌟 छात्रों का डेटा लोड करना (स्थानीय कैश फ़र्स्ट)
+     * 🌟 छात्रों का डेटा लोड करना (स्मार्ट कैश और सटीक फ़िल्टरिंग)
      */
     function loadStudentsData(forceServer = false) {
         const search = document.getElementById("msSearch").value.trim();
@@ -351,14 +338,19 @@
         const sec = document.getElementById("msSectionFilter").value;
         const stat = document.getElementById("msStatusFilter").value;
 
+        const hasActiveFilter = Boolean(search || school !== "all" || cls !== "All Classes" || sec !== "All Sections" || stat !== "All Status");
         const cacheKey = `students_cache_${ses}`;
 
-        // यदि कोई फ़िल्टर नहीं लगा है और सर्वर फ़ोर्स नहीं है, तो तुरंत लोकल मेमोरी से लोड करें
-        if (!forceServer && !search && school === "all" && cls === "All Classes" && sec === "All Sections" && stat === "All Status") {
+        // डिफ़ॉल्ट व्यू में लोकल मेमोरी से तुरंत दिखाना
+        if (!forceServer && !hasActiveFilter) {
             const cachedData = localStorage.getItem(cacheKey);
             if (cachedData) {
-                renderStudentRows(JSON.parse(cachedData));
-                return;
+                try {
+                    renderStudentRows(JSON.parse(cachedData));
+                    return;
+                } catch(e) {
+                    localStorage.removeItem(cacheKey);
+                }
             }
         }
 
@@ -376,8 +368,8 @@
                 return;
             }
 
-            // बिना फ़िल्टर का डिफ़ॉल्ट डेटा लोकल मेमोरी में सुरक्षित करें
-            if (!search && school === "all" && cls === "All Classes" && sec === "All Sections" && stat === "All Status") {
+            // डिफ़ॉल्ट व्यू को कैश करना
+            if (!hasActiveFilter) {
                 localStorage.setItem(cacheKey, JSON.stringify(res.students));
             }
 
@@ -438,7 +430,7 @@
         document.getElementById("msClassFilter").selectedIndex = 0;
         document.getElementById("msSectionFilter").selectedIndex = 0;
         document.getElementById("msStatusFilter").selectedIndex = 0;
-        loadStudentsData(true); // रीसेट पर सर्वर से ताज़ा डेटा लोड
+        loadStudentsData(true);
     }
 
     /* VIEW MODAL */
@@ -541,7 +533,6 @@
         .then(res => {
             if (res.status === "SUCCESS") {
                 alert("✅ Record Updated Successfully!");
-                // 🌟 अपडेट होने पर लोकल कैश क्लियर करना
                 localStorage.removeItem(`students_cache_${ses}`);
                 closeModal('editModal');
                 loadStudentsData(true);
@@ -649,7 +640,7 @@
         .then(res => {
             if (res.status === "SUCCESS") {
                 alert(`🎉 Promotion Done! Promoted: ${res.promoted}, Passout: ${res.passout}`);
-                localStorage.clear(); // पूरा कैश साफ़ करें
+                localStorage.clear();
                 initManageModule();
             } else {
                 alert("Error: " + res.message);
