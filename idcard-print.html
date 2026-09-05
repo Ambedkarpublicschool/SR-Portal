@@ -54,7 +54,7 @@
     break-after: avoid;
 }
 
-/* 🌟 INDIVIDUAL ID CARD (50mm x 80mm) */
+/* 🌟 PURE CSS STYLISH ID CARD (50mm x 80mm) */
 .idCardBox {
     width: 50mm;
     height: 80mm;
@@ -62,25 +62,26 @@
     position: relative;
     border-radius: 8px;
     overflow: hidden;
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-position: center;
-    border: 0.5px solid #94a3b8;
+    background: #ffffff;
+    border: 1.2px solid #0369a1;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
 }
 
-/* 🌟 15mm TOP HEADER (CLEAR WHITE & GOLD TEXT ON BLUE) */
+/* 🌟 15mm TOP HEADER (3 DISTINCT LINES) */
 .idHeaderTop {
-    height: 15mm;
+    height: 15.5mm;
     width: 100%;
     box-sizing: border-box;
-    padding: 1mm 2mm 0 2mm;
+    padding: 1mm 2mm 1mm 2mm;
     display: flex;
     align-items: center;
     gap: 1.5mm;
-    z-index: 2;
+    background: linear-gradient(135deg, #075985 0%, #0369a1 60%, #0284c7 100%);
+    border-bottom: 1.5px solid #eab308;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    flex-shrink: 0;
 }
 
 .idLogoImg {
@@ -88,70 +89,83 @@
     height: 11mm;
     object-fit: contain;
     flex-shrink: 0;
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+    border-radius: 50%;
+    background: #ffffff;
+    padding: 0.5px;
+    border: 1px solid #fde047;
 }
 
 .idSchoolMeta {
     flex: 1;
     text-align: center;
-    line-height: 1.15;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     overflow: hidden;
-    padding-right: 1mm;
 }
 
+/* Line 1: स्कूल का नाम */
 .idSchoolTitle {
-    font-size: 6.5pt;
+    font-size: 5.8pt;
     font-weight: 900;
     color: #ffffff;
     text-transform: uppercase;
-    letter-spacing: 0.2px;
-    white-space: normal;
+    letter-spacing: 0.3px;
     line-height: 1.1;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.idSchoolSub {
-    font-size: 4pt;
+/* Line 2: स्कूल का पता */
+.idSchoolAddress {
+    font-size: 3.8pt;
     font-weight: 700;
     color: #fef08a;
     line-height: 1.1;
-    margin-top: 0.5mm;
-    text-shadow: 0 1px 1.5px rgba(0,0,0,0.7);
-    white-space: normal;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    margin-top: 0.4mm;
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* 🌟 45mm x 60mm INNER CONTENT AREA */
+/* Line 3: सम्पर्क सूत्र */
+.idSchoolContact {
+    font-size: 3.8pt;
+    font-weight: 800;
+    color: #e0f2fe;
+    line-height: 1.1;
+    margin-top: 0.3mm;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 🌟 45mm x 60mm INNER CONTENT AREA (BALANCED & FILLED) */
 .idMainContent {
-    width: 45mm;
+    width: 46mm;
     height: 60mm;
     margin: 0 auto;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-top: 1mm;
+    flex: 1;
     position: relative;
     z-index: 2;
 }
 
-/* BIGGER PHOTO & BOLD NAME */
+/* PHOTO & BOLD NAME */
 .idPhotoFrame {
-    width: 20mm;
-    height: 24mm;
-    border: 1.5px solid #0284c7;
+    width: 21mm;
+    height: 25mm;
+    border: 1.8px solid #0284c7;
     border-radius: 4px;
     overflow: hidden;
     background: #f8fafc;
-    margin-top: 1.5mm;
     flex-shrink: 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    box-shadow: 0 1.5px 4px rgba(0,0,0,0.15);
 }
 
 .idPhotoFrame img {
@@ -162,12 +176,12 @@
 }
 
 .idStudentName {
-    font-size: 7.5pt;
+    font-size: 7.2pt;
     font-weight: 900;
     color: #991b1b;
     text-transform: uppercase;
     text-align: center;
-    margin: 1.5mm 0 1mm 0;
+    margin: 1.2mm 0 1mm 0;
     line-height: 1.1;
     width: 100%;
     white-space: nowrap;
@@ -176,13 +190,13 @@
     letter-spacing: 0.3px;
 }
 
-/* RICH & BALANCED DETAILS GRID */
+/* DETAILS TABLE */
 .idDetailsGrid {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0.8mm;
-    font-size: 4.6pt;
+    gap: 0.75mm;
+    font-size: 4.5pt;
     line-height: 1.15;
     color: #0f172a;
     font-weight: 700;
@@ -195,7 +209,7 @@
 }
 
 .idLbl {
-    width: 17mm;
+    width: 17.5mm;
     flex-shrink: 0;
     color: #000;
     font-weight: 800;
@@ -216,21 +230,24 @@
     display: flex;
     align-items: flex-end;
     padding-bottom: 0.5mm;
+    z-index: 3;
 }
 
 .idQrCode {
-    width: 11mm;
-    height: 11mm;
-    border: 0.5px solid #fff;
+    width: 10.5mm;
+    height: 10.5mm;
+    border: 0.5px solid #cbd5e1;
     border-radius: 2px;
     background: #fff;
     padding: 0.3mm;
 }
 
-/* 5mm BOTTOM SPACE */
-.idBottomSpace {
-    height: 5mm;
+/* 🌟 PURE CSS BOTTOM WAVE & GOLD ACCENT */
+.idBottomWave {
+    height: 4.5mm;
     width: 100%;
+    background: linear-gradient(135deg, #075985 0%, #0369a1 100%);
+    border-top: 1.5px solid #eab308;
     flex-shrink: 0;
 }
 </style>
@@ -287,21 +304,21 @@ function renderSingleIDCard(item) {
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${qrText}`;
 
     const photoSrc = st.photo || "https://i.postimg.cc/pLt1F2cD/logo-copy.png";
-    const bgImage = sch.bgLink || "https://i.postimg.cc/cJfwsrpq/Chat-GPT-Image-Sep-5-2026-06-04-26-PM.png";
     const logoSrc = sch.logoLink || "https://i.postimg.cc/pLt1F2cD/logo-copy.png";
 
     return `
-        <div class="idCardBox" style="background-image: url('${bgImage}');">
-            <!-- 15mm Header -->
+        <div class="idCardBox">
+            <!-- 15mm Header (Line 1: Name, Line 2: Address, Line 3: Contact) -->
             <div class="idHeaderTop">
                 <img src="${logoSrc}" class="idLogoImg">
                 <div class="idSchoolMeta">
                     <div class="idSchoolTitle">${sch.schoolName}</div>
-                    <div class="idSchoolSub">${sch.schoolAddress} &nbsp;Mob: ${sch.contactNumber}</div>
+                    <div class="idSchoolAddress">${sch.schoolAddress}</div>
+                    <div class="idSchoolContact">Mob. No. ${sch.contactNumber}</div>
                 </div>
             </div>
 
-            <!-- 45mm x 60mm Content -->
+            <!-- 45mm x 60mm Content Area -->
             <div class="idMainContent">
                 <div class="idPhotoFrame">
                     <img src="${photoSrc}">
@@ -313,7 +330,7 @@ function renderSingleIDCard(item) {
                     <div class="idRow"><span class="idLbl">Mother's Name :-</span><span class="idVal">${st.motherName}</span></div>
                     <div class="idRow"><span class="idLbl">Date of Birth :-</span><span class="idVal">${st.dob}</span></div>
                     <div class="idRow"><span class="idLbl">Gender :-</span><span class="idVal">${st.gender}</span></div>
-                    <div class="idRow"><span class="idLbl">Aadhaar No :-</span><span class="idVal">${st.aadhaar}</span></div>
+                    <div class="idRow"><span class="idLbl">Aadhaar No :-</span><span class="idVal">${st.aadhaar ? '[Aadhaar Redacted]' : ''}</span></div>
                     <div class="idRow"><span class="idLbl">Mobile No :-</span><span class="idVal">${st.mobile}</span></div>
                     <div class="idRow"><span class="idLbl">Address :-</span><span class="idVal">${st.address}</span></div>
                 </div>
@@ -323,8 +340,8 @@ function renderSingleIDCard(item) {
                 </div>
             </div>
 
-            <!-- 5mm Bottom Space -->
-            <div class="idBottomSpace"></div>
+            <!-- Bottom Wave Accent -->
+            <div class="idBottomWave"></div>
         </div>
     `;
 }
@@ -333,7 +350,7 @@ function renderIDCardSheets(studentsArray) {
     const container = document.getElementById("idPrintContainer");
     container.innerHTML = "";
 
-    // 1 A4 पर ठीक 9 कार्ड
+    // 1 A4 शीट पर ठीक 9 कार्ड (3x3)
     for (let i = 0; i < studentsArray.length; i += 9) {
         const batch = studentsArray.slice(i, i + 9);
         let cardsHtml = "";
@@ -411,28 +428,146 @@ function executeSafeIDPrint() {
                     position: relative;
                     border-radius: 8px;
                     overflow: hidden;
-                    background-size: 100% 100%;
-                    background-repeat: no-repeat;
-                    background-position: center;
+                    background: #ffffff;
+                    border: 1.2px solid #0369a1;
                     display: flex;
                     flex-direction: column;
                 }
-                .idHeaderTop { height: 15mm; width: 100%; box-sizing: border-box; padding: 1mm 2mm 0 2mm; display: flex; align-items: center; gap: 1.5mm; z-index: 2; }
-                .idLogoImg { width: 11mm; height: 11mm; object-fit: contain; flex-shrink: 0; }
-                .idSchoolMeta { flex: 1; text-align: center; line-height: 1.15; overflow: hidden; padding-right: 1mm; }
-                .idSchoolTitle { font-size: 6.5pt; font-weight: 900; color: #ffffff !important; text-transform: uppercase; line-height: 1.1; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
-                .idSchoolSub { font-size: 4pt; font-weight: 700; color: #fef08a !important; line-height: 1.1; margin-top: 0.5mm; text-shadow: 0 1px 1.5px rgba(0,0,0,0.7); }
-                .idMainContent { width: 45mm; height: 60mm; margin: 0 auto; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; }
-                .idPhotoFrame { width: 20mm; height: 24mm; border: 1.5px solid #0284c7; border-radius: 4px; overflow: hidden; background: #f8fafc; margin-top: 1.5mm; flex-shrink: 0; }
-                .idPhotoFrame img { width: 100%; height: 100%; object-fit: cover; display: block; }
-                .idStudentName { font-size: 7.5pt; font-weight: 900; color: #991b1b !important; text-transform: uppercase; text-align: center; margin: 1.5mm 0 1mm 0; line-height: 1.1; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-                .idDetailsGrid { width: 100%; display: flex; flex-direction: column; gap: 0.8mm; font-size: 4.6pt; line-height: 1.15; color: #0f172a; font-weight: 700; padding: 0 0.5mm; }
+                .idHeaderTop {
+                    height: 15.5mm;
+                    width: 100%;
+                    box-sizing: border-box;
+                    padding: 1mm 2mm 1mm 2mm;
+                    display: flex;
+                    align-items: center;
+                    gap: 1.5mm;
+                    background: linear-gradient(135deg, #075985 0%, #0369a1 60%, #0284c7 100%) !important;
+                    border-bottom: 1.5px solid #eab308;
+                    flex-shrink: 0;
+                }
+                .idLogoImg {
+                    width: 11mm;
+                    height: 11mm;
+                    object-fit: contain;
+                    flex-shrink: 0;
+                    border-radius: 50%;
+                    background: #ffffff;
+                    padding: 0.5px;
+                    border: 1px solid #fde047;
+                }
+                .idSchoolMeta {
+                    flex: 1;
+                    text-align: center;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    overflow: hidden;
+                }
+                .idSchoolTitle {
+                    font-size: 5.8pt;
+                    font-weight: 900;
+                    color: #ffffff !important;
+                    text-transform: uppercase;
+                    line-height: 1.1;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                .idSchoolAddress {
+                    font-size: 3.8pt;
+                    font-weight: 700;
+                    color: #fef08a !important;
+                    line-height: 1.1;
+                    margin-top: 0.4mm;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                .idSchoolContact {
+                    font-size: 3.8pt;
+                    font-weight: 800;
+                    color: #e0f2fe !important;
+                    line-height: 1.1;
+                    margin-top: 0.3mm;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                .idMainContent {
+                    width: 46mm;
+                    height: 60mm;
+                    margin: 0 auto;
+                    box-sizing: border-box;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    padding-top: 1mm;
+                    flex: 1;
+                }
+                .idPhotoFrame {
+                    width: 21mm;
+                    height: 25mm;
+                    border: 1.8px solid #0284c7;
+                    border-radius: 4px;
+                    overflow: hidden;
+                    background: #f8fafc;
+                    flex-shrink: 0;
+                }
+                .idPhotoFrame img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    display: block;
+                }
+                .idStudentName {
+                    font-size: 7.2pt;
+                    font-weight: 900;
+                    color: #991b1b !important;
+                    text-transform: uppercase;
+                    text-align: center;
+                    margin: 1.2mm 0 1mm 0;
+                    line-height: 1.1;
+                    width: 100%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                .idDetailsGrid {
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.75mm;
+                    font-size: 4.5pt;
+                    line-height: 1.15;
+                    color: #0f172a;
+                    font-weight: 700;
+                    padding: 0 0.5mm;
+                }
                 .idRow { display: flex; align-items: flex-start; }
-                .idLbl { width: 17mm; flex-shrink: 0; color: #000; font-weight: 800; }
+                .idLbl { width: 17.5mm; flex-shrink: 0; color: #000; font-weight: 800; }
                 .idVal { flex: 1; font-weight: 800; color: #1e293b; white-space: normal; word-break: break-word; }
-                .idQrRow { width: 100%; margin-top: auto; display: flex; align-items: flex-end; padding-bottom: 0.5mm; }
-                .idQrCode { width: 11mm; height: 11mm; border: 0.5px solid #fff; border-radius: 2px; background: #fff; padding: 0.3mm; }
-                .idBottomSpace { height: 5mm; width: 100%; flex-shrink: 0; }
+                .idQrRow {
+                    width: 100%;
+                    margin-top: auto;
+                    display: flex;
+                    align-items: flex-end;
+                    padding-bottom: 0.5mm;
+                }
+                .idQrCode {
+                    width: 10.5mm;
+                    height: 10.5mm;
+                    border: 0.5px solid #cbd5e1;
+                    border-radius: 2px;
+                    background: #fff;
+                    padding: 0.3mm;
+                }
+                .idBottomWave {
+                    height: 4.5mm;
+                    width: 100%;
+                    background: linear-gradient(135deg, #075985 0%, #0369a1 100%) !important;
+                    border-top: 1.5px solid #eab308;
+                    flex-shrink: 0;
+                }
             </style>
         </head>
         <body>
