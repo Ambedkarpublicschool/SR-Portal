@@ -580,6 +580,64 @@ function triggerIDCardPrint() {
     localStorage.setItem("selectedStudentsList", JSON.stringify(selected));
     navigateModule('idcard-print', "Student ID Cards");
 }
+
+    // पेज लोड होने पर स्कूल लिस्ट लोड करना
+window.initManageStudentsModule = function() {
+    fetchSchoolDropdown();
+    loadStudentDirectory();
+};
+
+function fetchSchoolDropdown() {
+    fetch(`${SCRIPT_URL}?action=getSchoolList`)
+    .then(res => res.json())
+    .then(res => {
+        if (res.status === "SUCCESS" && res.data) {
+            const select = document.getElementById("filterSchool");
+            select.innerHTML = '<option value="all">All Schools</option>';
+            res.data.forEach(sch => {
+                select.insertAdjacentHTML("beforeend", `<option value="${sch}">${sch}</option>`);
+            });
+        }
+    })
+    .catch(err => console.error("School fetch error:", err));
+}
+
+function loadStudentDirectory() {
+    const school = document.getElementById("filterSchool") ? document.getElementById("filterSchool").value : "all";
+    const session = document.getElementById("filterSession").value;
+    const cls = document.getElementById("filterClass").value;
+    const sec = document.getElementById("filterSection").value;
+    const status = document.getElementById("filterStatus").value;
+    const q = document.getElementById("filterSearch").value.trim();
+
+    const url = `${SCRIPT_URL}?action=getStudentsDirectory&filterSchool=${encodeURIComponent(school)}&filterSession=${encodeURIComponent(session)}&filterClass=${encodeURIComponent(cls)}&filterSection=${encodeURIComponent(sec)}&filterStatus=${encodeURIComponent(status)}&searchQuery=${encodeURIComponent(q)}`;
+
+    document.getElementById("studentTableBody").innerHTML = `<tr><td colspan="9" style="text-align:center; padding:20px;">Loading Students...</td></tr>`;
+
+    fetch(url)
+    .then(res => res.json())
+    .then(res => {
+        if (res.status !== "SUCCESS" || !res.data) {
+            document.getElementById("studentTableBody").innerHTML = `<tr><td colspan="9" style="text-align:center; color:red;">No Students Found</td></tr>`;
+            return;
+        }
+        renderStudentsTable(res.data);
+    })
+    .catch(err => {
+        document.getElementById("studentTableBody").innerHTML = `<tr><td colspan="9" style="text-align:center; color:red;">Error: ${err.message}</td></tr>`;
+    });
+}
+
+function resetStudentFilters() {
+    if (document.getElementById("filterSchool")) document.getElementById("filterSchool").value = "all";
+    document.getElementById("filterSession").value = "2026-2027";
+    document.getElementById("filterClass").value = "all";
+    document.getElementById("filterSection").value = "all";
+    document.getElementById("filterStatus").value = "all";
+    document.getElementById("filterSearch").value = "";
+    loadStudentDirectory();
+}
+    
     
     function closeModal(mId) {
         document.getElementById(mId).style.display = "none";
