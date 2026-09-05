@@ -28,20 +28,21 @@
 #printTCBtn { background: #16a34a; color: #fff; }
 #closeTCPrintBtn { background: #dc2626; color: #fff; }
 
-/* SCREEN A4 SHEET (210mm x 297mm) */
+/* SCREEN A4 SHEET (LOCKED TO 297mm WITH DYNAMIC FLEX DISTRIBUTION) */
 .tcLegalSheet {
     width: 210mm;
-    min-height: 297mm;
+    height: 297mm;
+    max-height: 297mm;
     margin: 0 auto 30px auto;
     background: #ffffff;
-    padding: 14mm 16mm 14mm 16mm;
+    padding: 12mm 15mm 12mm 15mm;
     box-sizing: border-box;
     border: 1px solid #94a3b8;
     box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    overflow: hidden;
 }
 
 /* HEADER */
@@ -49,19 +50,20 @@
     display: table;
     width: 100%;
     border-bottom: 2.5px solid #000;
-    padding-bottom: 10px;
-    margin-bottom: 14px;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
 }
 
 .tcLogoArea {
     display: table-cell;
     vertical-align: middle;
-    width: 15%;
+    width: 14%;
 }
 
 .tcLogoArea img {
-    width: 85px;
-    height: 85px;
+    width: 80px;
+    height: 80px;
     object-fit: contain;
 }
 
@@ -69,11 +71,11 @@
     display: table-cell;
     vertical-align: middle;
     text-align: center;
-    width: 85%;
+    width: 86%;
 }
 
 .tcSchoolArea h1 {
-    margin: 0 0 5px 0;
+    margin: 0 0 4px 0;
     font-size: 26px;
     color: #0b3c5d;
     font-weight: 800;
@@ -82,13 +84,14 @@
 }
 
 .tcSchoolArea div {
-    font-size: 13.5px;
+    font-size: 13px;
     color: #333;
 }
 
 .tcTitleArea {
     text-align: center;
-    margin: 12px 0 16px;
+    margin: 6px 0 10px;
+    flex-shrink: 0;
 }
 
 .tcTitleArea h2 {
@@ -98,21 +101,22 @@
     font-weight: 800;
     letter-spacing: 1.2px;
     border-bottom: 2px solid #000;
-    padding-bottom: 3px;
+    padding-bottom: 2px;
 }
 
-/* TABLES STYLES (A4 पूरे पन्ने को भरने के लिए संतुलित पैडिंग) */
-.tcMetaTable, .tcInfoTable, .tcAcademicTable, .tcLeavingTable {
+/* TABLES (STATIC TOP & BOTTOM) */
+.tcMetaTable, .tcInfoTable, .tcLeavingTable {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
     background: #fff;
+    flex-shrink: 0;
 }
 
-.tcMetaTable td, .tcInfoTable td, .tcAcademicTable td, .tcAcademicTable th, .tcLeavingTable td {
+.tcMetaTable td, .tcInfoTable td, .tcLeavingTable td {
     border: 1.2px solid #222;
-    padding: 7px 10px;
-    font-size: 13px;
+    padding: 6px 8px;
+    font-size: 12.5px;
     color: #000;
     vertical-align: middle;
 }
@@ -123,48 +127,70 @@
 .tcInfoTable td.lbl { width: 22%; }
 .tcInfoTable td:not(.lbl) { width: 28%; }
 .tcInfoTable td[colspan="3"] { width: 78%; }
+.tcLeavingTable td.lbl { width: 35%; }
 
 .tcSectionHeading {
-    margin: 14px 0 8px;
-    font-size: 14.5px;
+    margin: 8px 0 4px;
+    font-size: 14px;
     text-align: center;
     color: #0b3c5d;
     font-weight: bold;
     text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+/* DYNAMIC ACADEMIC HISTORY CONTAINER (FLEXIBLE HEIGHT) */
+.tcAcademicWrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+    min-height: 0;
+}
+
+.tcAcademicTable {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.tcAcademicTable th, .tcAcademicTable td {
+    border: 1.2px solid #222;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .tcAcademicTable th {
     background: #f1f5f9;
-    text-align: center;
     font-weight: bold;
-    font-size: 12.5px;
-    padding: 8px 6px;
+    font-size: 12px;
+    padding: 6px 4px;
+    height: 28px;
 }
 
 .tcAcademicTable td {
-    text-align: center;
-    height: 27px;
     font-size: 12.5px;
     padding: 4px 6px;
 }
 
-.tcLeavingTable td.lbl { width: 35%; }
-
 .tcCertificateText {
     border: 1.2px solid #333;
-    padding: 10px 14px;
-    margin: 14px 0 24px;
-    line-height: 1.5;
+    padding: 8px 12px;
+    margin: 6px 0 12px;
+    line-height: 1.4;
     text-align: justify;
-    font-size: 12px;
+    font-size: 11.5px;
+    flex-shrink: 0;
 }
 
-/* SIGNATURES */
+/* SIGNATURES (LOCKED TO BOTTOM) */
 .tcSignatureArea {
     display: table;
     width: 100%;
-    margin-top: 50px;
-    padding-bottom: 5px;
+    margin-top: 10px;
+    padding-bottom: 4px;
+    flex-shrink: 0;
 }
 
 .tcSignatureArea .sigBox {
@@ -184,7 +210,7 @@
 }
 
 .tcSignatureArea .sigBox .line {
-    margin-bottom: 6px;
+    margin-bottom: 5px;
     font-weight: bold;
 }
 
@@ -383,7 +409,7 @@ function renderTCSheets(studentsArray) {
                     <div class="tcSchoolArea">
                         <h1>${data.school.schoolName}</h1>
                         <div>${data.school.address}</div>
-                        <div style="font-weight:bold; margin-top:3px;">
+                        <div style="font-weight:bold; margin-top:2px;">
                             UDISE: ${data.school.udise} | Recognition: Nursery to 8th
                         </div>
                     </div>
@@ -429,7 +455,7 @@ function renderTCSheets(studentsArray) {
                         <td class="lbl">DOB (In Figure)</td>
                         <td>${data.student.dob}</td>
                         <td class="lbl">DOB (In Words)</td>
-                        <td style="font-size:12px;">${dobWords}</td>
+                        <td style="font-size:11.5px;">${dobWords}</td>
                     </tr>
                     <tr>
                         <td class="lbl">Religion</td>
@@ -448,21 +474,24 @@ function renderTCSheets(studentsArray) {
                 </table>
 
                 <div class="tcSectionHeading">Academic History</div>
-                <table class="tcAcademicTable">
-                    <thead>
-                        <tr>
-                            <th width="12%">Class</th>
-                            <th width="18%">Session</th>
-                            <th width="20%">Date of Admission</th>
-                            <th width="20%">Date of Leaving</th>
-                            <th width="15%">Result</th>
-                            <th width="15%">Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${tableRowsHtml}
-                    </tbody>
-                </table>
+                
+                <div class="tcAcademicWrapper">
+                    <table class="tcAcademicTable">
+                        <thead>
+                            <tr>
+                                <th width="12%">Class</th>
+                                <th width="18%">Session</th>
+                                <th width="20%">Date of Admission</th>
+                                <th width="20%">Date of Leaving</th>
+                                <th width="15%">Result</th>
+                                <th width="15%">Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRowsHtml}
+                        </tbody>
+                    </table>
+                </div>
 
                 <table class="tcLeavingTable">
                     <tr>
@@ -524,49 +553,73 @@ function executeSafePrint() {
             <style>
                 @page {
                     size: A4 portrait;
-                    margin: 8mm 12mm 8mm 12mm;
+                    margin: 0;
                 }
                 * { box-sizing: border-box; }
-                body {
+                html, body {
                     margin: 0;
                     padding: 0;
                     font-family: Arial, Helvetica, sans-serif;
                     background: #fff;
                     color: #000;
+                    width: 210mm;
+                    height: 297mm;
                 }
                 .tcLegalSheet {
-                    width: 100%;
+                    width: 210mm;
+                    height: 297mm;
+                    max-height: 297mm;
                     box-sizing: border-box;
                     page-break-after: always;
                     break-after: page;
                     margin: 0;
-                    padding: 0;
+                    padding: 10mm 15mm 8mm 15mm;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    overflow: hidden;
                 }
                 .tcLegalSheet:last-child {
                     page-break-after: avoid;
                     break-after: avoid;
                 }
-                .tcHeader { display: table; width: 100%; border-bottom: 2.5px solid #000; padding-bottom: 8px; margin-bottom: 12px; }
-                .tcLogoArea { display: table-cell; vertical-align: middle; width: 15%; }
+                .tcHeader { display: table; width: 100%; border-bottom: 2.5px solid #000; padding-bottom: 6px; margin-bottom: 8px; flex-shrink: 0; }
+                .tcLogoArea { display: table-cell; vertical-align: middle; width: 14%; }
                 .tcLogoArea img { width: 80px; height: 80px; object-fit: contain; }
-                .tcSchoolArea { display: table-cell; vertical-align: middle; text-align: center; width: 85%; }
-                .tcSchoolArea h1 { margin: 0 0 4px 0; font-size: 25px; color: #0b3c5d; font-weight: 800; text-transform: uppercase; }
+                .tcSchoolArea { display: table-cell; vertical-align: middle; text-align: center; width: 86%; }
+                .tcSchoolArea h1 { margin: 0 0 4px 0; font-size: 26px; color: #0b3c5d; font-weight: 800; text-transform: uppercase; }
                 .tcSchoolArea div { font-size: 13px; color: #333; }
-                .tcTitleArea { text-align: center; margin: 12px 0 14px; }
-                .tcTitleArea h2 { display: inline-block; margin: 0; font-size: 18px; font-weight: 800; border-bottom: 2px solid #000; padding-bottom: 2px; }
-                table { width: 100%; border-collapse: collapse; margin-bottom: 12px; background: #fff; }
-                td, th { border: 1.2px solid #000; padding: 6.5px 8px; font-size: 12.5px; vertical-align: middle; }
-                .tcMetaTable td { font-size: 13px; width: 50%; font-weight: bold; }
+                .tcTitleArea { text-align: center; margin: 6px 0 10px; flex-shrink: 0; }
+                .tcTitleArea h2 { display: inline-block; margin: 0; font-size: 19px; font-weight: 800; border-bottom: 2px solid #000; padding-bottom: 2px; }
+                
+                table { width: 100%; border-collapse: collapse; margin-bottom: 8px; background: #fff; }
+                .tcMetaTable, .tcInfoTable, .tcLeavingTable { flex-shrink: 0; }
+                td, th { border: 1.2px solid #000; padding: 6px 8px; font-size: 12.5px; vertical-align: middle; }
+                .tcMetaTable td { font-size: 13.5px; width: 50%; font-weight: bold; }
                 .lbl { font-weight: bold; background: #fafafa; }
-                .tcSectionHeading { margin: 14px 0 6px; font-size: 14px; text-align: center; color: #0b3c5d; font-weight: bold; text-transform: uppercase; }
-                .tcAcademicTable th { background: #f1f5f9; text-align: center; font-size: 12px; padding: 7px 4px; }
-                .tcAcademicTable td { text-align: center; height: 26px; font-size: 12px; padding: 4px 6px; }
-                .tcCertificateText { border: 1.2px solid #000; padding: 10px 12px; margin: 12px 0 20px; line-height: 1.45; text-align: justify; font-size: 11.5px; }
-                .tcSignatureArea { display: table; width: 100%; margin-top: 45px; }
+                .tcSectionHeading { margin: 8px 0 4px; font-size: 14px; text-align: center; color: #0b3c5d; font-weight: bold; text-transform: uppercase; flex-shrink: 0; }
+                
+                .tcAcademicWrapper {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    margin-bottom: 8px;
+                    min-height: 0;
+                }
+                .tcAcademicTable {
+                    width: 100%;
+                    height: 100%;
+                    border-collapse: collapse;
+                }
+                .tcAcademicTable th { background: #f1f5f9; text-align: center; font-size: 12px; padding: 6px 4px; height: 28px; }
+                .tcAcademicTable td { text-align: center; font-size: 12.5px; padding: 4px 6px; }
+
+                .tcCertificateText { border: 1.2px solid #000; padding: 8px 12px; margin: 6px 0 12px; line-height: 1.4; text-align: justify; font-size: 11.5px; flex-shrink: 0; }
+                .tcSignatureArea { display: table; width: 100%; margin-top: 10px; padding-bottom: 4px; flex-shrink: 0; }
                 .tcSignatureArea .sigBox { display: table-cell; width: 35%; text-align: center; vertical-align: bottom; }
                 .tcSignatureArea .dateBox { display: table-cell; width: 30%; text-align: center; vertical-align: bottom; font-size: 13px; font-weight: bold; }
                 .tcSignatureArea .sigBox .line { margin-bottom: 5px; font-weight: bold; }
-                .tcSignatureArea .sigBox .txt { font-size: 12px; font-weight: bold; }
+                .tcSignatureArea .sigBox .txt { font-size: 12.5px; font-weight: bold; }
             </style>
         </head>
         <body>
