@@ -127,6 +127,9 @@
     overflow: hidden;
     background: #f8fafc;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .resPhotoBox img {
@@ -135,7 +138,7 @@
     object-fit: cover;
 }
 
-/* 🌟 2. STUDENT DETAILS SECTION (TALLER, ROUNDED CARDS) */
+/* 🌟 2. STUDENT DETAILS SECTION */
 .resStudentGrid {
     display: flex;
     gap: 8px;
@@ -175,7 +178,7 @@
     text-transform: uppercase;
 }
 
-/* 🌟 3. MAIN BODY (ACADEMIC HEIGHT REDUCED) */
+/* 🌟 3. MAIN BODY */
 .resBodyGrid {
     display: flex;
     gap: 8px;
@@ -184,7 +187,6 @@
     margin-bottom: 4px;
 }
 
-/* LEFT COLUMN - SCHOLASTIC */
 .resScholasticWrap {
     flex: 1.35;
     border: 2px solid #0284c7;
@@ -243,7 +245,6 @@
     font-weight: 900;
 }
 
-/* RIGHT COLUMN - CO-SCHOLASTIC, ATTENDANCE, CONSOLIDATED */
 .resRightWrap {
     flex: 1;
     display: flex;
@@ -305,7 +306,6 @@
 }
 .sideRow:last-child { border-bottom: none; }
 
-/* 🌟 4. TEACHER REMARK BAR */
 .resRemarkBar {
     border: 2px solid #0284c7;
     border-radius: 8px;
@@ -319,7 +319,6 @@
     margin-bottom: 2px;
 }
 
-/* 🌟 5. EXACT 40mm SIGNATURE & STAMP SPACE */
 .resSignBox40mm {
     height: 40mm !important;
     min-height: 40mm !important;
@@ -348,7 +347,6 @@
     text-align: center;
 }
 
-/* 🌟 6. BOTTOM BANNER */
 .resBottomDeco {
     border-top: 2px solid #0284c7;
     padding-top: 3px;
@@ -471,6 +469,9 @@ function renderReportCards(studentsArray) {
         "COMPUTER": "💻"
     };
 
+    // 🌟 न्यूट्रल स्टूडेंट अवतार (फ़ोटो न होने पर स्कूल लोगो के स्थान पर उपयोग)
+    const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+
     studentsArray.forEach(st => {
         const clsClean = st.currentClass.trim();
         const isPrePrimary = ["Nursery", "LKG", "UKG"].includes(clsClean);
@@ -511,7 +512,7 @@ function renderReportCards(studentsArray) {
 
         const dobWords = convertDateToWords(st.dob);
         const promoText = getNextPromotionClass(clsClean);
-        const photoSrc = st.photo || "https://i.postimg.cc/pLt1F2cD/logo-copy.png";
+        const photoSrc = st.photo ? st.photo : DEFAULT_AVATAR;
 
         const cardHtml = `
             <div class="resSheet">
@@ -528,7 +529,7 @@ function renderReportCards(studentsArray) {
                         <div class="resultTitlePill">RESULT OF ANNUAL EXAMINATION (${st.session})</div>
                     </div>
                     <div class="resPhotoBox">
-                        <img src="${photoSrc}" alt="Student Photo">
+                        <img src="${photoSrc}" alt="Student Photo" onerror="this.src='${DEFAULT_AVATAR}'">
                     </div>
                 </div>
 
@@ -738,6 +739,9 @@ function executeSafeResultPrint() {
                     border-radius: 8px;
                     overflow: hidden;
                     background: #f8fafc;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
                 .resPhotoBox img { width: 100%; height: 100%; object-fit: cover; }
                 .resStudentGrid { display: flex; gap: 8px; margin-bottom: 6px; flex-shrink: 0; }
