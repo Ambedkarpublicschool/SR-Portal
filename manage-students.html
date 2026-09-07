@@ -341,7 +341,6 @@
         const hasActiveFilter = Boolean(search || school !== "all" || cls !== "All Classes" || sec !== "All Sections" || stat !== "All Status");
         const cacheKey = `students_cache_${ses}`;
 
-        // डिफ़ॉल्ट व्यू में लोकल मेमोरी से तुरंत दिखाना
         if (!forceServer && !hasActiveFilter) {
             const cachedData = localStorage.getItem(cacheKey);
             if (cachedData) {
@@ -368,7 +367,6 @@
                 return;
             }
 
-            // डिफ़ॉल्ट व्यू को कैश करना
             if (!hasActiveFilter) {
                 localStorage.setItem(cacheKey, JSON.stringify(res.students));
             }
@@ -385,14 +383,16 @@
         const tbody = document.getElementById("studentTableRows");
         tbody.innerHTML = "";
 
+        const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+
         students.forEach((s) => {
             const badgeCls = s.status === 'Active' ? 'badgeActive' : (s.status === 'Passout' ? 'badgePassout' : 'badgeInactive');
-            const photoSrc = s.photo || 'https://via.placeholder.com/40';
+            const photoSrc = s.photo ? s.photo : DEFAULT_AVATAR;
 
             tbody.innerHTML += `
                 <tr>
                     <td><input type="checkbox" class="rowCb" value="${s.studentId}" onchange="updateSelectedCounter()"></td>
-                    <td><img src="${photoSrc}" class="stPhoto" onerror="this.src='https://via.placeholder.com/40'"></td>
+                    <td><img src="${photoSrc}" class="stPhoto" onerror="this.src='${DEFAULT_AVATAR}'"></td>
                     <td><strong>${s.studentId}</strong></td>
                     <td>${s.studentName}</td>
                     <td>${s.fatherName}</td>
@@ -436,12 +436,14 @@
     /* VIEW MODAL */
     function openViewModal(studentId) {
         const ses = document.getElementById("msSessionFilter").value;
+        const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+
         fetch(`${SCRIPT_URL}?action=getSingleStudent&studentId=${encodeURIComponent(studentId)}&session=${encodeURIComponent(ses)}`)
         .then(r => r.json())
         .then(res => {
             if (res.status === "SUCCESS") {
                 const d = res.data;
-                const pImg = d.photoLink ? `<img src="${d.photoLink}" style="width:130px; height:150px; object-fit:cover; border-radius:6px; border:1px solid #ccc;">` : `<div style="width:130px; height:150px; background:#eee; display:flex; align-items:center; justify-content:center;">No Photo</div>`;
+                const pImg = `<img src="${d.photoLink || DEFAULT_AVATAR}" onerror="this.src='${DEFAULT_AVATAR}'" style="width:130px; height:150px; object-fit:cover; border-radius:6px; border:1px solid #ccc;">`;
                 
                 document.getElementById("viewContent").innerHTML = `
                     <div style="flex-shrink:0;">${pImg}</div>
@@ -464,9 +466,11 @@
         });
     }
 
-    /* EDIT MODAL */
+    /* 🌟 EDIT MODAL (फ़ोटो इनपुट और अपलोड फ़ील्ड सहित) */
     function openEditModal(studentId) {
         const ses = document.getElementById("msSessionFilter").value;
+        const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+
         fetch(`${SCRIPT_URL}?action=getSingleStudent&studentId=${encodeURIComponent(studentId)}&session=${encodeURIComponent(ses)}`)
         .then(r => r.json())
         .then(res => {
@@ -476,31 +480,83 @@
                 grid.innerHTML = `
                     <input type="hidden" id="edStudentId" value="${d.studentId}">
                     <input type="hidden" id="edSession" value="${d.currentSession}">
-                    <div><label>Name</label><input type="text" id="edName" value="${d.studentName}" style="width:100%;"></div>
-                    <div><label>Father Name</label><input type="text" id="edFather" value="${d.fatherName}" style="width:100%;"></div>
-                    <div><label>Mother Name</label><input type="text" id="edMother" value="${d.motherName}" style="width:100%;"></div>
-                    <div><label>Class</label><input type="text" id="edClass" value="${d.currentClass}" style="width:100%;"></div>
-                    <div><label>Section</label><input type="text" id="edSec" value="${d.section}" style="width:100%;"></div>
-                    <div><label>Roll Number</label><input type="text" id="edRoll" value="${d.rollNumber}" style="width:100%;"></div>
-                    <div><label>DOB</label><input type="date" id="edDob" value="${d.dob}" style="width:100%;"></div>
-                    <div><label>Mobile</label><input type="text" id="edMobile" value="${d.primaryMobile}" style="width:100%;"></div>
+                    <div><label style="font-weight:bold;">Name</label><input type="text" id="edName" value="${d.studentName}" style="width:100%;"></div>
+                    <div><label style="font-weight:bold;">Father Name</label><input type="text" id="edFather" value="${d.fatherName}" style="width:100%;"></div>
+                    <div><label style="font-weight:bold;">Mother Name</label><input type="text" id="edMother" value="${d.motherName}" style="width:100%;"></div>
+                    <div><label style="font-weight:bold;">Class</label><input type="text" id="edClass" value="${d.currentClass}" style="width:100%;"></div>
+                    <div><label style="font-weight:bold;">Section</label><input type="text" id="edSec" value="${d.section}" style="width:100%;"></div>
+                    <div><label style="font-weight:bold;">Roll Number</label><input type="text" id="edRoll" value="${d.rollNumber}" style="width:100%;"></div>
+                    <div><label style="font-weight:bold;">DOB</label><input type="date" id="edDob" value="${d.dob}" style="width:100%;"></div>
+                    <div><label style="font-weight:bold;">Mobile</label><input type="text" id="edMobile" value="${d.primaryMobile}" style="width:100%;"></div>
                     <div>
-                        <label>Status</label>
+                        <label style="font-weight:bold;">Status</label>
                         <select id="edStatus" style="width:100%;">
                             <option value="Active" ${d.studentStatus==='Active'?'selected':''}>Active</option>
                             <option value="Inactive" ${d.studentStatus==='Inactive'?'selected':''}>Inactive</option>
                             <option value="Passout" ${d.studentStatus==='Passout'?'selected':''}>Passout</option>
                         </select>
                     </div>
-                    <div><label>SR Number</label><input type="text" id="edSR" value="${d.srNumber}" style="width:100%;"></div>
-                    <div><label>Student ID</label><input type="text" value="${d.studentId}" readonly style="width:100%; background:#eee;"></div>
-                    <div><label>PEN Number</label><input type="text" id="edPEN" value="${d.penNumber}" style="width:100%;"></div>
-                    <div style="grid-column: span 3;"><label>Full Address</label><textarea id="edAddress" rows="2" style="width:100%;">${d.fullAddress}</textarea></div>
-                    <input type="hidden" id="edPhoto" value="${d.photoLink || ''}">
+                    <div><label style="font-weight:bold;">SR Number</label><input type="text" id="edSR" value="${d.srNumber}" style="width:100%;"></div>
+                    <div><label style="font-weight:bold;">Student ID</label><input type="text" value="${d.studentId}" readonly style="width:100%; background:#eee;"></div>
+                    <div><label style="font-weight:bold;">PEN Number</label><input type="text" id="edPEN" value="${d.penNumber}" style="width:100%;"></div>
+                    
+                    <!-- 🌟 फ़ोटो अपडेट फ़ील्ड -->
+                    <div style="grid-column: span 3; background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #cbd5e1; display:flex; gap:15px; align-items:center;">
+                        <img id="edPhotoPreview" src="${d.photoLink || DEFAULT_AVATAR}" onerror="this.src='${DEFAULT_AVATAR}'" style="width:60px; height:65px; object-fit:cover; border-radius:4px; border:1px solid #94a3b8;">
+                        <div style="flex:1;">
+                            <label style="font-weight:bold; font-size:12px;">Photo Image URL</label>
+                            <input type="text" id="edPhoto" value="${d.photoLink || ''}" placeholder="Paste Google Drive/Web image link" oninput="document.getElementById('edPhotoPreview').src = this.value || '${DEFAULT_AVATAR}'" style="width:100%; margin-bottom:5px;">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <input type="file" id="edPhotoFile" accept="image/*" onchange="handlePhotoUpload(this)" style="font-size:11px;">
+                                <span id="photoUploadStatus" style="font-size:11px; font-weight:bold; color:#0284c7;"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="grid-column: span 3;"><label style="font-weight:bold;">Full Address</label><textarea id="edAddress" rows="2" style="width:100%;">${d.fullAddress}</textarea></div>
                 `;
                 document.getElementById("editModal").style.display = "flex";
             }
         });
+    }
+
+    /* 🌟 फ़ोटो फ़ाइल को Base64 में पढ़कर Apps Script में अपलोड करना */
+    function handlePhotoUpload(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const statusLbl = document.getElementById("photoUploadStatus");
+        statusLbl.innerText = "Uploading photo...";
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64Data = e.target.result.split(',')[1];
+            const studentId = document.getElementById("edStudentId").value;
+            const fileName = `Photo_${studentId}_${Date.now()}.jpg`;
+
+            const params = new URLSearchParams();
+            params.append("action", "uploadPhoto");
+            params.append("base64", base64Data);
+            params.append("fileName", fileName);
+
+            fetch(SCRIPT_URL, { method: "POST", body: params })
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === "SUCCESS" && res.url) {
+                    document.getElementById("edPhoto").value = res.url;
+                    document.getElementById("edPhotoPreview").src = res.url;
+                    statusLbl.innerText = "✅ Uploaded!";
+                } else {
+                    statusLbl.innerText = "❌ Upload Failed";
+                    alert("Photo upload error: " + (res.message || "Unknown error"));
+                }
+            })
+            .catch(err => {
+                statusLbl.innerText = "❌ Error";
+                alert("Upload failed: " + err.message);
+            });
+        };
+        reader.readAsDataURL(file);
     }
 
     function saveEditedData() {
