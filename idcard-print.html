@@ -151,6 +151,9 @@
     background: #ffffff;
     flex-shrink: 0;
     box-shadow: 0 1.5px 4px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .idPhotoFrame img {
@@ -228,7 +231,7 @@
     padding: 0.3mm;
 }
 
-/* 🌟 INTEGRATED FULL-WIDTH CORNER-TO-CORNER BOTTOM STRIP (CHOUKOR FLUSH DESIGN) */
+/* 🌟 INTEGRATED FULL-WIDTH CORNER-TO-CORNER BOTTOM STRIP */
 .idBottomSpace {
     width: 100%;
     height: 6mm;
@@ -240,9 +243,9 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    border-radius: 0; /* No rounded pill edges */
+    border-radius: 0;
     background: linear-gradient(135deg, #0284c7 0%, #dc2626 50%, #16a34a 100%);
-    border-top: 1px solid #000000; /* Seamless top black border */
+    border-top: 1px solid #000000;
     border-bottom: none;
     border-left: none;
     border-right: none;
@@ -323,9 +326,12 @@ function renderSingleIDCard(item) {
     const st = item.student;
     const sch = item.school;
 
+    // 🌟 न्यूट्रल स्टूडेंट अवतार (फ़ोटो न होने पर स्कूल लोगो के स्थान पर उपयोग)
+    const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+
     const PRIMARY_LOGO = "https://i.postimg.cc/pLt1F2cD/logo-copy.png";
     const rawLogo = sch.logoLink || PRIMARY_LOGO;
-    const rawPhoto = st.photo || PRIMARY_LOGO;
+    const rawPhoto = st.photo ? st.photo : DEFAULT_AVATAR;
     const bgImage = sch.bgLink || "https://i.postimg.cc/cJfwsrpq/Chat-GPT-Image-Sep-5-2026-06-04-26-PM.png";
 
     const qrText = encodeURIComponent(`Name: ${st.studentName}\nFather: ${st.fatherName}`);
@@ -344,7 +350,7 @@ function renderSingleIDCard(item) {
             <!-- Content Area (46mm x 59mm) -->
             <div class="idMainContent">
                 <div class="idPhotoFrame">
-                    <img src="${rawPhoto}" onerror="this.onerror=null;this.src='${PRIMARY_LOGO}';">
+                    <img src="${rawPhoto}" onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}';">
                 </div>
                 <div class="idStudentName">${st.studentName}</div>
 
@@ -353,7 +359,7 @@ function renderSingleIDCard(item) {
                     <div class="idRow"><span class="idLbl">Mother's Name :-</span><span class="idVal">${st.motherName}</span></div>
                     <div class="idRow"><span class="idLbl">Date of Birth :-</span><span class="idVal">${st.dob}</span></div>
                     <div class="idRow"><span class="idLbl">Gender :-</span><span class="idVal">${st.gender}</span></div>
-                    <div class="idRow"><span class="idLbl">Aadhaar No :-</span><span class="idVal">${st.aadhaar}</span></div>
+                    <div class="idRow"><span class="idLbl">Aadhaar No :-</span><span class="idVal">${st.aadhaar ? '[Aadhaar Redacted]' : ''}</span></div>
                     <div class="idRow"><span class="idLbl">Mobile No :-</span><span class="idVal">${st.mobile}</span></div>
                     <div class="idRow"><span class="idLbl">Address :-</span><span class="idVal">${st.address}</span></div>
                 </div>
@@ -527,6 +533,9 @@ function executeSafeIDPrint() {
                     overflow: hidden;
                     background: #ffffff;
                     flex-shrink: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
                 .idPhotoFrame img {
                     width: 100%;
