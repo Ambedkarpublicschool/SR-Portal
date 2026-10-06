@@ -27,6 +27,31 @@
     .btnSuccess { background: #16a34a; color: #fff; }
     .btnInfo { background: #0284c7; color: #fff; }
     .btnDanger { background: #dc2626; color: #fff; }
+    .btn:disabled { background: #94a3b8 !important; cursor: not-allowed !important; opacity: 0.7; }
+
+    /* स्क्रीन लॉक ओवरले जब तक डेटा सेव हो रहा है */
+    #savingOverlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(15, 23, 42, 0.65);
+        z-index: 99999;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-family: sans-serif;
+    }
+    .spinner {
+        width: 44px;
+        height: 44px;
+        border: 4px solid #fff;
+        border-bottom-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.85s linear infinite;
+        margin-bottom: 12px;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     /* TABLET & MOBILE RESPONSIVE MEDIA QUERIES */
     @media (max-width: 900px) {
@@ -40,6 +65,12 @@
         .admBtns button { flex: 1; text-align: center; }
     }
 </style>
+
+<!-- प्रोसेसिंग के समय स्क्रीन लॉक ओवरले -->
+<div id="savingOverlay">
+    <div class="spinner"></div>
+    <div style="font-size: 15px; font-weight: 600;">कृपया प्रतीक्षा करें, डेटा सुरक्षित (Saving) किया जा रहा है...</div>
+</div>
 
 <form id="admSingleForm" onsubmit="event.preventDefault(); submitAdmissionData();">
     <!-- 1. छात्र विवरण -->
@@ -242,79 +273,90 @@
     </div>
 
     <div class="admBtns">
-        <button type="button" class="btn btnDanger" onclick="navigateModule('admission', 'New Admission')">Reset</button>
-        <button type="button" class="btn btnInfo" onclick="previewCurrentForm()">👁️ Print Preview</button>
-        <button type="submit" class="btn btnSuccess">💾 Final Submit</button>
+        <button type="button" class="btn btnDanger" id="btnReset" onclick="resetAdmissionFormCompletely()">Reset</button>
+        <button type="button" class="btn btnInfo" id="btnPreview" onclick="previewCurrentForm()">👁️ Print Preview</button>
+        <button type="submit" class="btn btnSuccess" id="btnSubmit">💾 Final Submit</button>
     </div>
 </form>
 
 <script>
     (function() {
-        document.getElementById("admissionDate").value = new Date().toISOString().split('T')[0];
-        fetchRollNumber();
+        resetAdmissionFormCompletely();
     })();
 
-function fetchRollNumber() {
-    const cls = document.getElementById("currentClass").value;
-    const sec = document.getElementById("section").value;
-
-    fetch(`${SCRIPT_URL}?action=getAdmissionInit&className=${encodeURIComponent(cls)}&section=${encodeURIComponent(sec)}`)
-    .then(r => r.json())
-    .then(res => {
-        if(res.status === "SUCCESS") {
-            document.getElementById("studentId").value = res.studentId;
-            // रोल नंबर अगर ऑब्जेक्ट हो तो उसका मान निकालें, वर्ना सीधा असाइन करें
-            const finalRoll = (typeof res.rollNumber === 'object' && res.rollNumber !== null) 
-                              ? res.rollNumber.rollNumber 
-                              : res.rollNumber;
-            document.getElementById("rollNumber").value = finalRoll || 1;
-            document.getElementById("srNumber").placeholder = `Auto: ${res.nextSR} (या खुद लिखें)`;
+    function resetAdmissionFormCompletely() {
+        document.getElementById("admSingleForm").reset();
+        document.getElementById("admissionDate").value = new Date().toISOString().split('T')[0];
+        document.getElementById("studentPhotoLink").value = "";
+        const photoStatus = document.getElementById("photoStatus");
+        if(photoStatus) {
+            photoStatus.innerText = "No photo uploaded";
+            photoStatus.style.color = "#666";
         }
-    });
-}
-
-function uploadPhotoNow() {
-    const fileInput = document.getElementById("photoFile");
-    if(!fileInput.files || !fileInput.files[0]) {
-        alert("कृपया पहले फोटो फ़ाइल चुनें!");
-        return;
+        fetchRollNumber();
     }
 
-    const sId = document.getElementById("studentId").value || "Student";
-    const sName = document.getElementById("studentName").value.trim() || "Photo";
-    const status = document.getElementById("photoStatus");
-    status.innerText = "Uploading photo...";
+    function fetchRollNumber() {
+        const cls = document.getElementById("currentClass").value;
+        const sec = document.getElementById("section").value;
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const params = new URLSearchParams();
-        params.append("action", "uploadPhoto");
-        params.append("base64", e.target.result);
-        params.append("fileName", `${sId}_${sName}.jpg`);
-
-        fetch(SCRIPT_URL, {
-            method: "POST",
-            body: params
-        })
+        fetch(`${SCRIPT_URL}?action=getAdmissionInit&className=${encodeURIComponent(cls)}&section=${encodeURIComponent(sec)}`)
         .then(r => r.json())
         .then(res => {
             if(res.status === "SUCCESS") {
-                document.getElementById("studentPhotoLink").value = res.thumbnail;
-                status.innerText = "✅ Uploaded!";
-                status.style.color = "green";
-                alert("फोटो सफलतापूर्वक अपलोड हो गई!");
-            } else {
-                alert("Upload error: " + res.message);
-                status.innerText = "Upload failed";
+                document.getElementById("studentId").value = res.studentId;
+                const finalRoll = (typeof res.rollNumber === 'object' && res.rollNumber !== null) 
+                                  ? res.rollNumber.rollNumber 
+                                  : res.rollNumber;
+                document.getElementById("rollNumber").value = finalRoll || 1;
+                document.getElementById("srNumber").placeholder = `Auto: ${res.nextSR} (या खुद लिखें)`;
             }
         })
-        .catch(err => {
-            alert("Upload failed: " + err.message);
-            status.innerText = "Upload failed";
-        });
-    };
-    reader.readAsDataURL(fileInput.files[0]);
-}
+        .catch(err => console.error("Error fetching init data:", err));
+    }
+
+    function uploadPhotoNow() {
+        const fileInput = document.getElementById("photoFile");
+        if(!fileInput.files || !fileInput.files[0]) {
+            alert("कृपया पहले फोटो फ़ाइल चुनें!");
+            return;
+        }
+
+        const sId = document.getElementById("studentId").value || "Student";
+        const sName = document.getElementById("studentName").value.trim() || "Photo";
+        const status = document.getElementById("photoStatus");
+        status.innerText = "Uploading photo...";
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const params = new URLSearchParams();
+            params.append("action", "uploadPhoto");
+            params.append("base64", e.target.result);
+            params.append("fileName", `${sId}_${sName}.jpg`);
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                body: params
+            })
+            .then(r => r.json())
+            .then(res => {
+                if(res.status === "SUCCESS") {
+                    document.getElementById("studentPhotoLink").value = res.thumbnail;
+                    status.innerText = "✅ Uploaded!";
+                    status.style.color = "green";
+                    alert("फोटो सफलतापूर्वक अपलोड हो गई!");
+                } else {
+                    alert("Upload error: " + res.message);
+                    status.innerText = "Upload failed";
+                }
+            })
+            .catch(err => {
+                alert("Upload failed: " + err.message);
+                status.innerText = "Upload failed";
+            });
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+    }
 
     function getFormDataJson() {
         return {
@@ -356,31 +398,57 @@ function uploadPhotoNow() {
         };
     }
 
-    function submitAdmissionData() {
+    async function submitAdmissionData() {
         const d = getFormDataJson();
-        if(!d.primaryMobile || !d.studentName || !d.fatherName) {
+        if(!d.primaryMobile || !d.studentName || !d.fatherName || !d.dob) {
             alert("कृपया सभी अनिवार्य फ़ील्ड्स (*) भरें!");
             return;
         }
 
-        const params = new URLSearchParams();
-        params.append("action", "saveAdmission");
-        params.append("data", JSON.stringify(d));
+        const submitBtn = document.getElementById("btnSubmit");
+        const resetBtn = document.getElementById("btnReset");
+        const overlay = document.getElementById("savingOverlay");
 
-        fetch(SCRIPT_URL, { method: "POST", body: params })
-        .then(r => r.json())
-        .then(res => {
-            if(res.status === "SUCCESS") {
+        // 1. बटन डिसेबल और लोडर चालू
+        submitBtn.disabled = true;
+        resetBtn.disabled = true;
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = "⏳ Saving...";
+        overlay.style.display = "flex";
+
+        try {
+            const params = new URLSearchParams();
+            params.append("action", "saveAdmission");
+            params.append("data", JSON.stringify(d));
+
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: params
+            });
+            const res = await response.json();
+
+            if (res.status === "SUCCESS") {
                 alert(`✅ प्रवेश सफलतापूर्वक सुरक्षित!\nStudent ID: ${res.studentId}\nSR Number: ${res.srNumber}`);
-                if(confirm("क्या आप एडमिशन फ़ॉर्म प्रिंट करना चाहते हैं?")) {
-                    printFormLayout(res.savedData, "ADMITTED");
+                if (confirm("क्या आप एडमिशन फ़ॉर्म प्रिंट करना चाहते हैं?")) {
+                    printFormLayout(res.savedData || d, "ADMITTED");
                 }
-                navigateModule('admission', 'New Admission');
+                // 2. फॉर्म पूरी तरह से रीसेट
+                resetAdmissionFormCompletely();
+            } else if (res.status === "DUPLICATE") {
+                // 3. डुप्लीकेट मिलने पर अलर्ट
+                alert(`⚠️ यह छात्र पहले से ही सुरक्षित (फीड) है!\n\nनाम: ${d.studentName}\nजन्म तिथि: ${d.dob}\nमोबाइल: ${d.primaryMobile}\nStudent ID: ${res.existingId || '-'}\nSR No: ${res.existingSR || '-'}\n\nदोबारा सबमिट करने की अनुमति नहीं है।`);
             } else {
                 alert("Error: " + res.message);
             }
-        })
-        .catch(err => alert("Saving failed: " + err.message));
+        } catch (err) {
+            alert("सबमिशन में त्रुटि: " + err.message);
+        } finally {
+            // प्रोसेस खत्म होने पर स्क्रीन अनलॉक
+            overlay.style.display = "none";
+            submitBtn.disabled = false;
+            resetBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
     }
 
     function previewCurrentForm() {
