@@ -286,12 +286,18 @@
 
 <script>
     (function() {
+        // Purana pada hua cache saaf karein
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith("students_cache_")) {
+                localStorage.removeItem(key);
+            }
+        });
         initManageModule();
     })();
 
     function initManageModule() {
         // 1. स्कूल ड्रॉपडाउन लोड करना (Student_Master Col AK से)
-        fetch(`${SCRIPT_URL}?action=getSchoolList`)
+        fetch(`${SCRIPT_URL}?action=getSchoolList&_t=${Date.now()}`)
         .then(r => r.json())
         .then(res => {
             if (res.status === "SUCCESS" && res.data) {
@@ -301,14 +307,14 @@
         .catch(err => console.error("School fetch error:", err));
 
         // 2. सत्र सूची लोड करना
-        fetch(`${SCRIPT_URL}?action=getAllSessions`)
+        fetch(`${SCRIPT_URL}?action=getAllSessions&_t=${Date.now()}`)
         .then(r => r.json())
         .then(res => {
             const list = (res.sessions && res.sessions.length > 0) ? res.sessions : ["2026-2027"];
             populateSessionDropdown(list);
-            loadStudentsData(false);
+            loadStudentsData(true);
         })
-        .catch(() => loadStudentsData(false));
+        .catch(() => loadStudentsData(true));
     }
 
     function populateSchoolDropdown(schools) {
@@ -328,9 +334,9 @@
     }
 
     /**
-     * 🌟 छात्रों का डेटा लोड करना (स्मार्ट कैश और सटीक फ़िल्टरिंग)
+     * 🌟 छात्रों का डेटा लोड करना (सीधा लाइव Google Sheet से और फ़ास्ट)
      */
-    function loadStudentsData(forceServer = false) {
+    function loadStudentsData(forceServer = true) {
         const search = document.getElementById("msSearch").value.trim();
         const school = document.getElementById("msSchoolFilter") ? document.getElementById("msSchoolFilter").value : "all";
         const ses = document.getElementById("msSessionFilter").value;
@@ -338,25 +344,11 @@
         const sec = document.getElementById("msSectionFilter").value;
         const stat = document.getElementById("msStatusFilter").value;
 
-        const hasActiveFilter = Boolean(search || school !== "all" || cls !== "All Classes" || sec !== "All Sections" || stat !== "All Status");
-        const cacheKey = `students_cache_${ses}`;
-
-        if (!forceServer && !hasActiveFilter) {
-            const cachedData = localStorage.getItem(cacheKey);
-            if (cachedData) {
-                try {
-                    renderStudentRows(JSON.parse(cachedData));
-                    return;
-                } catch(e) {
-                    localStorage.removeItem(cacheKey);
-                }
-            }
-        }
-
         const tbody = document.getElementById("studentTableRows");
         tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; font-weight:bold;">Loading Students...</td></tr>`;
 
-        const url = `${SCRIPT_URL}?action=getStudentsList&searchText=${encodeURIComponent(search)}&classFilter=${encodeURIComponent(cls)}&sectionFilter=${encodeURIComponent(sec)}&statusFilter=${encodeURIComponent(stat)}&sessionFilter=${encodeURIComponent(ses)}&schoolFilter=${encodeURIComponent(school)}`;
+        // Cache-Busting timestamp (_t) jisse hamesha fresh live data fetch ho
+        const url = `${SCRIPT_URL}?action=getStudentsList&searchText=${encodeURIComponent(search)}&classFilter=${encodeURIComponent(cls)}&sectionFilter=${encodeURIComponent(sec)}&statusFilter=${encodeURIComponent(stat)}&sessionFilter=${encodeURIComponent(ses)}&schoolFilter=${encodeURIComponent(school)}&_t=${Date.now()}`;
 
         fetch(url)
         .then(r => r.json())
@@ -365,10 +357,6 @@
                 tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:30px; color:#888;">No Students Found</td></tr>`;
                 document.getElementById("totalCounter").innerText = `Total Records : 0`;
                 return;
-            }
-
-            if (!hasActiveFilter) {
-                localStorage.setItem(cacheKey, JSON.stringify(res.students));
             }
 
             renderStudentRows(res.students);
@@ -438,7 +426,7 @@
         const ses = document.getElementById("msSessionFilter").value;
         const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
-        fetch(`${SCRIPT_URL}?action=getSingleStudent&studentId=${encodeURIComponent(studentId)}&session=${encodeURIComponent(ses)}`)
+        fetch(`${SCRIPT_URL}?action=getSingleStudent&studentId=${encodeURIComponent(studentId)}&session=${encodeURIComponent(ses)}&_t=${Date.now()}`)
         .then(r => r.json())
         .then(res => {
             if (res.status === "SUCCESS") {
@@ -471,7 +459,7 @@
         const ses = document.getElementById("msSessionFilter").value;
         const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
 
-        fetch(`${SCRIPT_URL}?action=getSingleStudent&studentId=${encodeURIComponent(studentId)}&session=${encodeURIComponent(ses)}`)
+        fetch(`${SCRIPT_URL}?action=getSingleStudent&studentId=${encodeURIComponent(studentId)}&session=${encodeURIComponent(ses)}&_t=${Date.now()}`)
         .then(r => r.json())
         .then(res => {
             if (res.status === "SUCCESS") {
@@ -589,7 +577,6 @@
         .then(res => {
             if (res.status === "SUCCESS") {
                 alert("✅ Record Updated Successfully!");
-                localStorage.removeItem(`students_cache_${ses}`);
                 closeModal('editModal');
                 loadStudentsData(true);
             } else {
@@ -636,7 +623,6 @@
         .then(res => {
             if (res.status === "SUCCESS") {
                 alert(`🎉 TC Saved Successfully!\nAssigned TC Number: ${res.tcNumber}`);
-                localStorage.removeItem(`students_cache_${ses}`);
                 closeModal('tcModal');
                 loadStudentsData(true);
             } else {
@@ -654,7 +640,7 @@
             return;
         }
 
-        fetch(`${SCRIPT_URL}?action=exportStudents&session=${encodeURIComponent(ses)}`)
+        fetch(`${SCRIPT_URL}?action=exportStudents&session=${encodeURIComponent(ses)}&_t=${Date.now()}`)
         .then(r => r.json())
         .then(res => {
             if (res.status !== "SUCCESS" || !res.data || res.data.length <= 1) {
@@ -696,7 +682,6 @@
         .then(res => {
             if (res.status === "SUCCESS") {
                 alert(`🎉 Promotion Done! Promoted: ${res.promoted}, Passout: ${res.passout}`);
-                localStorage.clear();
                 initManageModule();
             } else {
                 alert("Error: " + res.message);
